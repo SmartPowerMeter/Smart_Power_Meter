@@ -15,7 +15,7 @@ services:
       - 443:443
     restart: always
     volumes:
-      - /home/projects/Smart_Power_Meter/Software/showcase_webpage/conf.d/:/etc/nginx/conf.d/:ro
+      - /home/projects/Smart_Power_Meter/Software/Nginx/conf.d/:/etc/nginx/conf.d/:ro
       - /home/projects/Smart_Power_Meter/Software/showcase_webpage/:/usr/share/nginx/html/smartpowermeter.com.ge/
       - /home/data/certbot/www:/var/www/certbot/:ro
       - /home/data/certbot/conf/:/etc/nginx/ssl/:ro
