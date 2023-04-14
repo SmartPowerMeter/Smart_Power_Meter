@@ -34,9 +34,9 @@ services:
         ipv4_address: 172.25.5.2
   web:
     build: /home/projects/Smart_Power_Meter/Software/SPM.Api/SPM.Api
-    ports:
-      - 3000:80
-      - 3001:443
+    expose:
+      - 80
+      - 443
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.3
@@ -69,17 +69,15 @@ services:
       - mssql_sa_password
   second_site:
     build: /home/projects/Smart_Power_Meter/Software/second_site
-    # expose:
-    #   - 4200
-    ports:
-      - 4200:4200
+    expose:
+      - 4200
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.5
   influxdb:
     image: influxdb:2.6.1
-    ports:
-      - 5000:8086
+    expose:
+      - 8086
     volumes:
       - /home/data/influxdb/data:/var/lib/influxdb2:rw
       - /home/data/influxdb/config:/etc/influxdb2:rw
@@ -105,8 +103,8 @@ services:
 
 secrets:
   influxdb_init_password:
-    file: /home/secrets/influxdb.txt
+    file: /home/data/secrets/influxdb.txt
   influxdb_init_username:
-    file: /home/secrets/influxdb.txt
+    file: /home/data/secrets/influxdb.txt
   mssql_sa_password:
-    file: /home/secrets/mssql.txt
+    file: /home/data/secrets/mssql.txt
