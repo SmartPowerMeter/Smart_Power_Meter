@@ -1,7 +1,7 @@
 version: '2.16.0'
 
 networks:
-  smart_power_meter_network:
+  main_network:
     driver: bridge
     ipam:
       config:
@@ -20,7 +20,7 @@ services:
       - /home/data/certbot/www:/var/www/certbot/:ro
       - /home/data/certbot/conf/:/etc/nginx/ssl/:ro
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.1
     depends_on:
       - certbot
@@ -30,7 +30,7 @@ services:
       - /home/data/certbot/www/:/var/www/certbot/:rw
       - /home/data/certbot/conf/:/etc/letsencrypt/:rw
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.2
   web:
     build: /home/projects/Smart_Power_Meter/Software/SPM.Api/SPM.Api
@@ -38,7 +38,7 @@ services:
       - 80
       - 443
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.3
   db:
     user: root
@@ -46,7 +46,8 @@ services:
       - 1433:1433
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: /run/secrets/mssql_sa_password
+    env_file:
+      - /home/data/mssql/mssql_envs.env
     # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
     image: mcr.microsoft.com/azure-sql-edge:1.0.4
     # If you really want to use MS SQL Server, uncomment the following line
@@ -63,16 +64,14 @@ services:
       - /home/data/mssql/secrets:/var/opt/mssql/secrets:rw
       - /home/data/mssql/data:/var/opt/mssql/data:rw
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.4
-    secrets:
-      - mssql_sa_password
   second_site:
     build: /home/projects/Smart_Power_Meter/Software/second_site
     expose:
       - 4200
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.5
   influxdb:
     image: influxdb:2.6.1
@@ -83,28 +82,44 @@ services:
       - /home/data/influxdb/config:/etc/influxdb2:rw
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
-      DOCKER_INFLUXDB_INIT_USERNAME: /run/secrets/influxdb_init_username
-      DOCKER_INFLUXDB_INIT_PASSWORD: /run/secrets/influxdb_init_password
       DOCKER_INFLUXDB_INIT_ORG: smartpowermeter-org
       DOCKER_INFLUXDB_INIT_BUCKET: test_1
+    env_file:
+      - /home/data/influxdb/influxdb_envs.env
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.6
-    secrets:
-      - influxdb_init_password
-      - influxdb_init_username
   mqtt_broker:
     build: /home/projects/Smart_Power_Meter/Software/SPM_MQTT
     ports:
       - 707:707
     networks:
-      smart_power_meter_network:
+      main_network:
         ipv4_address: 172.25.5.7
-
-secrets:
-  influxdb_init_password:
-    file: /home/data/secrets/influxdb.txt
-  influxdb_init_username:
-    file: /home/data/secrets/influxdb.txt
-  mssql_sa_password:
-    file: /home/data/secrets/mssql.txt
+  jenkins:
+    image: jenkins/jenkins
+    container_name: jenkins
+    user: root
+    privileged: true
+    networks:
+      main_network:
+        ipv4_address: 172.25.5.8
+    environment:
+      DOCKER_TLS_CERTDIR: /certs
+    volumes:
+      - /home/data/jenkins/client:/certs/client
+      - /home/data/jenkins/home:/var/jenkins_home
+    expose:
+      - 8080
+  agent:
+    image: jenkins/ssh-agent:jdk11
+    user: root
+    privileged: true
+    container_name: agent
+    networks:
+      main_network:
+        ipv4_address: 172.25.5.9
+    expose:
+      - 22
+    env_file:
+      - /home/data/jenkins/ssh/pub_key.env
