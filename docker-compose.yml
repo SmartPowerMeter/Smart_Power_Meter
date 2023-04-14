@@ -15,11 +15,10 @@ services:
       - 443:443
     restart: always
     volumes:
-      - ./Irakli1109.github.io/conf.d/:/etc/nginx/conf.d/:ro
-      - ./Irakli1109.github.io/:/usr/share/nginx/html/smartpowermeter.com.ge/
-      - ./second_site/:/usr/share/nginx/html/smartpowermeter.ge/
-      - ./certbot/www:/var/www/certbot/:ro
-      - ./certbot/conf/:/etc/nginx/ssl/:ro
+      - /home/projects/Smart_Power_Meter/Software/showcase_webpage/conf.d/:/etc/nginx/conf.d/:ro
+      - /home/projects/Smart_Power_Meter/Software/showcase_webpage/:/usr/share/nginx/html/smartpowermeter.com.ge/
+      - /home/data/certbot/www:/var/www/certbot/:ro
+      - /home/data/certbot/conf/:/etc/nginx/ssl/:ro
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.1
@@ -28,8 +27,8 @@ services:
   certbot:
     image: certbot/certbot:latest
     volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - /home/data/certbot/www/:/var/www/certbot/:rw
+      - /home/data/certbot/conf/:/etc/letsencrypt/:rw
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.2
