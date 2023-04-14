@@ -6,10 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  isToggleChecked = true;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  clicked() {
+    this.isToggleChecked = !this.isToggleChecked;
+  }
 }

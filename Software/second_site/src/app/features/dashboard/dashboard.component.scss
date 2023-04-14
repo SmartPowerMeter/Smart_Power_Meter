@@ -28,3 +28,55 @@
     }
   }
 }
+
+/* Styles for the switch container */
+.toggle-switch {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 34px;
+  text-align: center;
+}
+
+/* Styles for the switch slider */
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: 0.4s;
+}
+
+/* Styles for the switch slider when it is toggled on */
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+/* Styles for the switch input */
+.toggle-switch input {
+  display: none;
+}
+
+/* Styles for the switch input when it is checked */
+.toggle-switch input:checked + .slider {
+  background-color: #2196F3;
+}
+
+/* Styles for the switch input when it is checked and the slider is toggled on */
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(26px);
+}
+
+
+
