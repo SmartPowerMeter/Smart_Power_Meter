@@ -1,0 +1,100 @@
+version: '2.16.0'
+
+networks:
+  smart_power_meter_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+services:
+  webserver:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./Irakli1109.github.io/conf.d/:/etc/nginx/conf.d/:ro
+      - ./Irakli1109.github.io/:/usr/share/nginx/html/smartpowermeter.com.ge/
+      - ./second_site/:/usr/share/nginx/html/smartpowermeter.ge/
+      - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.1
+    depends_on:
+      - certbot
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.2
+  web:
+    build: /home/projects/Smart_Power_Meter/Software/SPM.Api/SPM.Api
+    ports:
+      - 3000:80
+      - 3001:443
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.3
+  db:
+    user: root
+    ports:
+      - 1433:1433
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: example_123
+    # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
+    image: mcr.microsoft.com/azure-sql-edge:1.0.4
+    # If you really want to use MS SQL Server, uncomment the following line
+    #image: mcr.microsoft.com/mssql/server
+    restart: always
+    healthcheck:
+        test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P example_123 -Q 'SELECT 1' || exit 1"]
+        interval: 10s
+        retries: 10
+        start_period: 10s
+        timeout: 3s
+    volumes:
+      - /home/data/mssql/log:/var/opt/mssql/log:rw
+      - /home/data/mssql/secrets:/var/opt/mssql/secrets:rw
+      - /home/data/mssql/data:/var/opt/mssql/data:rw
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.4
+  second_site:
+    build: /home/projects/Smart_Power_Meter/Software/second_site
+    # expose:
+    #   - 4200
+    ports:
+      - 4200:4200
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.5
+  influxdb:
+    image: influxdb:2.6.1
+    ports:
+      - 5000:8086
+    volumes:
+      - /home/data/influxdb/data:/var/lib/influxdb2:rw
+      - /home/data/influxdb/config:/etc/influxdb2:rw
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: smartpowermeter
+      DOCKER_INFLUXDB_INIT_PASSWORD: smartpowermeter25
+      DOCKER_INFLUXDB_INIT_ORG: smartpowermeter-org
+      DOCKER_INFLUXDB_INIT_BUCKET: test_1
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.6
+  mqtt_broker:
+    build: /home/projects/Smart_Power_Meter/Software/SPM_MQTT
+    ports:
+      - 707:707
+    networks:
+      smart_power_meter_network:
+        ipv4_address: 172.25.5.7
