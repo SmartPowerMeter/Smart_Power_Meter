@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Meter</title>
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png" />
+    <link rel="stylesheet" href="index.css" />
+    <script
+      src="https://kit.fontawesome.com/6a865e69a2.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
+    />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Itim&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        visibility: hidden;
+        opacity: 0;
+      }
+    </style>
+  </head>
+
+  <body id="body">
+    <header id="start">
+      <div class="header-inner">
+        <div id="hamburger">
+          <!-- <div id="active-burger1" class="burger burger1 first-burger"></div>
+           <div id="active-burger2"class="burger burger2 second-burger"></div>
+           <div id="active-burger3"class="burger burger3 third-burger"></div> -->
+        </div>
+        <a style="cursor: pointer" href="#body"
+          ><img class="logo" src="./images/Smart_Meter_Logo.png"
+        /></a>
+        <ul id="toggle" class="header-ul">
+          <li>
+            <a href="#team" style="color: #b535f6; text-decoration: none"
+              >TEAM</a
+            >
+          </li>
+          <li>
+            <a href="#schedule" style="color: #b535f6; text-decoration: none"
+              >SCHEDULE
+            </a>
+          </li>
+          <li>
+            <a href="#project" style="color: #b535f6; text-decoration: none">
+              PROJECT</a
+            >
+          </li>
+          <li>
+            <a href="#plans" style="color: #b535f6; text-decoration: none"
+              >PLANS
+            </a>
+          </li>
+          <li>
+            <a href="#components" style="color: #b535f6; text-decoration: none"
+              >COMPONENTS</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="header-inner2">
+        <a></a>
+        <a id="mode" onclick="mode()"> Dark Mode: Off</a>
+      </div>
+    </header>
+
+    <section class="first-section">
+      <div class="first-section-info">
+        <p>PREMIERS MAY 15</p>
+
+        <h1 id="text19">The Smart Meter</h1>
+
+        <p id="text20">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Porro error
+          animi magni ullam et sequi vel quam? Fuga quod consequatur ut. Officia
+          fugit perspiciatis qui autem doloribus repellendus similique ab?
+        </p>
+
+        <!-- <div class="first-section-info-inner">
+          <a
+            ><span><i class="fa-solid fa-play"></i></span>WATCH THE TRAILER</a
+          >
+        </div> -->
+      </div>
+    </section>
+
+    <section class="second-section" id="team">
+      <div class="none">hello measeter</div>
+      <div class="none">hello measeter</div>
+      <h1 class="watch" style="color: #b535f6">Our Project Team</h1>
+
+      <div class="second-section-videos">
+        <div class="video1 second-section-video">
+          <div class="pictures picture1">
+            <!-- <img class="circle" src="circle.png" />
+            <span>0:59</span> -->
+          </div>
+
+          <div class="videos-info">
+            <p style="color: #b535f6">Electrical Engineer</p>
+            <p id="textHeader1">Shalva Butkhuzi</p>
+            <p id="text1">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Impedit
+              asperiores accusamus ipsa consectetur quam eius totam! Commodi
+              itaque, vero dignissimos reiciendis numquam iusto perferendis
+              deserunt blanditiis est, neque, dolores ea?
+            </p>
+          </div>
+        </div>
+
+        <div class="video2 second-section-video">
+          <div class="pictures picture2">
+            <!-- <img class="circle" src="circle.png" />
+            <span>2:19</span> -->
+          </div>
+
+          <div class="videos-info">
+            <p style="color: #b535f6">Computer Engineer</p>
+            <p id="textHeader2">Irakli Turabelidze</p>
+            <p id="text2">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus
+              voluptatum sed aut quod ipsam commodi voluptatibus, nulla nostrum
+              unde voluptas nihil molestias sunt magnam! Iure, cumque
+              blanditiis? Cum, reprehenderit repudiandae?
+            </p>
+          </div>
+        </div>
+
+        <div class="video3 second-section-video">
+          <div class="pictures picture3">
+            <!-- <img class="circle" src="circle.png" />
+            <span>2:34</span> -->
+          </div>
+
+          <div class="videos-info">
+            <p style="color: #b535f6">Computer Engineer</p>
+            <p id="textHeader3">Giorgi Turdziladze</p>
+            <p id="text3">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Inventore, reiciendis aspernatur temporibus magni vero, adipisci
+              quod iure tempore quibusdam omnis suscipit autem cum deleniti ut
+              possimus, mollitia dolorum sed. Deserunt!
+            </p>
+          </div>
+        </div>
+
+        <div class="video4 second-section-video">
+          <div class="pictures picture4">
+            <!-- <img class="circle" src="circle.png" />
+            <span>1:14</span> -->
+          </div>
+
+          <div class="videos-info">
+            <p style="color: #b535f6">Team Mentor</p>
+            <p id="textHeader4">Davit Chkhaidze</p>
+            <p id="text4">
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque
+              totam, suscipit dolores dolorum rem cum minima harum provident
+              aperiam, officia quos blanditiis quaerat praesentium! Adipisci
+              nobis illo deserunt neque omnis.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="schedule"></div>
+      <div></div>
+
+      <div class="dates-content">
+        <div class="dates">
+          <div class="dates-inner">
+            <p style="color: #b535f6; font-size: 22px">Project Timeline</p>
+          </div>
+
+          <div class="dates-inner1">
+            <div class="episode-dates date1">
+              <p id="text5">Building The Board and Designing Web Page</p>
+              <p id="text6">January-February, 2023</p>
+            </div>
+
+            <div class="episode-dates date2">
+              <p id="text7">
+                Programming ESP32, Designing Relay and Getting Data From Sensor
+              </p>
+              <p id="text8">March-April, 2023</p>
+            </div>
+
+            <div class="episode-dates date3">
+              <p id="text9">Finalizing Project and Preparing For Showcase</p>
+              <p id="text10">May, 2023</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="project"></div>
+    <section class="third-section">
+      <a href="#"
+        ><img class="middle-img" src="./images/project-desc.png" />
+      </a>
+
+      <div class="third-section-inner">
+        <p></p>
+        <p style="color: #b535f6">Project Description</p>
+        <p class="third-section-special-p" id="text11">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
+          maxime nulla quos fugit pariatur laudantium, aliquid tenetur vel
+          dolorem amet enim non, at ipsam aut unde alias minima quis
+          consequuntur? Lorem ipsum dolor sit amet, consectetur adipisicing
+          elit. Blanditiis nam nostrum suscipit, recusandae saepe quos nihil
+          itaque aut accusamus minus dolore reprehenderit dolores ad quidem vel
+          ullam vitae nisi numquam.
+        </p>
+      </div>
+    </section>
+
+    <div id="plans"></div>
+    <div></div>
+
+    <section class="fifth-section">
+      <div class="fifth-section-inner1">
+        <div class="fifth-section-video-info">
+          <!-- <img src="circle.png" /> -->
+
+          <div class="fifth-section-video-stats">
+            <!-- <p>1:23</p> -->
+            <h1 style="color: rgb(181, 53, 246); margin-left: 10px">
+              Showcase of Prototype in May 2023
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="fifth-section-inner2">
+        <h1 style="color: #b535f6">Showcase Plans</h1>
+        <p id="text12">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
+          maxime nulla quos fugit pariatur laudantium, aliquid tenetur vel
+          dolorem amet enim non, at ipsam aut unde alias minima quis
+          consequuntur? Lorem ipsum dolor sit amet, consectetur adipisicing
+          elit. Blanditiis nam nostrum suscipit, recusandae saepe quos nihil
+          itaque aut accusamus minus dolore reprehenderit dolores ad quidem vel
+          ullam vitae nisi numquam.
+        </p>
+      </div>
+    </section>
+
+    <div id="components"></div>
+    <h1 style="visibility: hidden">1</h1>
+    <h1 style="visibility: hidden">2</h1>
+    <h1 class="watch" style="color: #b535f6; text-align: center">Components</h1>
+
+    <section class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        <div class="card swiper-slide">
+          <div class="card__image">
+            <img src="/images/esp32.jpg" alt="ESP32 image" />
+          </div>
+
+          <div class="card__content">
+            <span class="card__title" style="color: #b535f6">ESP 32</span>
+            <span class="card__name">Microcontroller</span>
+            <p class="card__text" id="text13">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
+              veritatis labore provident non tempora odio est sunt, ipsum
+            </p>
+            <button class="card__btn">
+              <a
+                href="https://www.elecbee.com/en-23516-ESP32-S-WiFi-bluetooth-ESP32S-Serial-to-WiFi-Dual-Antenna-Module?utm_term=&utm_campaign=&utm_source=adwords&utm_medium=ppc&hsa_acc=9958698819&hsa_cam=18719854073&hsa_grp=140153146062&hsa_ad=630917925115&hsa_src=g&hsa_tgt=pla-1186173532455&hsa_kw=&hsa_mt=&hsa_net=adwords&hsa_ver=3&gclid=CjwKCAiAxP2eBhBiEiwA5puhNapp9HPWkKfeaJ6UgPTsr7hYkH-IMncQSyhTKeb_3JnBOMcZ8Y517BoCtPcQAvD_BwE"
+                target="_blank"
+                style="text-decoration: none"
+                class="card__btn"
+                >View More</a
+              >
+            </button>
+          </div>
+        </div>
+
+        <div class="card swiper-slide">
+          <div class="card__image">
+            <img src="/images/pzem.png" alt="PZEM-004T Sensor image" />
+          </div>
+
+          <div class="card__content">
+            <span class="card__title" style="color: #b535f6">PZEM-004T</span>
+            <span class="card__name">Sensor</span>
+            <p class="card__text" id="text14">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
+              veritatis labore provident non tempora odio est sunt, ipsum
+            </p>
+            <button class="card__btn">
+              <a
+                href="https://www.amazon.com/PZEM-004T-Current-Voltage-Multimeter-Transformer/dp/B074QGWMKH"
+                target="_blank"
+                style="text-decoration: none"
+                class="card__btn"
+                >View More</a
+              >
+            </button>
+          </div>
+        </div>
+
+        <div class="card swiper-slide">
+          <div class="card__image">
+            <img src="/images/ssr.webp" alt="relay image" />
+          </div>
+
+          <div class="card__content">
+            <span class="card__title" style="color: #b535f6">T92HP7D1X-12</span>
+            <span class="card__name">Solid State Relay</span>
+            <p class="card__text" id="text15">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
+              veritatis labore provident non tempora odio est sunt, ipsum
+            </p>
+            <button class="card__btn">
+              <a
+                href="https://www.digikey.com/en/products/detail/te-connectivity-potter-brumfield-relays/T92HP7D1X-12/13549155"
+                target="_blank"
+                style="text-decoration: none"
+                class="card__btn"
+                >View More</a
+              >
+            </button>
+          </div>
+        </div>
+
+        <div class="card swiper-slide">
+          <div class="card__image">
+            <img src="/images/converter.png" alt="card image" />
+          </div>
+
+          <div class="card__content">
+            <span class="card__title" style="color: #b535f6"
+              >Hi-Link 220V to 12V</span
+            >
+            <span class="card__name">220-12V Step Down Converter</span>
+            <p class="card__text" id="text16">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
+              veritatis labore provident non tempora odio est sunt, ipsum
+            </p>
+            <button class="card__btn">
+              <a
+                href="https://www.amazon.com/HI-Link-HLK-20M12-Step-Down-Intelligent-Household/dp/B086C46FSV"
+                target="_blank"
+                style="text-decoration: none"
+                class="card__btn"
+                >View More</a
+              >
+            </button>
+          </div>
+        </div>
+
+        <div class="card swiper-slide">
+          <div class="card__image">
+            <img src="/images/gsm.png" alt="gsm image" />
+          </div>
+
+          <div class="card__content">
+            <span class="card__title" style="color: #b535f6">SIM800L</span>
+            <span class="card__name">GSM Module</span>
+            <p class="card__text" id="text17">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
+              veritatis labore provident non tempora odio est sunt, ipsum
+            </p>
+            <button class="card__btn">
+              <a
+                href="https://nettigo.eu/products/sim800l-gsm-grps-module"
+                target="_blank"
+                style="text-decoration: none"
+                class="card__btn"
+                >View More</a
+              >
+            </button>
+          </div>
+        </div>
+
+        <div class="card swiper-slide">
+          <div class="card__image">
+            <img src="/images/sd.jpg" alt="sd card image" />
+          </div>
+
+          <div class="card__content">
+            <span class="card__title" style="color: #b535f6">AR019</span>
+            <span class="card__name">SD Card Module</span>
+            <p class="card__text" id="text18">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
+              veritatis labore provident non tempora odio est sunt, ipsum
+            </p>
+            <button class="card__btn">
+              <a
+                class="card__btn"
+                href="https://dac.ge/ka/?product=5617&category=40&subcategory=203"
+                target="_blank"
+                style="text-decoration: none"
+                >View More</a
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- <section class="sixth-section">
+      <a href="#">
+        <img class="sixth-section-img" src="sixth-section-img.webp" />
+      </a>
+    </section> -->
+
+    <section class="footer">
+      <a href="#body"
+        ><img width="170px" src="./images/Smart_Meter_Logo.png"
+      /></a>
+
+      <ul class="footer-ul1">
+        <li>
+          <a href="#team" style="color: #b535f6; text-decoration: none"
+            >ABOUT US</a
+          >
+        </li>
+        <li>
+          <a href="#project" style="color: #b535f6; text-decoration: none"
+            >PROJECT</a
+          >
+        </li>
+        <li>
+          <a href="#plans" style="color: #b535f6; text-decoration: none"
+            >SHOWCASE</a
+          >
+        </li>
+        <li>
+          <a href="#components" style="color: #b535f6; text-decoration: none"
+            >COMPONENTS</a
+          >
+        </li>
+        <li>
+          <a href="#schedule" style="color: #b535f6; text-decoration: none"
+            >SCHEDULE</a
+          >
+        </li>
+      </ul>
+
+      <!-- <ul class="footer-ul2">
+        <li>Privacy Policy</li>
+        <li>Terms of Use</li>
+        <li>Ad Choices</li>
+        <li>Cookie Settings</li>
+      </ul> -->
+
+      <p>© 2023 Smart Meter Team. All Rights Reserved.</p>
+
+      <p>This website may contain mature content.</p>
+    </section>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        coverflowEffect: {
+          rotate: 0,
+          stretch: 0,
+          depth: 300,
+          modifier: 1,
+          slideShadows: false,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+        },
+      });
+    </script>
+
+    <script src="index.js"></script>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+      ScrollReveal({
+        reset: false,
+        distance: "60px",
+        duration: 1500,
+        delay: 400,
+      });
+
+      ScrollReveal().reveal(
+        ".second-section, .third-section,.fourth-section,.fifth-section",
+        {
+          delay: 500,
+          origin: "left",
+        }
+      );
+
+      ScrollReveal().reveal(".sixth-section,.footer", { origin: "bottom" });
+    </script>
+
+    <script>
+      //cnt = 0;
+
+      function mode() {
+        //document.getElementById("toggle").style.backgroundColor = "rgb(37, 33, 33)";
+        if (localStorage.getItem("cnt") == null) {
+          localStorage.setItem("cnt", 0);
+          cnt = localStorage.getItem("cnt");
+        } else cnt = localStorage.getItem("cnt");
+        cnt++;
+        localStorage.setItem("cnt", cnt);
+        if (cnt % 2 == 1) {
+          document.getElementById("mode").innerHTML = "Dark Mode: On";
+          document.body.style.backgroundColor = "black";
+          document.getElementsByTagName("header")[0].style.backgroundColor =
+            "rgb(37 33 33)";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[0].style.backgroundColor = "black";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[1].style.backgroundColor = "black";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[2].style.backgroundColor = "black";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[3].style.backgroundColor = "black";
+          document.getElementsByClassName(
+            "dates-content"
+          )[0].style.backgroundColor = "black";
+
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[0].style.backgroundColor = "rgb(75 51 51)";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[1].style.backgroundColor = "rgb(75 51 51)";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[2].style.backgroundColor = "rgb(75 51 51)";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[3].style.backgroundColor = "rgb(75 51 51)";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[4].style.backgroundColor = "rgb(75 51 51)";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[5].style.backgroundColor = "rgb(75 51 51)";
+
+          //text colors for students
+          document.getElementById("textHeader1").style.color = "#caa5a5";
+          document.getElementById("text1").style.color = "#bcbcbc";
+          document.getElementById("textHeader2").style.color = "#caa5a5";
+          document.getElementById("text2").style.color = "#bcbcbc";
+          document.getElementById("textHeader3").style.color = "#caa5a5";
+          document.getElementById("text3").style.color = "#bcbcbc";
+          document.getElementById("textHeader4").style.color = "#caa5a5";
+          document.getElementById("text4").style.color = "#bcbcbc";
+
+          //text colors for timeline
+          document.getElementById("text5").style.color = "#bcbcbc";
+          document.getElementById("text6").style.color = "#bcbcbc";
+          document.getElementById("text7").style.color = "#bcbcbc";
+          document.getElementById("text8").style.color = "#bcbcbc";
+          document.getElementById("text9").style.color = "#bcbcbc";
+          document.getElementById("text10").style.color = "#bcbcbc";
+
+          //text color for sections
+          document.getElementById("text11").style.color = "#bcbcbc";
+          document.getElementById("text12").style.color = "#bcbcbc";
+
+          //text color for components
+          document.getElementById("text13").style.color = "#bcbcbc";
+          document.getElementById("text14").style.color = "#bcbcbc";
+          document.getElementById("text15").style.color = "#bcbcbc";
+          document.getElementById("text16").style.color = "#bcbcbc";
+          document.getElementById("text17").style.color = "#bcbcbc";
+          document.getElementById("text18").style.color = "#bcbcbc";
+          document.getElementById("toggle").style.backgroundColor =
+            "rgb(37, 33, 33)";
+
+          if (window.innerWidth <= 726) {
+            document.getElementById("text19").style.color = "#bcbcbc";
+            document.getElementById("text20").style.color = "#bcbcbc";
+          } else {
+            document.getElementById("text19").style.color = "white";
+            document.getElementById("text20").style.color = "white";
+          }
+        } else {
+          document.getElementById("mode").innerHTML = "Dark Mode: Off";
+          document.body.style.backgroundColor = "white";
+          document.getElementsByTagName("header")[0].style.backgroundColor =
+            "white";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[0].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[1].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[2].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "second-section-video"
+          )[3].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "dates-content"
+          )[0].style.backgroundColor = "white";
+
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[0].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[1].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[2].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[3].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[4].style.backgroundColor = "white";
+          document.getElementsByClassName(
+            "swiper-slide"
+          )[5].style.backgroundColor = "white";
+
+          //text color for students
+          document.getElementById("textHeader1").style.color = "#404040";
+          document.getElementById("text1").style.color = "#404040";
+          document.getElementById("textHeader2").style.color = "#404040";
+          document.getElementById("text2").style.color = "#404040";
+          document.getElementById("textHeader3").style.color = "#404040";
+          document.getElementById("text3").style.color = "#404040";
+          document.getElementById("textHeader4").style.color = "#404040";
+          document.getElementById("text4").style.color = "#404040";
+
+          //text colors for timeline
+          document.getElementById("text5").style.color = "#404040";
+          document.getElementById("text6").style.color = "#404040";
+          document.getElementById("text7").style.color = "#404040";
+          document.getElementById("text8").style.color = "#404040";
+          document.getElementById("text9").style.color = "#404040";
+          document.getElementById("text10").style.color = "#404040";
+
+          //text color for sections
+          document.getElementById("text11").style.color = "#404040";
+          document.getElementById("text12").style.color = "#404040";
+
+          //text color for components
+          document.getElementById("text13").style.color = "#404040";
+          document.getElementById("text14").style.color = "#404040";
+          document.getElementById("text15").style.color = "#404040";
+          document.getElementById("text16").style.color = "#404040";
+          document.getElementById("text17").style.color = "#404040";
+          document.getElementById("text18").style.color = "#404040";
+          document.getElementById("toggle").style.backgroundColor = "white";
+
+          if (window.innerWidth > 726) {
+            document.getElementById("text19").style.color = "white";
+            document.getElementById("text20").style.color = "white";
+          } else {
+            document.getElementById("text19").style.color = "#464545";
+            document.getElementById("text20").style.color = "#464545";
+          }
+        }
+      }
+
+      function myFunction () {
+        if (localStorage.getItem("cnt") != null) {
+        temp = localStorage.getItem("cnt")
+        temp--
+        localStorage.setItem("cnt", temp)
+        mode()
+        }
+      }
+
+      function showContent() {
+        document.body.style.visibility = 'visible';
+        document.body.style.opacity = 1;
+      }
+
+      window.addEventListener('DOMContentLoaded', function () {
+        myFunction();
+        showContent();
+      });
+    </script>
+  </body>
+</html>
