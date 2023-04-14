@@ -46,7 +46,7 @@ services:
       - 1433:1433
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: example_123
+      SA_PASSWORD: /run/secrets/mssql_sa_password
     # mssql server image isn't available for arm64 architecture, so we use azure-sql instead
     image: mcr.microsoft.com/azure-sql-edge:1.0.4
     # If you really want to use MS SQL Server, uncomment the following line
@@ -65,6 +65,8 @@ services:
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.4
+    secrets:
+      - mssql_sa_password
   second_site:
     build: /home/projects/Smart_Power_Meter/Software/second_site
     # expose:
@@ -83,13 +85,16 @@ services:
       - /home/data/influxdb/config:/etc/influxdb2:rw
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
-      DOCKER_INFLUXDB_INIT_USERNAME: smartpowermeter
-      DOCKER_INFLUXDB_INIT_PASSWORD: smartpowermeter25
+      DOCKER_INFLUXDB_INIT_USERNAME: /run/secrets/influxdb_init_username
+      DOCKER_INFLUXDB_INIT_PASSWORD: /run/secrets/influxdb_init_password
       DOCKER_INFLUXDB_INIT_ORG: smartpowermeter-org
       DOCKER_INFLUXDB_INIT_BUCKET: test_1
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.6
+    secrets:
+      - influxdb_init_password
+      - influxdb_init_username
   mqtt_broker:
     build: /home/projects/Smart_Power_Meter/Software/SPM_MQTT
     ports:
@@ -97,3 +102,11 @@ services:
     networks:
       smart_power_meter_network:
         ipv4_address: 172.25.5.7
+
+secrets:
+  influxdb_init_password:
+    file: /home/secrets/influxdb.txt
+  influxdb_init_username:
+    file: /home/secrets/influxdb.txt
+  mssql_sa_password:
+    file: /home/secrets/mssql.txt
