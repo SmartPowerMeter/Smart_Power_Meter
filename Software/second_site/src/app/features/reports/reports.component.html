@@ -1,0 +1,81 @@
+
+<!-- <div class="chart-container" style="width: 1000px;">
+  <canvas  id="MyLineChart" >{{ lineChart }}</canvas>
+</div>
+<div class="chart-container" style="width: 1000px;" >
+  <br>
+  <h3 style="text-align: center;">Pie Chart</h3>
+  <canvas  id="MyPieChart" >{{ pieChart }}</canvas>
+</div> -->
+
+<div style="display: flex; flex-direction: row; width: 56%; justify-content: space-between;">
+  Meaurement:<div class="dropdown">
+    <button
+      class="btn btn-secondary dropdown-toggle"
+      type="button"
+      id="dropdownMenuButton"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+      style="width:128px;"
+    >
+      {{ selectedOption }}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="#" (click)="selectOption('Voltage')"
+        >Voltage</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption('Current')"
+        >Current</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption('Power')"
+        >Power</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption('Frequency')"
+        >Frequency</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption('Power Factor')"
+        >Power Factor</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption('Energy')"
+        >Energy</a
+      >
+    </div>
+  </div>
+
+  Time Range: <div class="dropdown">
+    <button
+      class="btn btn-secondary dropdown-toggle"
+      type="button"
+      id="dropdownMenuButton"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+      style="width:120px;"
+    >
+      {{ selectedOption1 }}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="#" (click)="selectOption1('Day')"
+        >Day</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption1('Week')"
+        >Week</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption1('Month')"
+        >Month</a
+      >
+      <a class="dropdown-item" href="#" (click)="selectOption1('Year')"
+        >Year</a
+      >
+    </div>
+  </div>
+  <button type="button" class="btn btn-primary" (click)="send(selectedOption, selectedOption1)">Send</button>
+</div>
+
+<div class="providers-container-header">
+</div>
+<div class="chart-container" style="width: 1200px; margin-top: 30px;">
+  <canvas  id="MyBarChart" >{{ barChart }}</canvas>
+  <input (input)="updateChart($event.target)" type="range" id="points" min="1" max="10">
+</div>
