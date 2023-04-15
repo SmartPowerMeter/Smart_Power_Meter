@@ -15,7 +15,7 @@ pipeline {
         sh 'whoami'
         sh 'cd /home/pipes/ && ls -l'
         sh '''
-          cd /home/pipes/ && echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > spm_pipe
+          echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > /home/pipes/spm_pipe
         '''
       }
     }
