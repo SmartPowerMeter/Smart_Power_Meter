@@ -11,9 +11,10 @@ pipeline {
   stages {
     stage('GitHub Sync') {
       steps {
-        sh '''
-          echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > /home/pipes/spm_pipe
-        '''
+        sh 'pwd'
+        // sh '''
+        //   echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > /home/pipes/spm_pipe
+        // '''
       }
     }
     // stage('Build and Deploy') {
