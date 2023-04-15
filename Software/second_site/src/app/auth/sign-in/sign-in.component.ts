@@ -75,7 +75,6 @@ export class SignInComponent implements OnInit, OnDestroy {
   onSubmit() {
     //(this.form.get("check") as FormControl).value  ამით ხდება მოჩეკილის ნახვა
     const Email = (this.form.get("email") as FormControl).value;
-    console.log("rame gamoitanos\n");
     // localStorage.setItem(`Credentials`, JSON.stringify({ email: Email }));
     // }
     this._api
@@ -90,7 +89,6 @@ export class SignInComponent implements OnInit, OnDestroy {
             /* ამოკლედ თუ გინდათ წამატების შემთხვევაში დალოგინება dashboard-ის მაგივრად დაწერეთ როუტი რომელიც გადაიყვანს იუზერს ავტორიზაციის გვერდიდან მომხმარებლის დეფოლტ გვერდამდე/dashboard/what ever-მდე */
             // მაგალითად ასე
             this.router.navigate(["/dashboard"]);
-            console.log("success");
           
         },
         (error) => {
