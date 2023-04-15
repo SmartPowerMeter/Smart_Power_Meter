@@ -10,7 +10,7 @@
         <div style="display: inline-block;">Power Mode: </div>
         <label data-toggle="modal" data-target="#exampleModal"
           class="toggle-switch"
-          (click)="clicked()"
+          
           style="cursor: pointer"
         >
           <input
@@ -54,7 +54,7 @@
         Do you want to continue?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="clicked()">Yes</button>
         <button type="button" class="btn btn-danger">No</button>
       </div>
     </div>
