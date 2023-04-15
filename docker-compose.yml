@@ -96,42 +96,32 @@ services:
     networks:
       main_network:
         ipv4_address: 172.25.5.7
-  jenkins:
-    image: jenkins/jenkins:2.387.1-lts
-    container_name: jenkins
-    user: root
-    privileged: true
-    networks:
-      main_network:
-        ipv4_address: 172.25.5.8
-    environment:
-      DOCKER_TLS_CERTDIR: /certs
-    volumes:
-      - /home/data/jenkins/client:/certs/client
-      - /home/data/jenkins/home:/var/jenkins_home
-    expose:
-      - 8080
-  agent:
-    build:
-      context: /home/data/jenkins
-      dockerfile: Jenkins_Agent_Dockerfile
-    user: root
-    privileged: true
-    container_name: agent
-    # volumes:
-    #   - /etc/pipes/:/home/jenkins/pipes/:rw
-    networks:
-      main_network:
-        ipv4_address: 172.25.5.9
-    expose:
-      - 22
-    env_file:
-      - /home/data/jenkins/ssh/pub_key.env
-
-# volumes:
-#   agent_volume:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       o: bind,uid=1000,gid=1000,umask=022
-#       device: /etc/pipes/
+  # jenkins:
+  #   image: jenkins/jenkins:2.387.1-lts
+  #   container_name: jenkins
+  #   user: root
+  #   privileged: true
+  #   networks:
+  #     main_network:
+  #       ipv4_address: 172.25.5.8
+  #   environment:
+  #     DOCKER_TLS_CERTDIR: /certs
+  #   volumes:
+  #     - /home/data/jenkins/client:/certs/client
+  #     - /home/data/jenkins/home:/var/jenkins_home
+  #   expose:
+  #     - 8080
+  # agent:
+  #   build:
+  #     context: /home/data/jenkins
+  #     dockerfile: Jenkins_Agent_Dockerfile
+  #   user: root
+  #   privileged: true
+  #   container_name: agent
+  #   networks:
+  #     main_network:
+  #       ipv4_address: 172.25.5.9
+  #   expose:
+  #     - 22
+  #   env_file:
+  #     - /home/data/jenkins/ssh/pub_key.env
