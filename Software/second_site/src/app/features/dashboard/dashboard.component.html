@@ -2,8 +2,12 @@
   <div class="d-flex flex-wrap flex-xxl-nowrap">
     <div class="left-col">
 
-      <div style="display: flex; justify-content: right; margin-bottom: 20px">
-        <div style="display: inline-block; margin-right: 10px">Power Mode:</div>
+      <div style="display: flex; justify-content:space-between;  margin-bottom: 20px;">
+        <div style="display: flex; justify-content:flex-start;">
+          <div>Customer Id: <span style="font-weight: bold;">{{this.user.customerId}} </span></div>
+      </div>
+      <div style="display: flex; justify-content:space-between; width: 165px;">
+        <div style="display: inline-block;">Power Mode: </div>
         <label
           class="toggle-switch"
           (click)="clicked()"
@@ -17,6 +21,7 @@
           />
           <span class="slider"></span>
         </label>
+      </div>
       </div>
       
       <app-funds-overview></app-funds-overview>
