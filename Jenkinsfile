@@ -36,6 +36,7 @@ pipeline {
         sh '''
           cat README.md
           echo hello world
+          echo oe
         '''
 
       }
