@@ -118,6 +118,8 @@ services:
     user: root
     privileged: true
     container_name: agent
+    volumes:
+      - /root/pipes:/home/pipes
     networks:
       main_network:
         ipv4_address: 172.25.5.9
