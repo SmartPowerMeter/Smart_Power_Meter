@@ -19,12 +19,7 @@ const routes: Routes = [
   {path:'შენი როუტის სახელი', component: შენი კომპონენტი, canActivate: [AuthGuard]}  
   */
 
-  {
-    path: "",
-    loadChildren: () =>
-      import("./layout/layout.module").then((m) => m.LayoutModule),
-    canActivate: [AuthGuard],
-  },
+  
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
   { path: "sign-in", component: SignInComponent },
   // { path: "transactions", component: TransactionsComponent },
@@ -32,7 +27,13 @@ const routes: Routes = [
   { path: "recover-password", component: RecoverPassComponent },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
   { path: "reports", component: ReportsComponent, canActivate: [AuthGuard] },
-  { path: "settings", component: SettingsComponent, canActivate: [AuthGuard] }
+  { path: "settings", component: SettingsComponent, canActivate: [AuthGuard] },
+  {
+    path: "",
+    loadChildren: () =>
+      import("./layout/layout.module").then((m) => m.LayoutModule),
+    canActivate: [AuthGuard],
+  },
   // { path: 'account-list', component: AccountsListComponent },
   // { path: 'info', component:InfoPageComponent },
   /*
