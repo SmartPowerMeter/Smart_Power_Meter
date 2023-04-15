@@ -112,7 +112,9 @@ services:
     expose:
       - 8080
   agent:
-    image: jenkins/ssh-agent:jdk11
+    build:
+      context: /home/data/jenkins
+      dockerfile: Jenkins_Agent_Dockerfile
     user: root
     privileged: true
     container_name: agent
