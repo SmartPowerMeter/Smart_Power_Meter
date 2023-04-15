@@ -16,17 +16,21 @@ pipeline {
         '''
       }
     }
-    // stage('Build and Deploy') {
-    //   when {
-    //     branch "main"
-    //   }
-    //   steps {
-    //     sh '''
-    //       cat README.md
-    //       echo hello world
-    //       echo oe
-    //     '''
-    //   }
-    // }
+    stage('Build and Deploy second_site') {
+      when {
+        branch "main"
+        changeset changes: [
+          [$class: 'FilePath', path: 'Software/second_site/']
+        ]
+      }
+      steps {
+        sh '''
+          echo "docker build -t smart_power_meter-second_site /home/projects/Smart_Power_Meter/Software/second_site" > /home/pipes/spm_pipe
+          echo "docker compose -f /home/projects/Smart_Power_Meter/docker-compose.yml up -d second_site" > /home/pipes/spm_pipe
+          echo "docker rmi $(docker images -f "dangling=true" -q)" > /home/pipes/spm_pipe
+        '''
+      }
+    }
   }
 }
+// echo "" > /home/pipes/spm_pipe
