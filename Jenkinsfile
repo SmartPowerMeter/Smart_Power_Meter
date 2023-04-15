@@ -17,19 +17,18 @@ pipeline {
           """
         }
       }
-      // steps {
-      //   sh '''
-      //     echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > /home/pipes/spm_pipe
-      //   '''
-      // }
     }
     stage('Nginx') {
       when {
         branch "main"
         changeset "Software/Nginx/**"
       }
-      steps {
-        sh """echo "docker compose -f /home/projects/Smart_Power_Meter/docker-compose.yml restart webserver" > /home/pipes/spm_pipe"""
+      steps{
+        sshagent(credentials : ['ssh_id']) {
+          sh """
+          ssh -o StrictHostKeyChecking=no root@smartpowermeter.ge 'cd /home/projects/Smart_Power_Meter && docker compose restart webserver'
+          """
+        }
       }
     }
     stage('Build and Deploy second_site') {
@@ -37,9 +36,12 @@ pipeline {
         branch "main"
         changeset "Software/second_site/**"
       }
-      steps {
-        sh """echo "docker build -t smart_power_meter-second_site /home/projects/Smart_Power_Meter/Software/second_site" > /home/pipes/spm_pipe"""
-        sh """echo "docker compose -f /home/projects/Smart_Power_Meter/docker-compose.yml up -d second_site" > /home/pipes/spm_pipe"""
+      steps{
+        sshagent(credentials : ['ssh_id']) {
+          sh """
+          ssh -o StrictHostKeyChecking=no root@smartpowermeter.ge 'cd /home/projects/Smart_Power_Meter/Software/second_site && docker build -t smart_power_meter-second_site . && docker compose up -d second_site'
+          """
+        }
       }
     }
     stage('Build and Deploy SPM_MQTT') {
@@ -47,9 +49,12 @@ pipeline {
         branch "main"
         changeset "Software/SPM_MQTT/**"
       }
-      steps {
-        sh """echo "docker build -t smart_power_meter-mqtt_broker /home/projects/Smart_Power_Meter/Software/SPM_MQTT" > /home/pipes/spm_pipe"""
-        sh """echo "docker compose -f /home/projects/Smart_Power_Meter/docker-compose.yml up -d mqtt_broker" > /home/pipes/spm_pipe"""
+      steps{
+        sshagent(credentials : ['ssh_id']) {
+          sh """
+          ssh -o StrictHostKeyChecking=no root@smartpowermeter.ge 'cd /home/projects/Smart_Power_Meter/Software/SPM_MQTT && docker build -t smart_power_meter-mqtt_broker . && docker compose up -d mqtt_broker'
+          """
+        }
       }
     }
     stage('Build and Deploy SPM.Api') {
@@ -57,9 +62,12 @@ pipeline {
         branch "main"
         changeset "Software/SPM.Api/**"
       }
-      steps {
-        sh """echo "docker build -t smart_power_meter-web /home/projects/Smart_Power_Meter/Software/SPM.Api/SPM.Api" > /home/pipes/spm_pipe"""
-        sh """echo "docker compose -f /home/projects/Smart_Power_Meter/docker-compose.yml up -d web" > /home/pipes/spm_pipe"""
+      steps{
+        sshagent(credentials : ['ssh_id']) {
+          sh """
+          ssh -o StrictHostKeyChecking=no root@smartpowermeter.ge 'cd /home/projects/Smart_Power_Meter/Software/SPM.Api/SPM.Api && docker build -t smart_power_meter-web . && docker compose up -d web'
+          """
+        }
       }
     }
     stage('Remove Dangling Images') {
@@ -71,8 +79,12 @@ pipeline {
           changeset "Software/SPM.Api/**"
         }
       }
-      steps {
-        sh """echo '''docker rmi \$(docker images -f "dangling=true" -q)''' > /home/pipes/spm_pipe"""
+      steps{
+        sshagent(credentials : ['ssh_id']) {
+          sh """
+          ssh -o StrictHostKeyChecking=no root@smartpowermeter.ge 'docker rmi \$(docker images -f "dangling=true" -q)'
+          """
+        }
       }
     }
   }
