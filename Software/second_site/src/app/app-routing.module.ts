@@ -23,17 +23,18 @@ const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
   { path: "sign-in", component: SignInComponent },
   // { path: "transactions", component: TransactionsComponent },
-  { path: "sign-up", component: SignUpComponent },
-  { path: "recover-password", component: RecoverPassComponent },
-  { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: "reports", component: ReportsComponent, canActivate: [AuthGuard] },
-  { path: "settings", component: SettingsComponent, canActivate: [AuthGuard] },
   {
     path: "",
     loadChildren: () =>
       import("./layout/layout.module").then((m) => m.LayoutModule),
     canActivate: [AuthGuard],
   },
+  { path: "sign-up", component: SignUpComponent },
+  { path: "recover-password", component: RecoverPassComponent },
+  { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: "reports", component: ReportsComponent, canActivate: [AuthGuard] },
+  { path: "settings", component: SettingsComponent, canActivate: [AuthGuard] },
+
   // { path: 'account-list', component: AccountsListComponent },
   // { path: 'info', component:InfoPageComponent },
   /*
