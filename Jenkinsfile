@@ -19,9 +19,7 @@ pipeline {
     stage('Build and Deploy second_site') {
       when {
         branch "main"
-        changeset changes: [
-          [$class: 'FilePath', path: 'Software/second_site/']
-        ]
+        changeset "Software/second_site/**"
       }
       steps {
         sh '''
