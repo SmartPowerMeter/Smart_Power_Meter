@@ -16,6 +16,15 @@ pipeline {
         '''
       }
     }
+    stage('Nginx') {
+      when {
+        branch "main"
+        changeset "Software/Nginx/**"
+      }
+      steps {
+        sh """echo "docker compose -f /home/projects/Smart_Power_Meter/docker-compose.yml restart webserver" > /home/pipes/spm_pipe"""
+      }
+    }
     stage('Build and Deploy second_site') {
       when {
         branch "main"
