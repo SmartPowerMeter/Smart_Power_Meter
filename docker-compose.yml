@@ -118,8 +118,8 @@ services:
     user: root
     privileged: true
     container_name: agent
-    volumes:
-      - /root/pipes:/home/pipes:rw
+    # volumes:
+    #   - /etc/pipes/:/home/jenkins/pipes/:rw
     networks:
       main_network:
         ipv4_address: 172.25.5.9
@@ -127,3 +127,11 @@ services:
       - 22
     env_file:
       - /home/data/jenkins/ssh/pub_key.env
+
+# volumes:
+#   agent_volume:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       o: bind,uid=1000,gid=1000,umask=022
+#       device: /etc/pipes/

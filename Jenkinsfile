@@ -10,11 +10,16 @@ pipeline {
 
   stages {
     stage('GitHub Sync') {
-      steps {
-        sh '''
-          echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > /home/pipes/spm_pipe
-        '''
-      }
+      sshagent(credentials : ['ssh_id']) {
+        sh """
+        ssh -o StrictHostKeyChecking=no root@smartpowermeter.ge 'cd /home/projects/Smart_Power_Meter && git pull'
+        """
+      }  
+      // steps {
+      //   sh '''
+      //     echo "git --git-dir=/home/projects/Smart_Power_Meter/.git --work-tree=/home/projects/Smart_Power_Meter/ pull" > /home/pipes/spm_pipe
+      //   '''
+      // }
     }
     stage('Nginx') {
       when {
