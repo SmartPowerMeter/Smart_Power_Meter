@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 import { ApiService } from 'src/app/services/api.service';
 
 export interface User {
@@ -21,8 +22,22 @@ export class DashboardComponent implements OnInit {
   user: User;
   lineChart1: any;
   lineChart2: any;
-  lineChartCon: number[] = [1,2,3,4];
-  lineChartLabels: string[] = ['dges', 'xval', 'zeg', 'mazeg']; 
+  lineChart3: any;
+  lineChart4: any;
+  lineChart5: any;
+  lineChart6: any;
+  lineChartCon1: number[] = [1,2,3,4];
+  lineChartLabels1: string[] = ['dges', 'xval', 'zeg', 'mazeg']; 
+  lineChartCon2: number[];
+  lineChartLabels2: string[]; 
+  lineChartCon3: number[];
+  lineChartLabels3: string[];
+  lineChartCon4: number[];
+  lineChartLabels4: string[];
+  lineChartCon5: number[];
+  lineChartLabels5: string[];
+  lineChartCon6: number[];
+  lineChartLabels6: string[];
 
   constructor(public _api: ApiService,) {
     this._api.GetUser().subscribe((res)=>{
@@ -46,11 +61,11 @@ export class DashboardComponent implements OnInit {
 
       data: {
         // values on X-Axis
-        labels: this.lineChartLabels,
+        labels: this.lineChartLabels1,
         datasets: [
           {
             label: "Consumed",
-            data: this.lineChartCon,
+            data: this.lineChartCon1,
             backgroundColor: "limegreen",
             borderColor: "#7ADC24",
             tension: 0.2,
@@ -60,6 +75,7 @@ export class DashboardComponent implements OnInit {
       options: {
         aspectRatio: 2.5,
       },
+      
     });
   }
 
@@ -69,7 +85,7 @@ export class DashboardComponent implements OnInit {
 
       data: {
         // values on X-Axis
-        labels: this.lineChartLabels,
+        labels: this.lineChartLabels1,
         datasets: [
           {
             label: "Consumed",

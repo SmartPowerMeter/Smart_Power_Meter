@@ -89,11 +89,18 @@
   justify-content: space-around;
   align-items: center;
 
-  div{
+  .child-1, .child-2, .child-3, .child-4, .child-5, .child-6{
     height: 30%;
     width: 49%;
     // background-color: red;
   }
+  canva{
+    position: absolute;
+  }
+}
+
+.posRel{
+  position: relative;
 }
 
 
