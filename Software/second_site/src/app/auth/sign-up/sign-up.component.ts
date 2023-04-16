@@ -37,7 +37,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
     Password: new FormControl("", [Validators.required]),
 
-    agree_terms: new FormControl("", [Validators.required]),
+    isConnected: new FormControl(false),
+
+    //agree_terms: new FormControl("", [Validators.required]),
   });
   ngOnInit(): void {
     this.check();
@@ -80,8 +82,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
   check() {
     this.destr_0 = (this.forms as FormGroup).statusChanges.subscribe(() => {
       if (
-        this.forms.status == "VALID" &&
-        (this.forms.get("agree_terms") as FormControl).value == true
+        this.forms.status == "VALID" 
+        // && (this.forms.get("agree_terms") as FormControl).value == true
       ) {
         this.boolValid = false;
       } else this.boolValid = true;
