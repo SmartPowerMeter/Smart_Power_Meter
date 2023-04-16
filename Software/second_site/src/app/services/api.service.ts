@@ -9,6 +9,7 @@ interface UsersDataType {
   Email: string;
   full_name?: string;
   Password: string;
+  isConnected?: boolean;
   auth_token?: string;
 }
 
