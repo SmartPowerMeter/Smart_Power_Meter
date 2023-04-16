@@ -115,7 +115,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
         this._router.navigate(["/sign-in"]);
       },
       (error) => {
-        console.log(this.forms.value)
         alert("User Already Exists");
       }
     );
