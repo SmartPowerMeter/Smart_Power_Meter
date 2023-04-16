@@ -48,6 +48,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.createLineChart1();
     this.createLineChart2();
+    this.createLineChart3();
+    this.createLineChart4();
+    this.createLineChart5();
+    this.createLineChart6();
   }
 
   clicked() {
@@ -102,6 +106,96 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  createLineChart3() {
+    this.lineChart3 = new Chart("MyLineChart3", {
+      type: "line", //this denotes tha type of chart
 
+      data: {
+        // values on X-Axis
+        labels: this.lineChartLabels3,
+        datasets: [
+          {
+            label: "Consumed",
+            data: this.lineChartCon3,
+            backgroundColor: "limegreen",
+            borderColor: "#7ADC24",
+            tension: 0.2,
+          },
+        ],
+      },
+      options: {
+        aspectRatio: 2.5,
+      },
+    });
+  }
+
+  createLineChart4() {
+    this.lineChart4 = new Chart("MyLineChart4", {
+      type: "line", //this denotes tha type of chart
+
+      data: {
+        // values on X-Axis
+        labels: this.lineChartLabels4,
+        datasets: [
+          {
+            label: "Consumed",
+            data: this.lineChartCon4,
+            backgroundColor: "limegreen",
+            borderColor: "#7ADC24",
+            tension: 0.2,
+          },
+        ],
+      },
+      options: {
+        aspectRatio: 2.5,
+      },
+    });
+  }
+
+  createLineChart5() {
+    this.lineChart5 = new Chart("MyLineChart5", {
+      type: "line", //this denotes tha type of chart
+
+      data: {
+        // values on X-Axis
+        labels: this.lineChartLabels5,
+        datasets: [
+          {
+            label: "Consumed",
+            data: this.lineChartCon5,
+            backgroundColor: "limegreen",
+            borderColor: "#7ADC24",
+            tension: 0.2,
+          },
+        ],
+      },
+      options: {
+        aspectRatio: 2.5,
+      },
+    });
+  }
+
+  createLineChart6() {
+    this.lineChart6 = new Chart("MyLineChart6", {
+      type: "line", //this denotes tha type of chart
+
+      data: {
+        // values on X-Axis
+        labels: this.lineChartLabels6,
+        datasets: [
+          {
+            label: "Consumed",
+            data: this.lineChartCon6,
+            backgroundColor: "limegreen",
+            borderColor: "#7ADC24",
+            tension: 0.2,
+          },
+        ],
+      },
+      options: {
+        aspectRatio: 2.5,
+      },
+    });
+  }
 
 }
