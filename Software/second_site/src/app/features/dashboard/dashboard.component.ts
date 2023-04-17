@@ -16,7 +16,6 @@ export interface User {
   styleUrls: ['./dashboard.component.scss']
 })
 
-
 export class DashboardComponent implements OnInit {
   isToggleChecked = true;
   user: User;
@@ -27,9 +26,9 @@ export class DashboardComponent implements OnInit {
   lineChart5: any;
   lineChart6: any;
   lineChartCon1: number[] = [1,2,3,4];
-  lineChartLabels1: string[] = ['dges', 'xval', 'zeg', 'mazeg']; 
+  lineChartLabels1: string[] = ['dges', 'xval', 'zeg', 'mazeg'];
   lineChartCon2: number[];
-  lineChartLabels2: string[]; 
+  lineChartLabels2: string[];
   lineChartCon3: number[];
   lineChartLabels3: string[];
   lineChartCon4: number[];
@@ -39,153 +38,42 @@ export class DashboardComponent implements OnInit {
   lineChartCon6: number[];
   lineChartLabels6: string[];
 
+
+
   constructor(public _api: ApiService,) {
     this._api.GetUser().subscribe((res)=>{
       this.user = res;
     });
-   }
+  }
 
   ngOnInit(): void {
-    this.createLineChart1();
-    this.createLineChart2();
-    this.createLineChart3();
-    this.createLineChart4();
-    this.createLineChart5();
-    this.createLineChart6();
+    this.createLineCharts();
   }
 
   clicked() {
     this.isToggleChecked = !this.isToggleChecked;
   }
 
-
-  createLineChart1() {
-    this.lineChart1 = new Chart("MyLineChart1", {
-      type: "line", //this denotes tha type of chart
-
-      data: {
-        // values on X-Axis
-        labels: this.lineChartLabels1,
-        datasets: [
-          {
-            label: "Consumed",
-            data: this.lineChartCon1,
-            backgroundColor: "limegreen",
-            borderColor: "#7ADC24",
-            tension: 0.2,
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-      },
-      
-    });
+  createLineCharts() {
+    this.createLineChart(this.lineChart1, "MyLineChart1", this.lineChartLabels1, this.lineChartCon1);
+    this.createLineChart(this.lineChart2, "MyLineChart2", this.lineChartLabels1, [5, 4, 3, 2]);
+    this.createLineChart(this.lineChart3, "MyLineChart3", this.lineChartLabels3, this.lineChartCon3);
+    this.createLineChart(this.lineChart4, "MyLineChart4", this.lineChartLabels4, this.lineChartCon4);
+    this.createLineChart(this.lineChart5, "MyLineChart5", this.lineChartLabels5, this.lineChartCon5);
+    this.createLineChart(this.lineChart6, "MyLineChart6", this.lineChartLabels6, this.lineChartCon6);
   }
 
-  createLineChart2() {
-    this.lineChart2 = new Chart("MyLineChart2", {
+  createLineChart(chart: any, chartName: any, labels: any, chartData: any) {
+    chart = new Chart(chartName, {
       type: "line", //this denotes tha type of chart
 
       data: {
         // values on X-Axis
-        labels: this.lineChartLabels1,
+        labels: labels,
         datasets: [
           {
             label: "Consumed",
-            data: [5,4,3,2],
-            backgroundColor: "limegreen",
-            borderColor: "#7ADC24",
-            tension: 0.2,
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-      },
-    });
-  }
-
-  createLineChart3() {
-    this.lineChart3 = new Chart("MyLineChart3", {
-      type: "line", //this denotes tha type of chart
-
-      data: {
-        // values on X-Axis
-        labels: this.lineChartLabels3,
-        datasets: [
-          {
-            label: "Consumed",
-            data: this.lineChartCon3,
-            backgroundColor: "limegreen",
-            borderColor: "#7ADC24",
-            tension: 0.2,
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-      },
-    });
-  }
-
-  createLineChart4() {
-    this.lineChart4 = new Chart("MyLineChart4", {
-      type: "line", //this denotes tha type of chart
-
-      data: {
-        // values on X-Axis
-        labels: this.lineChartLabels4,
-        datasets: [
-          {
-            label: "Consumed",
-            data: this.lineChartCon4,
-            backgroundColor: "limegreen",
-            borderColor: "#7ADC24",
-            tension: 0.2,
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-      },
-    });
-  }
-
-  createLineChart5() {
-    this.lineChart5 = new Chart("MyLineChart5", {
-      type: "line", //this denotes tha type of chart
-
-      data: {
-        // values on X-Axis
-        labels: this.lineChartLabels5,
-        datasets: [
-          {
-            label: "Consumed",
-            data: this.lineChartCon5,
-            backgroundColor: "limegreen",
-            borderColor: "#7ADC24",
-            tension: 0.2,
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-      },
-    });
-  }
-
-  createLineChart6() {
-    this.lineChart6 = new Chart("MyLineChart6", {
-      type: "line", //this denotes tha type of chart
-
-      data: {
-        // values on X-Axis
-        labels: this.lineChartLabels6,
-        datasets: [
-          {
-            label: "Consumed",
-            data: this.lineChartCon6,
+            data: chartData,
             backgroundColor: "limegreen",
             borderColor: "#7ADC24",
             tension: 0.2,
