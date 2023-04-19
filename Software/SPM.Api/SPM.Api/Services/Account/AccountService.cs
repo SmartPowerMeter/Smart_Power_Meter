@@ -3,11 +3,11 @@ using SPM.Api.Core.Helpers;
 using SPM.Api.Services.Jwt;
 using SPM.Api.Core.Exceptions;
 using SPM.Api.Core.WorkContexts;
+using SPM.Api.Core.Domain.Enums;
 using SPM.Api.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
 using SPM.Api.Services.Account.Models;
-using SPM.Api.Core.Domain.Enums;
 
 namespace SPM.Api.Services.Account
 {

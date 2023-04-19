@@ -6,5 +6,7 @@ namespace SPM.Api.Services.Measurements
     public interface IMeasurementService
     {
         Task<IEnumerable<MeasurementModel>> GetMeasurement(MeasurementType measurement, TimeRange timeRange, AggregateDuration duration);
+
+        Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(MeasurementType measurement, TimeType timeType, int time);
     }
 }

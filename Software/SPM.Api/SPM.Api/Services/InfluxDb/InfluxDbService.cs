@@ -31,6 +31,24 @@ namespace SPM.Api.Services.InfluxDb
             return measurementReadings;
         }
 
+        public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(string measurementName, string time, int duration)
+        {
+            var measurementReadings = await QueryAsync(async query =>
+            {
+                var flux = $"from(bucket:\"{_settings.Bucket}\") |> range(start: -{time}) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: {duration}s, fn: median)";
+                var tables = await query.QueryAsync(flux, _settings.Organization);
+                return tables.SelectMany(table =>
+                    table.Records.Select(record =>
+                        new MeasurementModel
+                        {
+                            Time = record.GetTime().ToString(),
+                            Value = record.GetValue()?.ToString()?.ToDouble() ?? 0d
+                        }));
+            });
+
+            return measurementReadings;
+        }
+
         private async Task<T> QueryAsync<T>(Func<QueryApi, Task<T>> action)
         {
             var options = new InfluxDBClientOptions(_settings.ClientUrl)

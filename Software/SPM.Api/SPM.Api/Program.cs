@@ -1,4 +1,5 @@
 using SPM.Api.Data;
+using SPM.Api.Data.Extensions;
 using SPM.Api.Services.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,8 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.Services.MigrateDb();
 
 app.UseHttpsRedirection();
 
