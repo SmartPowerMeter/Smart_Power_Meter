@@ -30,7 +30,7 @@ void setup() {
   WiFiManager wm;
 
   // reset settings - wipe stored credentials for testing, these are stored by the esp library
-  wm.resetSettings();
+  // wm.resetSettings();
 
   WiFiManagerParameter data("ClientId", "Enter your string here", "default string", 50);
   wm.addParameter(&data);
