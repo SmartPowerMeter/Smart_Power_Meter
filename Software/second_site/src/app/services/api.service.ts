@@ -94,7 +94,7 @@ export class ApiService {
     aggregateDuration: number
   ) {
     return this._http
-      .post<any>("https://api.smartpowermeter.ge/Measurement", {
+      .post<any>("https://api.smartpowermeter.ge/Measurement/GetMeasurement", {
         measurementType: measurementType,
         timeRange: timeRange,
         aggregateDuration: aggregateDuration,
