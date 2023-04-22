@@ -56,7 +56,7 @@
             >Last 24 Hours</a
           >
         </div>
-        <button type="button" style="margin-left: 20px;" class="btn btn-primary" (click)="send(selectedOption, selectedOption)">Send</button>
+        <button type="button" style="margin-left: 20px;" class="btn btn-primary" (click)="send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)">Send</button>
       </div>
       
 
