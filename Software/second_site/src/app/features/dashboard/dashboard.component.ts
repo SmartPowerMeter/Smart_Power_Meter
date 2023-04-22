@@ -134,13 +134,13 @@ export class DashboardComponent implements OnInit {
   send(timeType: number, time: number) {
     this._api.RecentMeasurementPost(1, timeType, time).subscribe((res) => {
       this.lineChartCon1 = res.map((item: any) => item.value);
-      this.lineChartLabels1 = res.map((item: any) => item.time.slice(11, 19));
-      this.lineChart1.data.datasets[0].data = this.lineChartCon1;
       this.lineChartLabels1 = res.map((item: any) => {
         const date = new Date(item.time);
         date.setHours(date.getHours() + 4);
         return date.toISOString().slice(11, 19);
       });
+      this.lineChart1.data.datasets[0].data = this.lineChartCon1;
+      this.lineChart1.data.labels = this.lineChartLabels1;
       this.lineChart1.update();
     });
   }
