@@ -56,10 +56,13 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this._api.RecentMeasurementPost(1, 1, 30).subscribe((res)=>{
       this.lineChartCon1 = res.map((item: any) => item.value);
-      this.lineChartLabels1 = res.map((item: any) => item.time.slice(11, 19));
+      this.lineChartLabels1 = res.map((item: any) => {
+        const date = new Date(item.time);
+        date.setHours(date.getHours() + 4);
+        return date.toISOString().slice(11, 19);
+      });
       this.createLineCharts();
-    })
-    
+    });
   }
 
   clicked() {
