@@ -19,6 +19,7 @@ export interface User {
 export class DashboardComponent implements OnInit {
   isToggleChecked = true;
   user: User;
+  selectedOption: string = "Energy";
   lineChart1: any;
   lineChart2: any;
   lineChart3: any;
@@ -37,6 +38,14 @@ export class DashboardComponent implements OnInit {
   lineChartLabels5: string[];
   lineChartCon6: number[];
   lineChartLabels6: string[];
+  TimeType: any = {
+    Voltage: 1,
+    Current: 2,
+    Power: 3,
+    Frequency: 4,
+    "Power Factor": 5,
+    Energy: 6,
+  };
 
 
 
@@ -85,5 +94,7 @@ export class DashboardComponent implements OnInit {
       },
     });
   }
-
+  selectOption(option: string) {
+    this.selectedOption = option;
+  }
 }
