@@ -23,6 +23,41 @@
         </label>
       </div>
       </div>
+
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          style="width:128px;"
+        >
+          {{ selectedOption }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#" (click)="selectOption('Voltage')"
+            >Voltage</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Current')"
+            >Current</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Power')"
+            >Power</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Frequency')"
+            >Frequency</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Power Factor')"
+            >Power Factor</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Energy')"
+            >Energy</a
+          >
+        </div>
+      </div>
+
       <div class="main-div">
         <div class="child-1">
           <p>Voltage</p>
@@ -71,7 +106,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Do you want to continue?
+        {{this.modalText}} Do you want to continue?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-success" data-dismiss="modal" (click)="clicked()">Yes</button>
