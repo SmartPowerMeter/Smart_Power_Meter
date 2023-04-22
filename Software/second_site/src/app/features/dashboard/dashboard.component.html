@@ -32,31 +32,33 @@
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-          style="width:128px;"
+          style="width:150px;"
         >
           {{ selectedOption }}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="#" (click)="selectOption('Voltage')"
-            >Voltage</a
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 30 Minutes')"
+            >Last 30 Minutes</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Current')"
-            >Current</a
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 1 Hour')"
+            >Last 1 Hour</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Power')"
-            >Power</a
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 3 Hours')"
+            >Last 3 Hours</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Frequency')"
-            >Frequency</a
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 6 Hours')"
+            >Last 6 Hours</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Power Factor')"
-            >Power Factor</a
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 12 Hours')"
+            >Last 12 Hours</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Energy')"
-            >Energy</a
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 24 Hours')"
+            >Last 24 Hours</a
           >
         </div>
+        <button type="button" style="margin-left: 20px;" class="btn btn-primary" (click)="send(selectedOption, selectedOption)">Send</button>
       </div>
+      
 
       <div class="main-div">
         <div class="child-1">
