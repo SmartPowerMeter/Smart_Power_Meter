@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
   isToggleChecked: boolean = true;
   modalText: string = 'Power will turn off.';
   user: User;
-  selectedOption: string = "Energy";
+  selectedOption: string = "Last 30 Minutes";
   lineChart1: any;
   lineChart2: any;
   lineChart3: any;
@@ -39,14 +39,14 @@ export class DashboardComponent implements OnInit {
   lineChartLabels5: string[];
   lineChartCon6: number[];
   lineChartLabels6: string[];
-  TimeType: any = {
-    Voltage: 1,
-    Current: 2,
-    Power: 3,
-    Frequency: 4,
-    "Power Factor": 5,
-    Energy: 6,
-  };
+  // TimeType: any = {
+  //   Voltage: 1,
+  //   Current: 2,
+  //   Power: 3,
+  //   Frequency: 4,
+  //   "Power Factor": 5,
+  //   Energy: 6,
+  // };
 
 
 
@@ -99,7 +99,12 @@ export class DashboardComponent implements OnInit {
       },
     });
   }
+
   selectOption(option: string) {
     this.selectedOption = option;
+  }
+
+  send(par1: string, par2: string){
+    
   }
 }
