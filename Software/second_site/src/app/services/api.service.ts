@@ -105,6 +105,25 @@ export class ApiService {
         })
       );
   }
+
+  RecentMeasurementPost(
+    measurementType: number,
+    timeType: number,
+    time: number
+  ) {
+    return this._http
+      .post<any>("https://api.smartpowermeter.ge/Measurement/GetRecentMeasurement", {
+        measurementType: measurementType,
+        timeType: timeType,
+        time: time,
+      })
+      .pipe(
+        map((e) => {
+          return e;
+        })
+      );
+  }
+
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http

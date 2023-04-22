@@ -26,8 +26,8 @@ export class DashboardComponent implements OnInit {
   lineChart4: any;
   lineChart5: any;
   lineChart6: any;
-  lineChartCon1: number[] = [1, 2, 3, 4];
-  lineChartLabels1: string[] = ["dges", "xval", "zeg", "mazeg"];
+  lineChartCon1: number[];
+  lineChartLabels1: string[];
   lineChartCon2: number[];
   lineChartLabels2: string[];
   lineChartCon3: number[];
@@ -54,7 +54,12 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.createLineCharts();
+    this._api.RecentMeasurementPost(1, 1, 30).subscribe((res)=>{
+      this.lineChartCon1 = res.map((item: any) => item.value);
+      this.lineChartLabels1 = res.map((item: any) => item.time.slice(11, 19));
+      this.createLineCharts();
+    })
+    
   }
 
   clicked() {
@@ -64,48 +69,42 @@ export class DashboardComponent implements OnInit {
   }
 
   createLineCharts() {
-    this.createLineChart(
-      this.lineChart1,
+    this.lineChart1 = this.createLineChart(
       "MyLineChart1",
       this.lineChartLabels1,
       this.lineChartCon1
     );
-    this.createLineChart(
-      this.lineChart2,
+    this.lineChart2 = this.createLineChart(
       "MyLineChart2",
-      this.lineChartLabels1,
-      [5, 4, 3, 2]
+      this.lineChartLabels2,
+      this.lineChartCon2
     );
-    this.createLineChart(
-      this.lineChart3,
+    this.lineChart3 = this.createLineChart(
       "MyLineChart3",
       this.lineChartLabels3,
       this.lineChartCon3
     );
-    this.createLineChart(
-      this.lineChart4,
+    this.lineChart4 = this.createLineChart(
       "MyLineChart4",
       this.lineChartLabels4,
       this.lineChartCon4
     );
-    this.createLineChart(
-      this.lineChart5,
+    this.lineChart5 = this.createLineChart(
       "MyLineChart5",
       this.lineChartLabels5,
       this.lineChartCon5
     );
-    this.createLineChart(
-      this.lineChart6,
+    this.lineChart6 = this.createLineChart(
       "MyLineChart6",
       this.lineChartLabels6,
       this.lineChartCon6
     );
   }
 
-  createLineChart(chart: any, chartName: any, labels: any, chartData: any) {
-    chart = new Chart(chartName, {
+  createLineChart(chartName: any, labels: any, chartData: any) {
+    return new Chart(chartName, {
       type: "line", //this denotes tha type of chart
-
+  
       data: {
         // values on X-Axis
         labels: labels,
@@ -130,7 +129,21 @@ export class DashboardComponent implements OnInit {
   }
 
   send(timeType: number, time: number) {
-    // console.log(this.serviceParams[this.selectedOption]);
-    
+    this._api.RecentMeasurementPost(1, timeType, time).subscribe((res) => {
+      this.lineChartCon1 = res.map((item: any) => item.value);
+      this.lineChartLabels1 = res.map((item: any) => item.time.slice(11, 19));
+      this.lineChart1.data.datasets[0].data = this.lineChartCon1;
+      this.lineChart1.data.labels = this.lineChartLabels1;
+      this.lineChart1.update();
+    });
   }
 }
+
+// MeasurementType: any = {
+//   Voltage: 1,
+//   Current: 2,
+//   Power: 3,
+//   Frequency: 4,
+//   "Power Factor": 5,
+//   Energy: 6,
+// };
