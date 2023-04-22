@@ -17,7 +17,8 @@ export interface User {
 })
 
 export class DashboardComponent implements OnInit {
-  isToggleChecked = true;
+  isToggleChecked: boolean = true;
+  modalText: string = 'Power will turn off.';
   user: User;
   selectedOption: string = "Energy";
   lineChart1: any;
@@ -60,6 +61,10 @@ export class DashboardComponent implements OnInit {
   }
 
   clicked() {
+    if (!this.isToggleChecked) 
+      this.modalText = 'Power will turn off.'
+    else
+      this.modalText = 'Power will turn on.'
     this.isToggleChecked = !this.isToggleChecked;
   }
 
