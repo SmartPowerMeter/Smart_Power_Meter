@@ -8,6 +8,10 @@
             <fa-icon [icon]="['fas','tachometer-alt']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">DASHBOARD</p>
         </a>
+        <a [routerLink]="['/reports']" routerLinkActive="active">
+            <fa-icon [icon]="['fas','chart-bar']"></fa-icon>
+            <p [ngClass]="{disappear: isCollapsed}">REPORTS</p>
+        </a>
         <a [routerLink]="['/transactions']" routerLinkActive="active">
             <fa-icon [icon]="['fas','share']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">TRANSACTIONS</p>
@@ -19,10 +23,6 @@
         <a [routerLink]="['/payments']" routerLinkActive="active" >
             <fa-icon [icon]="['fas','credit-card']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">PAYMENTS</p>
-        </a>
-        <a [routerLink]="['/reports']" routerLinkActive="active">
-            <fa-icon [icon]="['fas','chart-bar']"></fa-icon>
-            <p [ngClass]="{disappear: isCollapsed}">REPORTS</p>
         </a>
         <a [routerLink]="['/currency']" routerLinkActive="active">
             <fa-icon [icon]="['fas','pound-sign']"></fa-icon>

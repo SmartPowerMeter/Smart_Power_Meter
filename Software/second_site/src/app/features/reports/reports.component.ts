@@ -82,7 +82,6 @@ export class ReportsComponent implements OnInit, OnChanges {
     //   this.paymentsArray = this.paymentsService.data;
     // });
     this._api.MeasurementPost(6, 2, 2).subscribe((res) => {
-      console.log(res);
       this.barChartCon = [];
       this.barChartCon = res.map((item: any) => item.value);
       this.barChartLabels = [];
