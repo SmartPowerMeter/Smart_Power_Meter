@@ -37,26 +37,26 @@
           {{ selectedOption }}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="#" (click)="selectOption('Last 30 Minutes')"
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 30 Minutes'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
             >Last 30 Minutes</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Last 1 Hour')"
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 1 Hour'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
             >Last 1 Hour</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Last 3 Hours')"
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 3 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
             >Last 3 Hours</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Last 6 Hours')"
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 6 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
             >Last 6 Hours</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Last 12 Hours')"
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 12 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
             >Last 12 Hours</a
           >
-          <a class="dropdown-item" href="#" (click)="selectOption('Last 24 Hours')"
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 24 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
             >Last 24 Hours</a
           >
         </div>
-        <button type="button" style="margin-left: 20px;" class="btn btn-primary" (click)="send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)">Send</button>
+        <!-- <button type="button" style="margin-left: 20px;" class="btn btn-primary" (click)="send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)">Send</button> -->
       </div>
       
 
