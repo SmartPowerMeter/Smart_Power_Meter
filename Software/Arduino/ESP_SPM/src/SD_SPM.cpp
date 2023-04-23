@@ -4,9 +4,20 @@
 #include "SPI.h"
 #include <time.h> 
 #include <WiFi.h>
-#include <PZEM004Tv30.h>
+#include "pzem_004t_SPM.h"
+#include "time_SPM.h"
 
-char header[] = "Timestamp,voltage,current,power,energy,pf,frequency\n\0";
+char header[] = "Timestamp,voltage,current,power,energy,frequency,pf\n\0";
+const char formatStringWithTime[] = "%02d:%02d:%02d,%.1f,%.3f,%.1f,%.2f,%.1f,%.2f\n";
+const char formatString[] = "%.1f,%.3f,%.1f,%.2f,%.1f,%.2f\n";
+char append_str[3000] = "";
+
+extern PZEM004Tv30 pzem;
+
+uint8_t SD_CARD_WRITE_ENABLE = 1;
+
+struct SD_event_flags SD_flags = {0};
+struct SD_1min_mean meanVals_1min = {0};
 
 // PZEM004Tv30 pzem(Serial2, 16, 17);
 
@@ -263,36 +274,33 @@ bool insertRecord(fs::FS &fs, const char* path, double volt, double amp, double 
 // }
 
 
-void writeFile(fs::FS &fs, const char * path, const char * message){
-    Serial.printf("Writing file: %s\n", path);
+sd_status writeFile(fs::FS &fs, const char * path, const char * message){
 
     File file = fs.open(path, FILE_WRITE);
     if(!file){
-        Serial.println("Failed to open file for writing");
-        return;
+        return SD_FILE_WRITE_OPEN_ERROR;
     }
-    if(file.print(message)){
-        Serial.println("File written");
-    } else {
-        Serial.println("Write failed");
+    if(!file.print(message)){
+        file.close();
+        return SD_FILE_WRITE_FAILED;
     }
     file.close();
+    return SD_OK;
 }
 
-void appendFile(fs::FS &fs, const char * path, const char * message){
-    Serial.printf("Appending to file: %s\n", path);
+sd_status appendFile(fs::FS &fs, const char * path, const char * message){
 
     File file = fs.open(path, FILE_APPEND);
     if(!file){
-        Serial.println("Failed to open file for appending");
-        return;
+        return SD_FILE_APPEND_OPEN_ERROR;
     }
-    if(file.print(message)){
-        Serial.println("Message appended");
-    } else {
-        Serial.println("Append failed");
+
+    if(!file.print(message)){
+        file.close();
+        return SD_FILE_APPEND_FAILED;
     }
     file.close();
+    return SD_OK;
 }
 
 void renameFile(fs::FS &fs, const char * path1, const char * path2){
@@ -355,6 +363,167 @@ void testFileIO(fs::FS &fs, const char * path){
     file.close();
 }
 
+bool makeDirRecursive(fs::FS &fs, const char *dir) {
+  // split directory path into parent and child directories
+  char parentDir[strlen(dir) + 1];
+  char childDir[strlen(dir) + 1];
+  const char *lastSlash = strrchr(dir, '/');
+  if (lastSlash) {
+    strncpy(parentDir, dir, lastSlash - dir);
+    parentDir[lastSlash - dir] = '\0';
+    strcpy(childDir, lastSlash + 1);
+  } else {
+    strcpy(parentDir, "/");
+    strcpy(childDir, dir);
+  }
+
+  // create parent directory if it does not exist
+  if (!fs.exists(parentDir)) {
+    if (!makeDirRecursive(fs, parentDir)) {
+      return false;
+    }
+  }
+
+  // create child directory
+//   Serial.println(dir);
+  return fs.mkdir(dir);
+}
+
+/* This function will return string with current time and values
+*/
+void formatPzemValuesWithTime(PZEM004Tv30& pzem, char* output){
+    sprintf(output, formatStringWithTime,
+                        getESPHour24(),
+                        getESPMin(),
+                        getESPSec(),
+                (float) pzem.voltage(),
+                (float) pzem.current(),
+                (float) pzem.power(),
+                (float) pzem.energy(),
+                (float) pzem.frequency(),
+                (float) pzem.pf());
+}
+
+void formatMeasValuesWithTime(char* output, float voltage,
+                                            float current,
+                                            float power,
+                                            float energy,
+                                            float frequency,
+                                            float pf){
+    sprintf(output, formatStringWithTime,
+                        getESPHour24(),
+                        getESPMin(),
+                        getESPSec(),
+                        voltage,
+                        current,
+                        power,
+                        energy,
+                        frequency,
+                        pf);
+}
+
+/* This function should be called after taking measurements
+   It will append to the string in flash memory which then
+   will be saved into file in every 1 minute
+*/
+sd_status appendToStr(){
+    char curr_vals[50] = "";
+    formatPzemValuesWithTime(pzem, curr_vals);
+    if(strcat(append_str, curr_vals) == nullptr){
+        return SD_STR_APPEND_ERROR;
+    };
+    return SD_OK;
+}
+
+void accumulateMean_1min(){
+    meanVals_1min.voltage   = (meanVals_1min.voltage   * meanVals_1min.cnt + (float)pzem.voltage())  /(meanVals_1min.cnt + 1);
+    meanVals_1min.current   = (meanVals_1min.current   * meanVals_1min.cnt + (float)pzem.current())  /(meanVals_1min.cnt + 1);
+    meanVals_1min.power     = (meanVals_1min.power     * meanVals_1min.cnt + (float)pzem.power())    /(meanVals_1min.cnt + 1);
+    meanVals_1min.energy    = (meanVals_1min.energy    * meanVals_1min.cnt + (float)pzem.energy())   /(meanVals_1min.cnt + 1);
+    meanVals_1min.frequency = (meanVals_1min.frequency * meanVals_1min.cnt + (float)pzem.frequency())/(meanVals_1min.cnt + 1);
+    meanVals_1min.pf        = (meanVals_1min.pf        * meanVals_1min.cnt + (float)pzem.pf())       /(meanVals_1min.cnt + 1);
+    meanVals_1min.cnt++;
+}
+
+/* This function handles writing to a files
+   Every second it will append record to a string in flash memory
+   If 1  minute has passed it will write to s.txt
+   On multiples of    minute  it will write to m.txt
+   On multiples of 5  minutes it will write to 5m.txt
+   On multiples of 15 minutes it will write to 15m.txt
+   On multiples of 1  hour    it will write to h.txt
+*/
+sd_status SDRoutineEverySec(){
+    if (!SD_CARD_WRITE_ENABLE){
+        return SD_WRITE_NOT_ALLOWED;
+    }
+
+    sd_status ret = appendToStr();
+    if(ret != SD_OK) return ret;
+
+    accumulateMean_1min();
+    updateSDFlagCounter();
+
+    char path[50];
+    char full_path[50] = "";
+    sprintf(path, "/SPM_DATA/%04d/%02d/%02d",
+                getESPYear(),
+                getESPMonth(),
+                getESPDay());
+    
+    if(SD_flags.f_1min == 1){
+        SD_flags.f_1min = 0;
+
+        strcpy(full_path, path);
+        strcat(full_path, "/s.txt");
+        if(!SD.exists(full_path)){
+            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+        }
+
+        ret = appendFile(SD, full_path, append_str);
+        if(ret != SD_OK) return ret;
+        memset(append_str, 0, sizeof(append_str));
+
+        return SD_OK;
+    }
+
+    if (getESPSec() == 0){
+        char data[50] = "";
+        formatMeasValuesWithTime(data,  meanVals_1min.voltage,
+                                        meanVals_1min.current,
+                                        meanVals_1min.power,
+                                        meanVals_1min.energy,
+                                        meanVals_1min.frequency,
+                                        meanVals_1min.pf);
+        strcpy(full_path, path);
+        strcat(full_path, "/m.txt");
+        if(!SD.exists(full_path)){
+            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+        }
+        ret = appendFile(SD, full_path, data);
+        if(ret != SD_OK) return ret;
+        memset(&meanVals_1min, 0, sizeof(meanVals_1min));
+        Serial.println("Appended to m.txt");
+    }
+
+    // implemet 5m, 15m, 1h write
+    // need to read back from SD past few values
+
+    return SD_OK;
+}
+
+void updateSDFlagCounter(){
+    if(SD_flags.cnt >= 3600){
+        SD_flags.cnt = 0;
+        SD_flags.f_1hour = 1;
+    }else{
+        SD_flags.cnt++;
+        if(SD_flags.cnt % 60 == 0)   SD_flags.f_1min = 1;
+        if(SD_flags.cnt % 300 == 0)  SD_flags.f_5min = 1;
+        if(SD_flags.cnt % 900 == 0)  SD_flags.f_15min = 1;
+    }
+}
+
 void handleErrorSD(sd_status status){
     if(status == SD_ABSENT){
         Serial.println("SD Card is not inserted");
@@ -365,7 +534,31 @@ void handleErrorSD(sd_status status){
     }else if (status == SD_SIZE_ERROR)
     {
         Serial.println("SD Card size error");
-    }    
+    }else if (status == SD_FILE_CREATION_ERROR)
+    {
+        Serial.println("Could not create file");
+    }else if (status == SD_FILE_APPEND_OPEN_ERROR)
+    {
+        Serial.println("Could not open file for append");
+    }else if (status == SD_FILE_APPEND_FAILED)
+    {
+        Serial.println("Could not append to a file");
+    }else if (status == SD_STR_APPEND_ERROR)
+    {
+        Serial.println("Could not append to a string in flash memory");
+    }else if (status == SD_FILE_WRITE_OPEN_ERROR)
+    {
+        Serial.println("Could not open file for write");
+    }else if (status == SD_FILE_WRITE_FAILED)
+    {
+        Serial.println("Could not write to a file");
+    }
+    
+    
+    
+    
+    
+    
 }
 
 // void setup(){
