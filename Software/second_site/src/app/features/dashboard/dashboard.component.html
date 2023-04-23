@@ -62,27 +62,27 @@
 
       <div class="main-div">
         <div class="child-1">
-          <p>Voltage: {{this.lineChartCon1.slice(-1)[0]}} V</p>
+          <p>Voltage: {{this.lineChartCon1.slice(-1)[0].toFixed(1)}} V</p>
           <canvas  id="MyLineChart1" >{{ lineChart1 }}</canvas>
         </div>
         <div class="child-2">
-          <p>Current: {{this.lineChartCon2.slice(-1)[0]}} Amp</p>
+          <p>Current: {{this.lineChartCon2.slice(-1)[0].toFixed(3)}} A</p>
           <canvas  id="MyLineChart2" >{{ lineChart2 }}</canvas>
         </div>
         <div class="child-3">
-          <p>Power: {{this.lineChartCon3.slice(-1)[0]}} W</p>
+          <p>Power: {{this.lineChartCon3.slice(-1)[0].toFixed(1)}} W</p>
           <canvas  id="MyLineChart3" >{{ lineChart3 }}</canvas>
         </div>
         <div class="child-4">
-          <p>Energy: {{this.lineChartCon4.slice(-1)[0]}} J</p>
+          <p>Energy: {{this.lineChartCon4.slice(-1)[0].toFixed(2)}} KWh</p>
           <canvas  id="MyLineChart4" >{{ lineChart4 }}</canvas>
         </div>
         <div class="child-5">
-          <p>Power Factor: {{this.lineChartCon5.slice(-1)[0]}} kVA</p>
+          <p>Power Factor: {{this.lineChartCon5.slice(-1)[0].toFixed(2)}} kVA</p>
           <canvas  id="MyLineChart5" >{{ lineChart5 }}</canvas>
         </div>
         <div class="child-6">
-          <p>Frequency: {{this.lineChartCon6.slice(-1)[0]}} Hz</p>
+          <p>Frequency: {{this.lineChartCon6.slice(-1)[0].toFixed(1)}} Hz</p>
           <canvas  id="MyLineChart6" >{{ lineChart6 }}</canvas>
         </div>
       </div>

@@ -127,7 +127,7 @@ export class DashboardComponent implements OnInit {
     setInterval(() => {
       const params = this.serviceParams[this.selectedOption];
       this.send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time);
-    }, 3000);
+    }, 1000);
 
   }
 
