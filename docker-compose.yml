@@ -101,6 +101,7 @@ services:
   # jenkins:
   #   image: jenkins/jenkins:2.387.1-lts
   #   container_name: jenkins
+  #   restart: always
   #   user: root
   #   privileged: true
   #   networks:
@@ -118,6 +119,7 @@ services:
   #     context: /home/data/jenkins
   #     dockerfile: Jenkins_Agent_Dockerfile
   #   user: root
+  #   restart: always
   #   privileged: true
   #   container_name: agent
   #   networks:
