@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Chart } from "chart.js";
 import { ChartConfiguration } from "chart.js";
+import { Subscription } from "rxjs";
 import { ApiService } from "src/app/services/api.service";
 
 export interface User {
@@ -46,6 +47,13 @@ export class DashboardComponent implements OnInit {
     "Last 12 Hours": { timeType: 2, time: 12 },
     "Last 24 Hours": { timeType: 2, time: 24 },
   };
+  private subscr1: Subscription;
+  private subscr2: Subscription;
+  private subscr3: Subscription;
+  private subscr4: Subscription;
+  private subscr5: Subscription;
+  private subscr6: Subscription;
+  private subscr7: Subscription;
 
   constructor(public _api: ApiService) {
     this._api.GetUser().subscribe((res) => {
@@ -198,7 +206,7 @@ export class DashboardComponent implements OnInit {
   }
 
   send(timeType: number, time: number) {
-    this._api.RecentMeasurementPost(1, timeType, time).subscribe((res) => {
+    this.subscr1 = this._api.RecentMeasurementPost(1, timeType, time).subscribe((res) => {
       this.lineChartCon1 = res.map((item: any) => item.value);
       this.lineChartLabels1 = res.map((item: any) => {
         const date = new Date(item.time);
@@ -210,7 +218,7 @@ export class DashboardComponent implements OnInit {
       this.lineChart1.update();
     });
 
-    this._api.RecentMeasurementPost(2, timeType, time).subscribe((res) => {
+    this.subscr2 = this._api.RecentMeasurementPost(2, timeType, time).subscribe((res) => {
       this.lineChartCon2 = res.map((item: any) => item.value);
       this.lineChartLabels2 = res.map((item: any) => {
         const date = new Date(item.time);
@@ -222,7 +230,7 @@ export class DashboardComponent implements OnInit {
       this.lineChart2.update();
     });
 
-    this._api.RecentMeasurementPost(3, timeType, time).subscribe((res) => {
+    this.subscr3 = this._api.RecentMeasurementPost(3, timeType, time).subscribe((res) => {
       this.lineChartCon3 = res.map((item: any) => item.value);
       this.lineChartLabels3 = res.map((item: any) => {
         const date = new Date(item.time);
@@ -234,7 +242,7 @@ export class DashboardComponent implements OnInit {
       this.lineChart3.update();
     });
 
-    this._api.RecentMeasurementPost(6, timeType, time).subscribe((res) => {
+    this.subscr4 = this._api.RecentMeasurementPost(6, timeType, time).subscribe((res) => {
       this.lineChartCon4 = res.map((item: any) => item.value);
       this.lineChartLabels4 = res.map((item: any) => {
         const date = new Date(item.time);
@@ -246,7 +254,7 @@ export class DashboardComponent implements OnInit {
       this.lineChart4.update();
     });
 
-    this._api.RecentMeasurementPost(5, timeType, time).subscribe((res) => {
+    this.subscr5 = this._api.RecentMeasurementPost(5, timeType, time).subscribe((res) => {
       this.lineChartCon5 = res.map((item: any) => item.value);
       this.lineChartLabels5 = res.map((item: any) => {
         const date = new Date(item.time);
@@ -258,7 +266,7 @@ export class DashboardComponent implements OnInit {
       this.lineChart5.update();
     });
 
-    this._api.RecentMeasurementPost(4, timeType, time).subscribe((res) => {
+    this.subscr6 = this._api.RecentMeasurementPost(4, timeType, time).subscribe((res) => {
       this.lineChartCon6 = res.map((item: any) => item.value);
       this.lineChartLabels6 = res.map((item: any) => {
         const date = new Date(item.time);
@@ -269,6 +277,15 @@ export class DashboardComponent implements OnInit {
       this.lineChart6.data.labels = this.lineChartLabels6;
       this.lineChart6.update();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscr1.unsubscribe();
+    this.subscr2.unsubscribe();
+    this.subscr3.unsubscribe();
+    this.subscr4.unsubscribe();
+    this.subscr5.unsubscribe();
+    this.subscr6.unsubscribe();
   }
 }
 
