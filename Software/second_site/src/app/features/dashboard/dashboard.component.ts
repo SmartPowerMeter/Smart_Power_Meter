@@ -54,6 +54,7 @@ export class DashboardComponent implements OnInit {
   private subscr5: Subscription;
   private subscr6: Subscription;
   private subscr7: Subscription;
+  private intervalId: any;
 
   constructor(public _api: ApiService) {
     this._api.GetUser().subscribe((res) => {
@@ -132,7 +133,7 @@ export class DashboardComponent implements OnInit {
       this.lineChart6.update();
     });
 
-    setInterval(() => {
+    this.intervalId = setInterval(() => {
       const params = this.serviceParams[this.selectedOption];
       this.send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time);
     }, 1000);
@@ -280,6 +281,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    clearInterval(this.intervalId);
     this.subscr1.unsubscribe();
     this.subscr2.unsubscribe();
     this.subscr3.unsubscribe();
