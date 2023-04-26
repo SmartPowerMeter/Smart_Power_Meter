@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using SPM.Api.Services.Jwt;
+using SPM.Api.Services.MQTT;
 using SPM.Api.Core.Constants;
 using System.Security.Claims;
 using SPM.Api.Services.Account;
@@ -21,6 +22,7 @@ namespace SPM.Api.Services.Extensions
             services.AddScoped<IMeasurementService, MeasurementService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IMQTTService, MQTTService>();
 
             services.AddJwt(configuration);
             services.AddSwagger();

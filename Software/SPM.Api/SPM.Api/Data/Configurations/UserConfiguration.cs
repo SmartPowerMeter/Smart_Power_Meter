@@ -15,6 +15,7 @@ namespace SPM.Api.Data.Configurations
             builder.Property(x => x.Password).IsRequired().HasMaxLength(FieldLengthConstants.Small);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(FieldLengthConstants.ExtraSmall);
             builder.Property(x => x.CustomerId).IsRequired().HasMaxLength(FieldLengthConstants.ExtraSmall);
+            builder.Property(x => x.BucketAccessToken).IsRequired().HasMaxLength(FieldLengthConstants.Medium);
         }
     }
 }

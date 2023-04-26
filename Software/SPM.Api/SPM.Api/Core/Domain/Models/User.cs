@@ -1,5 +1,4 @@
 ﻿using SPM.Api.Core.Domain.Enums;
-using InfluxDB.Client.Api.Domain;
 
 namespace SPM.Api.Core.Domain.Models
 {
@@ -21,6 +20,10 @@ namespace SPM.Api.Core.Domain.Models
 
         public UserType UserType { get; private set; }
 
+        public string BucketAccessToken { get; private set; }
+
+        public bool RelayEnabled { get; private set; }
+
         #endregion
 
         public User(string firstName, string lastName, string email, string password, UserType userType)
@@ -39,6 +42,18 @@ namespace SPM.Api.Core.Domain.Models
             var guidParts = guid.Split('-');
 
             return guidParts[0] + guidParts[1];
+        }
+
+        public string GetBucketName() => $"{CustomerId}_bucket";
+
+        public void SetBucketAccessToken(string token)
+        {
+            BucketAccessToken = token;
+        }
+
+        public void SetRelayState(bool enabled)
+        {
+            RelayEnabled = enabled;
         }
     }
 }

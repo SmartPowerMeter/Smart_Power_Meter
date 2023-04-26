@@ -4,6 +4,7 @@ using SPM.Api.Services.Jwt;
 using SPM.Api.Core.Exceptions;
 using SPM.Api.Core.WorkContexts;
 using SPM.Api.Core.Domain.Enums;
+using SPM.Api.Services.InfluxDb;
 using SPM.Api.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
@@ -16,12 +17,14 @@ namespace SPM.Api.Services.Account
         private readonly IJwtService _jwtService;
         private readonly SPMDbContext _dbContext;
         private readonly IWorkContext _workContext;
+        private readonly IInfluxDbService _influxDbService;
 
-        public AccountService(IJwtService jwtService, SPMDbContext dbContext, IWorkContext workContext)
+        public AccountService(IJwtService jwtService, SPMDbContext dbContext, IWorkContext workContext, IInfluxDbService influxDbService)
         {
             _jwtService = jwtService;
             _dbContext = dbContext;
             _workContext = workContext;
+            _influxDbService = influxDbService;
         }
 
         public async Task RegisterUser(RegisterUserRequest request)
@@ -35,10 +38,17 @@ namespace SPM.Api.Services.Account
 
             var userType = request.IsConnected ? UserType.Connected : UserType.Seperate;
 
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
             var newUser = new User(request.FirstName, request.LastName, request.Email, hashedPassword, userType);
+
+            var bucketAccessToken = await _influxDbService.CreateBucket(newUser.CustomerId);
+            newUser.SetBucketAccessToken(bucketAccessToken);
 
             await _dbContext.User.AddAsync(newUser);
             await _dbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
         }
 
         public async Task<LoginUserResponse> LoginUser(LoginUserRequest request)

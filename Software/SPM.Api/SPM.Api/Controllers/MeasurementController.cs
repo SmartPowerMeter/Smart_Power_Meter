@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using SPM.Api.Services.MQTT;
+using Microsoft.AspNetCore.Mvc;
 using SPM.Api.Services.Measurements;
 using SPM.Api.Services.InfluxDb.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@ namespace SPM.Api.Controllers
     public class MeasurementController : ControllerBase
     {
         private readonly IMeasurementService _measurementService;
+        private readonly IMQTTService _mqttService;
 
-        public MeasurementController(IMeasurementService measurementService)
+        public MeasurementController(IMeasurementService measurementService, IMQTTService mqttService)
         {
             _measurementService = measurementService;
+            _mqttService = mqttService;
         }
 
         [Authorize]
@@ -33,6 +36,15 @@ namespace SPM.Api.Controllers
             var data = await _measurementService.GetRecentMeasurement(request.MeasurementType, request.TimeType, request.Time);
 
             return data;
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<bool> SetRelayStatus(bool activate)
+        {
+            var isActivated = await _mqttService.SetRelayStatus(activate);
+
+            return isActivated;
         }
     }
 }
