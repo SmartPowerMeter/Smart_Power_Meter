@@ -1,6 +1,7 @@
 ﻿using InfluxDB.Client;
 using InfluxDB.Client.Writes;
 using InfluxDB.Client.Api.Domain;
+using MQTT.Broker.Services.SqlDb.Models;
 
 namespace MQTT.Broker.Services.InfluxDb
 {
@@ -13,22 +14,22 @@ namespace MQTT.Broker.Services.InfluxDb
             _settings = configuration.GetSection("InfluxDb").Get<InfluxDbSettings>();
         }
 
-        public void WritePoint(string measurementName, string customerId, double value)
+        public void WritePoint(string measurementName, double value, DateTime timeStamp, UserData user)
         {
             var pointData = PointData.Measurement(measurementName)
-                    .Tag("CustomerId", customerId)
+                    .Tag("CustomerId", user.CustomerId)
                     .Field("Value", value)
-                    .Timestamp(DateTime.UtcNow, WritePrecision.Ns);
+                    .Timestamp(DateTime.SpecifyKind(timeStamp.AddHours(-4), DateTimeKind.Utc), WritePrecision.Ns);
 
             Write(write =>
             {
-                write.WritePoint(pointData, _settings.Bucket, _settings.Organization);
-            });
+                write.WritePoint(pointData, user.GetBucketName(), _settings.Organization);
+            }, user);
         }
 
-        private void Write(Action<WriteApi> action)
+        private void Write(Action<WriteApi> action, UserData user)
         {
-            using var client = new InfluxDBClient(_settings.ClientUrl, _settings.Token);
+            using var client = new InfluxDBClient(_settings.ClientUrl, user.BucketAccessToken);
             using var write = client.GetWriteApi();
             action(write);
         }

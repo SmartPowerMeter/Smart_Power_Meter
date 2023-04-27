@@ -4,7 +4,9 @@ using MQTTnet.Server;
 using MQTTnet.Protocol;
 using System.Text.Json;
 using MQTT.Broker.Models;
+using MQTT.Broker.Services.SqlDb;
 using MQTT.Broker.Services.InfluxDb;
+using MQTT.Broker.Services.SqlDb.Models;
 
 namespace MQTT.Broker
 {
@@ -13,6 +15,7 @@ namespace MQTT.Broker
         private readonly ILogger<Worker> _logger;
         private readonly IServiceProvider _serviceProvider;
         private MqttServer _mqttServer;
+        private UserData _user;
 
         public Worker(IServiceProvider serviceProvider, ILogger<Worker> logger)
         {
@@ -51,14 +54,16 @@ namespace MQTT.Broker
 
         private async Task ValidatingConnectionAsync(ValidatingConnectionEventArgs arg)
         {
-            // imitatingDbCall
-            // var retrievedClientId = "12345";
-            // var retrievedPassword = "pass";
+            using var scope = _serviceProvider.CreateScope();
+            var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
 
-            // if (arg.ClientId != retrievedClientId || arg.Password != retrievedPassword)
-            // {
-            //     arg.ReasonCode = MqttConnectReasonCode.BadUserNameOrPassword;
-            // }
+            if (arg.ClientId != "admin")
+            {
+                _user = await dbService.GetUser(arg.ClientId);
+
+                if (_user == null)
+                    arg.ReasonCode = MqttConnectReasonCode.BadUserNameOrPassword;
+            }
 
             await Task.CompletedTask;
         }
@@ -70,25 +75,28 @@ namespace MQTT.Broker
 
         private async Task MessageReceivedAsync(InterceptingPublishEventArgs arg)
         {
-            var payload = arg.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(arg.ApplicationMessage?.Payload);
-
-            try
+            if (!arg.ApplicationMessage.Topic.Contains("relay"))
             {
-                var data = JsonSerializer.Deserialize<MeasurementData>(payload);
+                var payload = arg.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(arg.ApplicationMessage?.Payload);
 
-                using var scope = _serviceProvider.CreateScope();
-                var influxDbService = scope.ServiceProvider.GetRequiredService<InfluxDbService>();
+                try
+                {
+                    var data = JsonSerializer.Deserialize<MeasurementData>(payload);
 
-                influxDbService.WritePoint(nameof(data.Voltage), arg.ClientId, data.Voltage);
-                influxDbService.WritePoint(nameof(data.Current), arg.ClientId, data.Current);
-                influxDbService.WritePoint(nameof(data.Power), arg.ClientId, data.Power);
-                influxDbService.WritePoint(nameof(data.Energy), arg.ClientId, data.Energy);
-                influxDbService.WritePoint(nameof(data.Frequency), arg.ClientId, data.Frequency);
-                influxDbService.WritePoint(nameof(data.PowerFactor), arg.ClientId, data.PowerFactor);
-            }
-            catch (Exception ex)
-            {
-                await Task.Run(() => _logger.LogError(ex.ToString()));
+                    using var scope = _serviceProvider.CreateScope();
+                    var influxDbService = scope.ServiceProvider.GetRequiredService<InfluxDbService>();
+
+                    influxDbService.WritePoint(nameof(data.Voltage), data.Voltage, data.TimeStamp, _user);
+                    influxDbService.WritePoint(nameof(data.Current), data.Current, data.TimeStamp, _user);
+                    influxDbService.WritePoint(nameof(data.Power), data.Power, data.TimeStamp, _user);
+                    influxDbService.WritePoint(nameof(data.Energy), data.Energy, data.TimeStamp, _user);
+                    influxDbService.WritePoint(nameof(data.Frequency), data.Frequency, data.TimeStamp, _user);
+                    influxDbService.WritePoint(nameof(data.PowerFactor), data.PowerFactor, data.TimeStamp, _user);
+                }
+                catch (Exception ex)
+                {
+                    await Task.Run(() => _logger.LogError(ex.ToString()));
+                }
             }
         }
     }

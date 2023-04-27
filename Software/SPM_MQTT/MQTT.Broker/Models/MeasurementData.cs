@@ -13,5 +13,7 @@
         public double Frequency { get; set; }
 
         public double PowerFactor { get; set; }
+
+        public DateTime TimeStamp { get; set; }
     }
 }
