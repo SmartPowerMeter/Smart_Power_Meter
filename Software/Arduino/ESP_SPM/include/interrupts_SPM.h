@@ -6,5 +6,7 @@
 
 void init1SecInterrupt();
 void IRAM_ATTR every1Sec();
+void onSDInsert();
+void initSDInterrupt();
 
 #endif

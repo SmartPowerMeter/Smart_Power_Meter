@@ -32,8 +32,27 @@ void setup() {
   Serial.print("Time after modification: ");
   Serial.println(ctime(&tt));
 
-  pinMode(22, OUTPUT);
+  pinMode(22, OUTPUT);  // for testing
   init1SecInterrupt();
+  initSDInterrupt();
+
+
+  // SD.end();
+
+  // Serial.println("========================== >>>>>> End");
+  // Serial.println("========================== >>>>>> 5");
+  // delay(1000);
+  // Serial.println("========================== >>>>>> 4");
+  // delay(1000);
+  // Serial.println("========================== >>>>>> 3");
+  // delay(1000);
+  // Serial.println("========================== >>>>>> 2");
+  // delay(1000);
+  // Serial.println("========================== >>>>>> 1");
+  // delay(1000);
+
+  // SD.begin();
+
 
 
 
@@ -96,8 +115,9 @@ void setup() {
 
 }
 
-
 void loop() {
+
+  initSDOnInterrupt();
   everySecond();
 
   // pzem_status pzem_ret = pzemReadValues(pzem);

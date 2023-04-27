@@ -8,6 +8,10 @@
 #include "time_SPM.h"
 #include "Hardware_SPM.h"
 
+#include "vfs_api.h"
+
+
+
 #define ONE_REC_MAX_LEN           60
 #define ONE_REC_TRUE_LEN_WTIME    48  // based on format string with time
 #define ONE_REC_TRUE_LEN_WOTIME   39  // based on format string with time
@@ -18,11 +22,14 @@ const char formatString[] = "%05.1f,%07.3f,%07.1f,%07.2f,%04.1f,%04.2f\n";
 char append_str[3000] = "";
 
 extern PZEM004Tv30 pzem;
+extern bool f_SD_fall_edge;
+extern unsigned long SD_insert_start;
 
 uint8_t SD_CARD_WRITE_ENABLE = 1;
 
 struct SD_event_flags SD_flags = {0};
 struct SD_1min_mean meanVals_1min = {0};
+
 
 // PZEM004Tv30 pzem(Serial2, 16, 17);
 
@@ -40,6 +47,22 @@ struct SD_1min_mean meanVals_1min = {0};
 // ModbusMaster node;
 
 // struct pzem_data measurements;
+
+sd_status initSDOnInterrupt(){
+    if ((f_SD_fall_edge == 1) & (millis() - SD_insert_start >= 1000)){
+        // delay(500); // debounce
+        if (digitalRead(SD_PRECENCE) == 1) return SD_ABSENT;
+
+        SD.end();
+        SD = SDFS(FSImplPtr(new VFSImpl()));
+        sd_status ret = initCard(SD);
+        if (ret != SD_OK) {
+            handleErrorSD(ret);
+        };
+        f_SD_fall_edge = 0;
+    }
+    return SD_OK;
+}
 
 /* Check following:
     SD Card is inserted
@@ -74,9 +97,11 @@ sd_status checkCardPrecense(uint8_t gpio_pin){
 /* Initialize SD Card
 */
 sd_status initCard(fs::SDFS &card){
-    if(!card.begin()){
+    
+    if(!card.begin(SD_CS, SPI, 4000000, "/sd", 5, false)){
         return SD_INIT_ERROR;
     }
+    Serial.println("SD initialization successfull");
     return SD_OK;
 }
 
@@ -516,7 +541,7 @@ sd_status SDRoutineEverySec(){
         ret = appendFile(SD, full_path, data);
         if(ret != SD_OK) return ret;
         memset(&meanVals_1min, 0, sizeof(meanVals_1min));
-        Serial.printf("Appended to m.txt\n%s\n", data);
+        // Serial.printf("Appended to m.txt\n%s\n", data);
     }
 
     if ((getESPMin() % 5 == 0) & (getESPSec() == 0)){

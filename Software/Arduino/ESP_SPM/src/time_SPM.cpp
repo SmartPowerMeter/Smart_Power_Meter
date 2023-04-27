@@ -73,13 +73,13 @@ void everySecond(){
     unsigned long start, end;
 
     f_1sec_event = 0;
-    start = micros();
+    // start = micros();
     pzem_status pzem_ret = pzemReadValues(pzem);
-    end = micros();
+    // end = micros();
     if (pzem_ret != PZEM_OK){
         pzemHandleError(pzem_ret);
     }
-    Serial.printf("Reading measurements took: %lu microseconds\n", end-start);
+    // Serial.printf("Reading measurements took: %lu microseconds\n", end-start);
 
     start = micros();
     sd_status sd_ret = SDRoutineEverySec();

@@ -58,6 +58,7 @@ void deleteFile(fs::FS &fs, const char * path);
 void testFileIO(fs::FS &fs, const char * path);
 
 
+sd_status initSDOnInterrupt();
 sd_status allCardChecks(fs::SDFS &card, uint8_t gpio_pin);
 sd_status checkCardPrecense(uint8_t gpio_pin);
 sd_status initCard(fs::SDFS &card);
