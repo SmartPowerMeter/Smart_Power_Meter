@@ -6,10 +6,15 @@
 #include <WiFi.h>
 #include "pzem_004t_SPM.h"
 #include "time_SPM.h"
+#include "Hardware_SPM.h"
+
+#define ONE_REC_MAX_LEN           60
+#define ONE_REC_TRUE_LEN_WTIME    48  // based on format string with time
+#define ONE_REC_TRUE_LEN_WOTIME   39  // based on format string with time
 
 char header[] = "Timestamp,voltage,current,power,energy,frequency,pf\n\0";
-const char formatStringWithTime[] = "%02d:%02d:%02d,%.1f,%.3f,%.1f,%.2f,%.1f,%.2f\n";
-const char formatString[] = "%.1f,%.3f,%.1f,%.2f,%.1f,%.2f\n";
+const char formatStringWithTime[] = "%02d:%02d:%02d,%05.1f,%07.3f,%07.1f,%07.2f,%04.1f,%04.2f\n";
+const char formatString[] = "%05.1f,%07.3f,%07.1f,%07.2f,%04.1f,%04.2f\n";
 char append_str[3000] = "";
 
 extern PZEM004Tv30 pzem;
@@ -404,22 +409,25 @@ void formatPzemValuesWithTime(PZEM004Tv30& pzem, char* output){
                 (float) pzem.pf());
 }
 
-void formatMeasValuesWithTime(char* output, float voltage,
-                                            float current,
-                                            float power,
-                                            float energy,
-                                            float frequency,
-                                            float pf){
+void formatMeasValuesWithTime(char* output, struct meas* meas, time_t time){
+    struct tm *dt = gmtime(&time);
     sprintf(output, formatStringWithTime,
-                        getESPHour24(),
-                        getESPMin(),
-                        getESPSec(),
-                        voltage,
-                        current,
-                        power,
-                        energy,
-                        frequency,
-                        pf);
+                        dt->tm_hour,
+                        dt->tm_min,
+                        dt->tm_sec,
+                        meas->voltage,
+                        meas->current,
+                        meas->power,
+                        meas->energy,
+                        meas->frequency,
+                        meas->pf);
+    // Serial.printf("\nvoltage: %f\n", meas->voltage);
+    // Serial.printf("Current: %f\n", meas->current);
+    // Serial.printf("power: %f\n", meas->power);
+    // Serial.printf("energy: %f\n", meas->energy);
+    // Serial.printf("frequency: %f\n", meas->frequency);
+    // Serial.printf("pf: %f\n\n", meas->pf);
+    // Serial.printf("Rec str: %s\n", output);
 }
 
 /* This function should be called after taking measurements
@@ -427,7 +435,7 @@ void formatMeasValuesWithTime(char* output, float voltage,
    will be saved into file in every 1 minute
 */
 sd_status appendToStr(){
-    char curr_vals[50] = "";
+    char curr_vals[ONE_REC_MAX_LEN] = "";
     formatPzemValuesWithTime(pzem, curr_vals);
     if(strcat(append_str, curr_vals) == nullptr){
         return SD_STR_APPEND_ERROR;
@@ -436,12 +444,12 @@ sd_status appendToStr(){
 }
 
 void accumulateMean_1min(){
-    meanVals_1min.voltage   = (meanVals_1min.voltage   * meanVals_1min.cnt + (float)pzem.voltage())  /(meanVals_1min.cnt + 1);
-    meanVals_1min.current   = (meanVals_1min.current   * meanVals_1min.cnt + (float)pzem.current())  /(meanVals_1min.cnt + 1);
-    meanVals_1min.power     = (meanVals_1min.power     * meanVals_1min.cnt + (float)pzem.power())    /(meanVals_1min.cnt + 1);
-    meanVals_1min.energy    = (meanVals_1min.energy    * meanVals_1min.cnt + (float)pzem.energy())   /(meanVals_1min.cnt + 1);
-    meanVals_1min.frequency = (meanVals_1min.frequency * meanVals_1min.cnt + (float)pzem.frequency())/(meanVals_1min.cnt + 1);
-    meanVals_1min.pf        = (meanVals_1min.pf        * meanVals_1min.cnt + (float)pzem.pf())       /(meanVals_1min.cnt + 1);
+    meanVals_1min.meas.voltage   = (meanVals_1min.meas.voltage   * meanVals_1min.cnt + (float)pzem.voltage())  /(meanVals_1min.cnt + 1);
+    meanVals_1min.meas.current   = (meanVals_1min.meas.current   * meanVals_1min.cnt + (float)pzem.current())  /(meanVals_1min.cnt + 1);
+    meanVals_1min.meas.power     = (meanVals_1min.meas.power     * meanVals_1min.cnt + (float)pzem.power())    /(meanVals_1min.cnt + 1);
+    meanVals_1min.meas.energy    = (meanVals_1min.meas.energy    * meanVals_1min.cnt + (float)pzem.energy())   /(meanVals_1min.cnt + 1);
+    meanVals_1min.meas.frequency = (meanVals_1min.meas.frequency * meanVals_1min.cnt + (float)pzem.frequency())/(meanVals_1min.cnt + 1);
+    meanVals_1min.meas.pf        = (meanVals_1min.meas.pf        * meanVals_1min.cnt + (float)pzem.pf())       /(meanVals_1min.cnt + 1);
     meanVals_1min.cnt++;
 }
 
@@ -474,6 +482,12 @@ sd_status SDRoutineEverySec(){
     if(SD_flags.f_1min == 1){
         SD_flags.f_1min = 0;
 
+        ret = checkCardPrecense(SD_PRECENCE);
+        if (ret != SD_OK) {
+            memset(append_str, 0, sizeof(append_str));
+            return ret;
+        }
+
         strcpy(full_path, path);
         strcat(full_path, "/s.txt");
         if(!SD.exists(full_path)){
@@ -482,19 +496,18 @@ sd_status SDRoutineEverySec(){
 
         ret = appendFile(SD, full_path, append_str);
         if(ret != SD_OK) return ret;
+        // Serial.printf("Appended to s.txt\n%s\n", append_str);
         memset(append_str, 0, sizeof(append_str));
 
         return SD_OK;
     }
 
+    ret = checkCardPrecense(SD_PRECENCE);
+    if (ret != SD_OK) return ret;
+
     if (getESPSec() == 0){
-        char data[50] = "";
-        formatMeasValuesWithTime(data,  meanVals_1min.voltage,
-                                        meanVals_1min.current,
-                                        meanVals_1min.power,
-                                        meanVals_1min.energy,
-                                        meanVals_1min.frequency,
-                                        meanVals_1min.pf);
+        char data[ONE_REC_MAX_LEN] = "";
+        formatMeasValuesWithTime(data,  &meanVals_1min.meas, time(nullptr));
         strcpy(full_path, path);
         strcat(full_path, "/m.txt");
         if(!SD.exists(full_path)){
@@ -503,14 +516,300 @@ sd_status SDRoutineEverySec(){
         ret = appendFile(SD, full_path, data);
         if(ret != SD_OK) return ret;
         memset(&meanVals_1min, 0, sizeof(meanVals_1min));
-        Serial.println("Appended to m.txt");
+        Serial.printf("Appended to m.txt\n%s\n", data);
+    }
+
+    if ((getESPMin() % 5 == 0) & (getESPSec() == 0)){
+        char data[ONE_REC_MAX_LEN] = "";
+        time_t start, end;
+        end = time(nullptr);
+        start = end - 300;
+
+        struct meas meas = {0};
+        strcpy(full_path, path);
+        strcat(full_path, "/m.txt");
+        ret = meanLastValsBetween(full_path, start, end, &meas, 7);
+        if(ret != SD_OK){
+            handleErrorSD(ret);
+            goto func_end;
+        }
+        // Serial.print("Before formatting:\n");
+        // Serial.printf("voltage: %f\n", meas.voltage);
+        // Serial.printf("current: %f\n", meas.current);
+        // Serial.printf("power: %f\n", meas.power);
+        // Serial.printf("energy: %f\n", meas.energy);
+        // Serial.printf("frequency: %f\n", meas.frequency);
+        // Serial.printf("pf: %f\n", meas.pf);
+
+        formatMeasValuesWithTime(data,  &meas, time(nullptr));
+
+        // Serial.printf("formatted: %s\n", data);
+
+        strcpy(full_path, path);
+        strcat(full_path, "/5m.txt");
+        if(!SD.exists(full_path)){
+            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+        }
+        ret = appendFile(SD, full_path, data);
+        if(ret != SD_OK) return ret;
+        // Serial.printf("Appended to 5m.txt\n%s\n", data);
+    }
+
+    if ((getESPMin() % 15 == 0) & (getESPSec() == 0)){
+        char data[ONE_REC_MAX_LEN] = "";
+        time_t start, end;
+        end = time(nullptr);
+        start = end - 900; // 60*15
+
+        struct meas meas;
+        strcpy(full_path, path);
+        strcat(full_path, "/5m.txt");
+        ret = meanLastValsBetween(full_path, start, end, &meas, 5);
+        if(ret != SD_OK){
+            handleErrorSD(ret);
+            goto func_end;
+        }
+        formatMeasValuesWithTime(data,  &meas, time(nullptr));
+
+        strcpy(full_path, path);
+        strcat(full_path, "/15m.txt");
+        if(!SD.exists(full_path)){
+            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+        }
+        ret = appendFile(SD, full_path, data);
+        if(ret != SD_OK) return ret;
+        // Serial.printf("Appended to 15m.txt\n%s\n", data);
+    }
+
+    if ((getESPMin() == 0) & (getESPSec() == 0)){
+        char data[ONE_REC_MAX_LEN] = "";
+        time_t start, end;
+        end = time(nullptr);
+        start = end - 3600; // 60*60
+
+        struct meas meas;
+        strcpy(full_path, path);
+        strcat(full_path, "/15m.txt");
+        ret = meanLastValsBetween(full_path, start, end, &meas, 7);
+        if(ret != SD_OK){
+            handleErrorSD(ret);
+            goto func_end;
+        }
+        formatMeasValuesWithTime(data,  &meas, time(nullptr));
+
+        strcpy(full_path, path);
+        strcat(full_path, "/h.txt");
+        if(!SD.exists(full_path)){
+            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+        }
+        ret = appendFile(SD, full_path, data);
+        if(ret != SD_OK) return ret;
+        // Serial.printf("Appended to h.txt\n%s\n", data);
     }
 
     // implemet 5m, 15m, 1h write
     // need to read back from SD past few values
+    // SD_flags struct should be renewed
+    func_end:
+    return SD_OK;
+}
+
+
+/* Read fixed length string from opened file from specified cursor position
+   Leaves coursor to the end of the string in file
+*/
+sd_status getStrAtPos(File* file, int pos, char* str, uint8_t length){
+
+    if(!file->seek(pos)) return SD_FILE_SEEK_ERROR;
+    file->read((uint8_t*)str, (size_t)length);
+    // int len = 
+    // Serial.printf("str from file: %s\n", str);
+    // Serial.print("return length: ");
+    // Serial.println(len);
+    // Serial.print("argument length: ");
+    // Serial.println(length);
+    // if(len != (int)length) return SD_FILE_READ_BYTES_ERROR;
+    str[length] = '\0';
+    // if(!file->seek(pos)) return SD_FILE_SEEK_ERROR;
 
     return SD_OK;
 }
+
+/* Return mean values read from the end of file
+   maxRewind is parameter for maximum number of records it goes from end to the begining of file
+*/
+sd_status meanLastValsBetween(const char *path, time_t start, time_t end, struct meas* meas, uint8_t maxRewind){
+    
+    if(!SD.exists(path)){
+        return SD_FILE_PATH_NOT_FOUND;
+    }
+
+    File file = SD.open(path);
+    if(!file){
+        return SD_FILE_READ_OPEN_ERROR;
+    }
+
+    if(!file.seek(0, SeekEnd)) return SD_FILE_SEEK_ERROR;
+    int cursor = file.position();
+
+    struct tm ymd = {0};
+    sd_status ret = getYearMonthDayFromPath((char *)path, &ymd);
+    if(ret != SD_OK) return ret;
+
+    char rec[ONE_REC_MAX_LEN] = "";
+    // char rec_copy[ONE_REC_MAX_LEN] = "";
+    char *p1, *p2;
+    struct meas rec_vals = {0};
+    struct meas mean_vals = {0};
+    uint16_t rec_cnt = 0;
+    time_t rec_t;
+
+    for(int i = 0; i < maxRewind; i++){
+        // Serial.println("begin for");
+        cursor = cursor - ONE_REC_TRUE_LEN_WTIME - 1;
+        if (cursor < 0) goto copy_mean_vals_and_exit;
+        // Serial.printf("Cursor pos: %d\n", cursor);
+        ret = getStrAtPos(&file, (cursor == 0) ? 0 : (cursor-1), rec, ONE_REC_TRUE_LEN_WTIME+1);
+        if(ret != SD_OK) return ret;
+
+        // strcpy(rec_copy, rec);
+        if(cursor == 0) p1 = rec;
+        else p1 = strchr(rec, '\n') + 1;
+
+        // Serial.printf("============>> For i == %d\n", i);
+        // Serial.printf("Rec: %s\n", rec);
+        // Serial.printf("Recptr: %d\n", rec_copy);
+        // Serial.printf("p1: %d\n", p1);
+        if(p1 != nullptr){
+            p2 = strchr(p1, ',');
+            // Serial.printf("p2: %d\n", p2);
+            if((p2 != nullptr) & (p2-p1==8)){
+                *p2 = '\0';
+                rec_t = getRecTime(p1, ymd);
+
+                // Serial.printf("Record time: %d -> %s\n", rec_t, ctime(&rec_t));
+                // Serial.printf("Start time:  %d -> %s\n", start, ctime(&start));
+                // Serial.printf("End time:    %d -> %s\n", end, ctime(&end));
+
+                if((difftime(start, rec_t) > 0) | (difftime(rec_t, end) > 0)) continue;
+                // Serial.println(" ==================== > Time cond satisfied");
+
+                *(p2+1+ONE_REC_TRUE_LEN_WOTIME) = '\0';
+                // Serial.printf("meas_str: %s\n", p2+1);
+                ret = convRecValues((p2+1), &rec_vals);
+                if (ret != SD_OK) return ret;
+
+                // Serial.println("Rec_vals: ");
+                // Serial.printf("voltage: %f\n", rec_vals.voltage);
+                // Serial.printf("current: %f\n", rec_vals.current);
+                // Serial.printf("power: %f\n", rec_vals.power);
+                // Serial.printf("energy: %f\n", rec_vals.energy);
+                // Serial.printf("frequency: %f\n", rec_vals.frequency);
+                // Serial.printf("pf: %f\n", rec_vals.pf);
+                mean_vals.voltage   = ((mean_vals.voltage   * rec_cnt) + rec_vals.voltage)  /(rec_cnt+1);
+                mean_vals.current   = ((mean_vals.current   * rec_cnt) + rec_vals.current)  /(rec_cnt+1);
+                mean_vals.power     = ((mean_vals.power     * rec_cnt) + rec_vals.power)    /(rec_cnt+1);
+                mean_vals.energy    = ((mean_vals.energy    * rec_cnt) + rec_vals.energy)   /(rec_cnt+1);
+                mean_vals.frequency = ((mean_vals.frequency * rec_cnt) + rec_vals.frequency)/(rec_cnt+1);
+                mean_vals.pf        = ((mean_vals.pf        * rec_cnt) + rec_vals.pf)       /(rec_cnt+1);
+                rec_cnt = rec_cnt + 1;
+            }else return SD_NULL_PRT_ERROR;
+        }else return SD_NULL_PRT_ERROR;
+
+        // Serial.printf("voltage: %f\n", mean_vals.voltage);
+        // Serial.printf("current: %f\n", mean_vals.current);
+        // Serial.printf("power: %f\n", mean_vals.power);
+        // Serial.printf("energy: %f\n", mean_vals.energy);
+        // Serial.printf("frequency: %f\n", mean_vals.frequency);
+        // Serial.printf("pf: %f\n", mean_vals.pf);
+
+        // Serial.println("End For");
+    }
+
+    copy_mean_vals_and_exit:
+    meas->voltage   = mean_vals.voltage;
+    meas->current   = mean_vals.current;
+    meas->power     = mean_vals.power;
+    meas->energy    = mean_vals.energy;
+    meas->frequency = mean_vals.frequency;
+    meas->pf        = mean_vals.pf;
+
+    return SD_OK;
+}
+
+
+sd_status convRecValues(char* rec_str, struct meas* meas_vals){
+    uint8_t n = sscanf(rec_str, "%f,%f,%f,%f,%f,%f\n", &meas_vals->voltage,
+                                                       &meas_vals->current,
+                                                       &meas_vals->power,
+                                                       &meas_vals->energy,
+                                                       &meas_vals->frequency,
+                                                       &meas_vals->pf);
+    if (n != 6) return SD_STR_TO_VAL_CONV_ERROR;
+
+    return SD_OK;
+}
+
+/* Get time_t value of record
+   time_str is HH:MI:SS type string
+   ymd is struct tm object in which year, month and day should be present
+*/
+time_t getRecTime(const char *time_str, struct tm ymd){
+    char tmp[3] = "";
+
+    // Serial.println("In getRecTime()");
+
+    strncpy(tmp, time_str, 2); tmp[2] = '\0';
+    ymd.tm_hour = atoi(tmp);
+    strncpy(tmp, time_str+3, 2); tmp[2] = '\0';
+    ymd.tm_min = atoi(tmp);
+    strncpy(tmp, time_str+6, 2); tmp[2] = '\0';
+    ymd.tm_sec = atoi(tmp);
+
+    // Serial.printf("Year: %d\n", ymd.tm_year);
+    // Serial.printf("Month: %d\n", ymd.tm_mon);
+    // Serial.printf("Day: %d\n", ymd.tm_mday);
+    // Serial.printf("Hour: %d\n", ymd.tm_hour);
+    // Serial.printf("Min:  %d\n", ymd.tm_min);
+    // Serial.printf("Sec:  %d\n", ymd.tm_sec);
+
+    time_t t1 = mktime(&ymd);
+    return t1;
+}
+
+sd_status getYearMonthDayFromPath(char path[], struct tm *ymd){
+    char *p1, *end;
+    p1 = strchr(path, '/');
+    if(p1 == nullptr) return SD_SLASH_NOT_FOUND_IN_PATH_ERROR;
+
+    end = path + strlen(path);
+    p1 = end;
+    uint8_t tmp_cnt = 0;
+    while(tmp_cnt != 4){
+        if(end - p1 > 30) return SD_PATH_INFERENCE_ERROR;
+        if(*p1 == '/') tmp_cnt++;
+        p1 = p1 - 1;
+    }
+    p1 = p1 + 2;
+    char year[5], month[3], day[3];
+    strncpy(year, p1, 4); year[4] = '\0';
+    p1 = p1 + 5;
+    strncpy(month, p1, 2); month[2] = '\0';
+    p1 = p1 + 3;
+    strncpy(day, p1, 2); day[2] = '\0';
+    
+    // Serial.printf("year: %s, month: %s, day: %s\n", year, month, day);
+    ymd->tm_year = atoi(year);
+    ymd->tm_mon  = atoi(month);
+    ymd->tm_mday = atoi(day);
+    // if((ymd->tm_year == 0) | (ymd->tm_mon == 0) | (ymd->tm_mday == 0)) return SD_YMD_CONV_ERROR;
+
+    ymd->tm_year = ymd->tm_year - 1900;
+    ymd->tm_mon = ymd->tm_mon - 1;
+
+    return SD_OK;
+}
+
 
 void updateSDFlagCounter(){
     if(SD_flags.cnt >= 3600){
@@ -525,6 +824,7 @@ void updateSDFlagCounter(){
 }
 
 void handleErrorSD(sd_status status){
+    Serial.print("!!!!!!!!! Error: ");
     if(status == SD_ABSENT){
         Serial.println("SD Card is not inserted");
     }else if (status == SD_INIT_ERROR){
@@ -552,7 +852,55 @@ void handleErrorSD(sd_status status){
     }else if (status == SD_FILE_WRITE_FAILED)
     {
         Serial.println("Could not write to a file");
+    }else if (status == SD_FILE_PATH_NOT_FOUND)
+    {
+        Serial.println("File on specified path was not found");
+    }else if (status == SD_FILE_READ_OPEN_ERROR)
+    {
+        Serial.println("Could not open file for read");
+    }else if (status == SD_FILE_SEEK_ERROR)
+    {
+        Serial.println("Could not position cursor to a specified location");
+    }else if (status == SD_FILE_READ_BYTES_ERROR)
+    {
+        Serial.println("Error in reading bytes from file");
+    }else if (status == SD_RETRIEVE_STR_AT_POS_ERROR)
+    {
+        Serial.println("Error retrieving record from file");
+    }else if (status == SD_SLASH_NOT_FOUND_IN_PATH_ERROR)
+    {
+        Serial.println("Slash not found in path");
+    }else if (status == SD_PATH_INFERENCE_ERROR)
+    {
+        Serial.println("Path could not be inferred");
+    }else if (status == SD_YMD_CONV_ERROR)
+    {
+        Serial.println("Error occured during year, month or day conversion from string to int");
+    }else if (status == SD_YMD_CONV_FUNC_ERROR)
+    {
+        Serial.println("getYearMonthDayFromPath() function errored");
+    }else if (status == SD_STR_TO_VAL_CONV_ERROR)
+    {
+        Serial.println("Error in getting 6 measurement values from string");
+    }else if (status == SD_NULL_PRT_ERROR)
+    {
+        Serial.println("Got nullptr where was not expected");
+    }else if (status == SD_FILE_CURSOR_OUT_OF_RANGE_ERROR)
+    {
+        Serial.println("Crusor out of range when reading from file");
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

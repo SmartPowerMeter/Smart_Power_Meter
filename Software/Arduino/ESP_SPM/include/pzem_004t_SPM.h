@@ -11,6 +11,16 @@ typedef enum{
   PZEM_READ_ERROR
 } pzem_status;
 
+struct meas
+{
+  float voltage;
+  float current;
+  float power;
+  float energy;
+  float frequency;
+  float pf;
+};
+
 PZEM004Tv30 pzemInit();
 pzem_status pzemReadValues(PZEM004Tv30& pzem);
 void pzemPrintValues(PZEM004Tv30& pzem, Print& port);

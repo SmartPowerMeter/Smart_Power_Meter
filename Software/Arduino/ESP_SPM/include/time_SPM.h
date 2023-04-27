@@ -17,8 +17,6 @@ uint8_t getESPHour24();
 uint8_t getESPMin();
 uint8_t getESPSec();
 time_status setESPTimeUsingWiFi(char* ssid, char *pass);
-void init1SecInterrupt();
-void IRAM_ATTR every1Sec();
 void everySecond();
 
 void timeHandleError(time_status status);
