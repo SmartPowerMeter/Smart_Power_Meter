@@ -91,8 +91,8 @@ export class ReportsComponent implements OnInit, OnChanges {
       // this.lineChartAvg = res.avgTenMonths;
       // this.lineChartCon = res.conTenMonths;
       this.createBarChart();
-      this.createLineChart();
-      this.createPieChart();
+      // this.createLineChart();
+      // this.createPieChart();
     });
   }
 
@@ -114,7 +114,7 @@ export class ReportsComponent implements OnInit, OnChanges {
           //   backgroundColor: "blue",
           // },
           {
-            label: "Consumed Avarage",
+            label: "Consumed",
             data: this.barChartCon,
             backgroundColor: "limegreen",
           },
@@ -220,7 +220,9 @@ export class ReportsComponent implements OnInit, OnChanges {
         this.barChartCon = res.map((item: any) => item.value);
         this.barChartLabels = [];
         this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
-        this.barChart.data.datasets[1].data = this.barChartCon;
+        // console.log(this.barChart.data.datasets[1].data)
+        console.log(this.barChart.data.datasets[0].data)
+        this.barChart.data.datasets[0].data = this.barChartCon;
         this.barChart.data.labels = this.barChartLabels;
         this.barChart.update();
       });
