@@ -10,6 +10,17 @@ import { Subscription } from "rxjs";
 import { UserService } from "src/app/services/user.service";
 import { ApiService } from "../../services/api.service";
 
+interface ChartOptions {
+  aspectRatio?: number;
+  scales?: {
+    xAxes?: any[];
+    yAxes?: any[];
+    radialAxes?: any[];
+    polarAxes?: any[];
+    [key: string]: any;
+  };
+}
+
 @Component({
   selector: "app-reports",
   templateUrl: "./reports.component.html",
@@ -102,19 +113,12 @@ export class ReportsComponent implements OnInit, OnChanges {
 
   createBarChart() {
     this.barChart = new Chart("MyBarChart", {
-      type: "bar", //this denotes tha type of chart
-
+      type: "bar",
       data: {
-        // values on X-Axis
         labels: this.barChartLabels,
         datasets: [
-          // {
-          //   label: "Avarage",
-          //   data: this.barChartAvg,
-          //   backgroundColor: "blue",
-          // },
           {
-            label: "Consumed",
+            label: "Consumed Avarage",
             data: this.barChartCon,
             backgroundColor: "limegreen",
           },
@@ -122,9 +126,26 @@ export class ReportsComponent implements OnInit, OnChanges {
       },
       options: {
         aspectRatio: 2.5,
-      },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                min: 200,
+                max: 250,
+              },
+            },
+          ],
+        },
+      } as ChartOptions,
     });
   }
+
+
+
+
+
+
+
 
   createPieChart() {
     this.pieChart = new Chart("MyPieChart", {
