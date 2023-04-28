@@ -220,8 +220,6 @@ export class ReportsComponent implements OnInit, OnChanges {
         this.barChartCon = res.map((item: any) => item.value);
         this.barChartLabels = [];
         this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
-        // console.log(this.barChart.data.datasets[1].data)
-        console.log(this.barChart.data.datasets[0].data)
         this.barChart.data.datasets[0].data = this.barChartCon;
         this.barChart.data.labels = this.barChartLabels;
         this.barChart.update();
