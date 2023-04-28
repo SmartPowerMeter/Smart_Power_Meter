@@ -2,22 +2,27 @@
 #include <ArduinoJson.h>
 #include <WiFiManager.h>
 #include <PZEM004Tv30.h>
+#include "time.h"
 
 PZEM004Tv30 pzem(Serial2, 16, 17);
 
 #define RELAY 26
 
 // MQTT Broker
-const char *mqtt_broker = "161.35.207.10";
-const char *clientId = "12345";
-const char *topic = "measurement-12345";
+const char *mqtt_broker = "192.168.1.27";
+const char *customerId = "bf227d0cb4b2";
+const char *topic = "measurement-bf227d0cb4b2";
 const char *mqtt_username = "client";
 const char *mqtt_password = "pass";
 const int mqtt_port = 707;
 
+// NTP Server
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 10800;
+const int   daylightOffset_sec = 3600;
+
 WiFiClient espClient;
 PubSubClient client(espClient);
-StaticJsonDocument<200> measurement;
 
 void setup() {
   Serial.begin(115200);
@@ -32,7 +37,7 @@ void setup() {
   // reset settings - wipe stored credentials for testing, these are stored by the esp library
   //wm.resetSettings();
 
-  WiFiManagerParameter data("ClientId", "Enter your string here", "default string", 50);
+  WiFiManagerParameter data("CustomerId", "Enter your string here", "default string", 50);
   wm.addParameter(&data);
     
   bool connected = wm.autoConnect("AutoConnectAP","password"); // password protected ap
@@ -44,15 +49,19 @@ void setup() {
       Serial.println("Connected to the WIFI");
   }
 
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
   client.setServer(mqtt_broker, mqtt_port);
   client.setCallback(callback);
-  client.subscribe("admin-12345");
 }
 
 void reconnect() {
   while (!client.connected()) {
-    if (!client.connect(clientId, mqtt_username, mqtt_password)) {
+    if (!client.connect(customerId, mqtt_username, mqtt_password)) {
       delay(5000);
+    }
+    else{
+      client.subscribe("relay-bf227d0cb4b2");
     }
   }
 }
@@ -63,6 +72,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
   } else {
     digitalWrite(RELAY, HIGH);
   }
+
+int state = digitalRead(RELAY);
+String stateStr = String(state);
+client.publish("relay-state-bf227d0cb4b2", stateStr.c_str());
 }
 
 void loop() {
@@ -77,23 +90,58 @@ void loop() {
   double energy = pzem.energy();
   double frequency = pzem.frequency();
   double pf = pzem.pf();
-
+  String timeStamp = GetLocalTime();
+  Serial.println(timeStamp);
 
   if(!isnan(voltage) && !isnan(current) && !isnan(power) && !isnan(energy) && !isnan(frequency) && !isnan(pf))
   {
+    StaticJsonDocument<200> measurement;
+
     measurement["Voltage"] = voltage;
     measurement["Current"] = current;
     measurement["Power"] = power;
     measurement["Energy"] = energy;
     measurement["Frequency"] = frequency;
     measurement["PowerFactor"] = pf;
+    measurement["TimeStamp"] = timeStamp;
 
     char json[200];
     serializeJson(measurement, json);
 
+    Serial.println(json);
+
     client.publish(topic, json);
   }
-  
 
   delay(1000);
+}
+
+///////////////////////////////////////////////////////
+
+String GetLocalTime(){
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return "";
+  }
+
+  return FormatDateTime(timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday, timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+}
+
+String FormatDateTime(int year, int month, int day, int hour, int minute, int second){
+  String formattedDateTime = "";
+  formattedDateTime = formattedDateTime + year + "-" + GetTwoDigitNumber(month) + "-" + GetTwoDigitNumber(day) + "T" + GetTwoDigitNumber(hour) + ":" + GetTwoDigitNumber(minute) + ":" + GetTwoDigitNumber(second);
+
+  return formattedDateTime;
+}
+
+String GetTwoDigitNumber(int num){
+  String res = "";
+
+  if(num > 9){
+    return res + num;
+  }
+  else{
+    return res + "0" + num;
+  }
 }

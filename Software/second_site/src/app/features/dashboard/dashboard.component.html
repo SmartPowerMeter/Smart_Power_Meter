@@ -23,29 +23,66 @@
         </label>
       </div>
       </div>
+
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          style="width:150px;"
+        >
+          {{ selectedOption }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 30 Minutes'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
+            >Last 30 Minutes</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 1 Hour'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
+            >Last 1 Hour</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 3 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
+            >Last 3 Hours</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 6 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
+            >Last 6 Hours</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 12 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
+            >Last 12 Hours</a
+          >
+          <a class="dropdown-item" href="#" (click)="selectOption('Last 24 Hours'); send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)"
+            >Last 24 Hours</a
+          >
+        </div>
+        <!-- <button type="button" style="margin-left: 20px;" class="btn btn-primary" (click)="send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time)">Send</button> -->
+      </div>
+      
+
       <div class="main-div">
         <div class="child-1">
-          <p>Voltage</p>
+          <p>Voltage: {{this.lineChartCon1?.slice(-1)?.[0]?.toFixed(1)}} V</p>
           <canvas  id="MyLineChart1" >{{ lineChart1 }}</canvas>
         </div>
         <div class="child-2">
-          <p>Current</p>
+          <p>Current: {{this.lineChartCon2?.slice(-1)?.[0]?.toFixed(3)}} A</p>
           <canvas  id="MyLineChart2" >{{ lineChart2 }}</canvas>
         </div>
         <div class="child-3">
-          <p>Power</p>
+          <p>Power: {{this.lineChartCon3?.slice(-1)?.[0]?.toFixed(1)}} W</p>
           <canvas  id="MyLineChart3" >{{ lineChart3 }}</canvas>
         </div>
         <div class="child-4">
-          <p>Frequency</p>
+          <p>Energy: {{this.lineChartCon4?.slice(-1)?.[0]?.toFixed(2)}} KWh</p>
           <canvas  id="MyLineChart4" >{{ lineChart4 }}</canvas>
         </div>
         <div class="child-5">
-          <p>Power Factor</p>
+          <p>Power Factor: {{this.lineChartCon5?.slice(-1)?.[0]?.toFixed(2)}} kVA</p>
           <canvas  id="MyLineChart5" >{{ lineChart5 }}</canvas>
         </div>
         <div class="child-6">
-          <p>Energy</p>
+          <p>Frequency: {{this.lineChartCon6?.slice(-1)?.[0]?.toFixed(1)}} Hz</p>
           <canvas  id="MyLineChart6" >{{ lineChart6 }}</canvas>
         </div>
       </div>
@@ -71,7 +108,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Do you want to continue?
+        {{this.modalText}} Do you want to continue?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-success" data-dismiss="modal" (click)="clicked()">Yes</button>
