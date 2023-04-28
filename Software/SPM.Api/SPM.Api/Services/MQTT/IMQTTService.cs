@@ -3,5 +3,7 @@
     public interface IMQTTService
     {
         Task<bool> SetRelayStatus(bool activate);
+
+        Task<bool> GetRelayStatus();
     }
 }

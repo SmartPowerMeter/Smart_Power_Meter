@@ -65,5 +65,12 @@ namespace SPM.Api.Services.MQTT
 
             return user.RelayEnabled;
         }
+
+        public async Task<bool> GetRelayStatus()
+        {
+            var user = await _dbContext.User.FirstAsync(x => x.Id == _workContext.CurrentUser.Id);
+
+            return user.RelayEnabled;
+        }
     }
 }

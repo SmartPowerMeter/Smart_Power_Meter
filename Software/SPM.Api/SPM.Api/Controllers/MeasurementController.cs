@@ -46,5 +46,14 @@ namespace SPM.Api.Controllers
 
             return isActivated;
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<bool> GetRelayStatus()
+        {
+            var isActivated = await _mqttService.GetRelayStatus();
+
+            return isActivated;
+        }
     }
 }
