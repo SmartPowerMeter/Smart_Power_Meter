@@ -85,7 +85,7 @@ export class ReportsComponent implements OnInit, OnChanges {
       this.barChartCon = [];
       this.barChartCon = res.map((item: any) => item.value);
       this.barChartLabels = [];
-      this.barChartLabels = res.map((item: any) => item.time);
+      this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));;
       // this.barChartAvg = res.avgTenDays;
       // this.barChartCon = res.conTenDays;
       // this.lineChartAvg = res.avgTenMonths;
@@ -108,13 +108,13 @@ export class ReportsComponent implements OnInit, OnChanges {
         // values on X-Axis
         labels: this.barChartLabels,
         datasets: [
+          // {
+          //   label: "Avarage",
+          //   data: this.barChartAvg,
+          //   backgroundColor: "blue",
+          // },
           {
-            label: "Avarage",
-            data: this.barChartAvg,
-            backgroundColor: "blue",
-          },
-          {
-            label: "Consumed",
+            label: "Consumed Avarage",
             data: this.barChartCon,
             backgroundColor: "limegreen",
           },
@@ -219,7 +219,7 @@ export class ReportsComponent implements OnInit, OnChanges {
         this.barChartCon = [];
         this.barChartCon = res.map((item: any) => item.value);
         this.barChartLabels = [];
-        this.barChartLabels = res.map((item: any) => item.time);
+        this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
         this.barChart.data.datasets[1].data = this.barChartCon;
         this.barChart.data.labels = this.barChartLabels;
         this.barChart.update();
