@@ -10,6 +10,17 @@ import { Subscription } from "rxjs";
 import { UserService } from "src/app/services/user.service";
 import { ApiService } from "../../services/api.service";
 
+interface ChartOptions {
+  aspectRatio?: number;
+  scales?: {
+    xAxes?: any[];
+    yAxes?: any[];
+    radialAxes?: any[];
+    polarAxes?: any[];
+    [key: string]: any;
+  };
+}
+
 @Component({
   selector: "app-reports",
   templateUrl: "./reports.component.html",
@@ -85,14 +96,14 @@ export class ReportsComponent implements OnInit, OnChanges {
       this.barChartCon = [];
       this.barChartCon = res.map((item: any) => item.value);
       this.barChartLabels = [];
-      this.barChartLabels = res.map((item: any) => item.time);
+      this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));;
       // this.barChartAvg = res.avgTenDays;
       // this.barChartCon = res.conTenDays;
       // this.lineChartAvg = res.avgTenMonths;
       // this.lineChartCon = res.conTenMonths;
       this.createBarChart();
-      this.createLineChart();
-      this.createPieChart();
+      // this.createLineChart();
+      // this.createPieChart();
     });
   }
 
@@ -102,19 +113,12 @@ export class ReportsComponent implements OnInit, OnChanges {
 
   createBarChart() {
     this.barChart = new Chart("MyBarChart", {
-      type: "bar", //this denotes tha type of chart
-
+      type: "bar",
       data: {
-        // values on X-Axis
         labels: this.barChartLabels,
         datasets: [
           {
-            label: "Avarage",
-            data: this.barChartAvg,
-            backgroundColor: "blue",
-          },
-          {
-            label: "Consumed",
+            label: "Consumed Avarage",
             data: this.barChartCon,
             backgroundColor: "limegreen",
           },
@@ -122,9 +126,26 @@ export class ReportsComponent implements OnInit, OnChanges {
       },
       options: {
         aspectRatio: 2.5,
-      },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                min: 200,
+                max: 250,
+              },
+            },
+          ],
+        },
+      } as ChartOptions,
     });
   }
+
+
+
+
+
+
+
 
   createPieChart() {
     this.pieChart = new Chart("MyPieChart", {
@@ -215,12 +236,11 @@ export class ReportsComponent implements OnInit, OnChanges {
         2
       )
       .subscribe((res) => {
-        // console.log(res);
         this.barChartCon = [];
         this.barChartCon = res.map((item: any) => item.value);
         this.barChartLabels = [];
-        this.barChartLabels = res.map((item: any) => item.time);
-        this.barChart.data.datasets[1].data = this.barChartCon;
+        this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
+        this.barChart.data.datasets[0].data = this.barChartCon;
         this.barChart.data.labels = this.barChartLabels;
         this.barChart.update();
       });
