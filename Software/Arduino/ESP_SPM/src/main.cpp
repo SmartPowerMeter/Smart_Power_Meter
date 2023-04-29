@@ -26,11 +26,11 @@ void setup() {
     timeHandleError(time_ret);
   }
    
-  time_t tt = time(nullptr) - 11*60;
-  struct timeval tv = {tt, 0};
-  settimeofday(&tv, nullptr);
-  Serial.print("Time after modification: ");
-  Serial.println(ctime(&tt));
+  // time_t tt = time(nullptr) - 5*60;
+  // struct timeval tv = {tt, 0};
+  // settimeofday(&tv, nullptr);
+  // Serial.print("Time after modification: ");
+  // Serial.println(ctime(&tt));
 
   pinMode(22, OUTPUT);  // for testing
   init1SecInterrupt();

@@ -21,13 +21,17 @@ const char formatStringWithTime[] = "%02d:%02d:%02d,%05.1f,%07.3f,%07.1f,%07.2f,
 const char formatString[] = "%05.1f,%07.3f,%07.1f,%07.2f,%04.1f,%04.2f\n";
 char append_str[3000] = "";
 
+char path[50];
+char full_path[50] = "";
+time_t t_now;
+
 extern PZEM004Tv30 pzem;
 extern bool f_SD_fall_edge;
 extern unsigned long SD_insert_start;
 
 uint8_t SD_CARD_WRITE_ENABLE = 1;
 
-struct SD_event_flags SD_flags = {0};
+// struct SD_event_flags SD_flags = {0};
 struct SD_1min_mean meanVals_1min = {0};
 
 
@@ -435,7 +439,7 @@ void formatPzemValuesWithTime(PZEM004Tv30& pzem, char* output){
 }
 
 void formatMeasValuesWithTime(char* output, struct meas* meas, time_t time){
-    struct tm *dt = gmtime(&time);
+    struct tm *dt = localtime(&time);
     sprintf(output, formatStringWithTime,
                         dt->tm_hour,
                         dt->tm_min,
@@ -494,25 +498,51 @@ sd_status SDRoutineEverySec(){
     sd_status ret = appendToStr();
     if(ret != SD_OK) return ret;
 
-    accumulateMean_1min();
-    updateSDFlagCounter();
-
-    char path[50];
-    char full_path[50] = "";
-    sprintf(path, "/SPM_DATA/%04d/%02d/%02d",
-                getESPYear(),
-                getESPMonth(),
-                getESPDay());
+    accumulateMean_1min();  // for m.txt
+    // updateSDFlagCounter();
     
-    if(SD_flags.f_1min == 1){
-        SD_flags.f_1min = 0;
+    // if(SD_flags.f_1min == 1){
+    //     SD_flags.f_1min = 0;
 
+    //     ret = checkCardPrecense(SD_PRECENCE);
+    //     if (ret != SD_OK) {
+    //         memset(append_str, 0, sizeof(append_str));
+    //         return ret;
+    //     }
+
+    //     strcpy(full_path, path);
+    //     strcat(full_path, "/s.txt");
+    //     if(!SD.exists(full_path)){
+    //         if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+    //     }
+
+    //     ret = appendFile(SD, full_path, append_str);
+    //     if(ret != SD_OK) return ret;
+    //     // Serial.printf("Appended to s.txt\n%s\n", append_str);
+    //     memset(append_str, 0, sizeof(append_str));
+
+    //     return SD_OK;
+    // }
+    t_now = time(nullptr);
+    struct tm *tm_now = localtime(&t_now);
+
+    // on every whole second
+    if (tm_now->tm_sec == 0){
         ret = checkCardPrecense(SD_PRECENCE);
         if (ret != SD_OK) {
-            memset(append_str, 0, sizeof(append_str));
+            memset(append_str, 0, sizeof(append_str));  // clear string if SD card is not inserted
+            memset(&meanVals_1min, 0, sizeof(meanVals_1min)); // clear accumulate struct for m.txt
             return ret;
         }
+        tm_now->tm_year = tm_now->tm_year + 1900;
+        tm_now->tm_mon = tm_now->tm_mon + 1;
 
+        sprintf(path, "/SPM_DATA/%04d/%02d/%02d",
+                                            tm_now->tm_year,
+                                            tm_now->tm_mon,
+                                            tm_now->tm_mday);
+
+        // add to s.txt
         strcpy(full_path, path);
         strcat(full_path, "/s.txt");
         if(!SD.exists(full_path)){
@@ -524,15 +554,10 @@ sd_status SDRoutineEverySec(){
         // Serial.printf("Appended to s.txt\n%s\n", append_str);
         memset(append_str, 0, sizeof(append_str));
 
-        return SD_OK;
-    }
 
-    ret = checkCardPrecense(SD_PRECENCE);
-    if (ret != SD_OK) return ret;
-
-    if (getESPSec() == 0){
+        // add to m.txt
         char data[ONE_REC_MAX_LEN] = "";
-        formatMeasValuesWithTime(data,  &meanVals_1min.meas, time(nullptr));
+        formatMeasValuesWithTime(data,  &meanVals_1min.meas, t_now);
         strcpy(full_path, path);
         strcat(full_path, "/m.txt");
         if(!SD.exists(full_path)){
@@ -542,99 +567,103 @@ sd_status SDRoutineEverySec(){
         if(ret != SD_OK) return ret;
         memset(&meanVals_1min, 0, sizeof(meanVals_1min));
         // Serial.printf("Appended to m.txt\n%s\n", data);
+
+
+        // 5 min
+        if (tm_now->tm_min % 5 == 0){
+            Serial.println("-------------------> Into 5 minute");
+            // char data[ONE_REC_MAX_LEN] = "";
+            time_t start, end;
+            end = t_now;
+            start = end - 300;
+
+            struct meas meas = {0};
+            strcpy(full_path, path);
+            strcat(full_path, "/m.txt");
+            ret = meanLastValsBetween(full_path, start, end, &meas, 7);
+            if(ret != SD_OK){
+                handleErrorSD(ret);
+                goto func_end;
+            }
+            // Serial.print("Before formatting:\n");
+            // Serial.printf("voltage: %f\n", meas.voltage);
+            // Serial.printf("current: %f\n", meas.current);
+            // Serial.printf("power: %f\n", meas.power);
+            // Serial.printf("energy: %f\n", meas.energy);
+            // Serial.printf("frequency: %f\n", meas.frequency);
+            // Serial.printf("pf: %f\n", meas.pf);
+
+            formatMeasValuesWithTime(data,  &meas, t_now);
+
+            // Serial.printf("formatted: %s\n", data);
+
+            strcpy(full_path, path);
+            strcat(full_path, "/5m.txt");
+            if(!SD.exists(full_path)){
+                if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+            }
+            ret = appendFile(SD, full_path, data);
+            if(ret != SD_OK) return ret;
+            // Serial.printf("Appended to 5m.txt\n%s\n", data);
+
+            // 15 min
+            if (tm_now->tm_min % 15 == 0){
+                Serial.println("-------------------> Into 15 minute");
+                // char data[ONE_REC_MAX_LEN] = "";
+                // time_t start, end;
+                // end = time(nullptr);
+                start = end - 900; // 60*15
+
+                // struct meas meas;
+                strcpy(full_path, path);
+                strcat(full_path, "/5m.txt");
+                ret = meanLastValsBetween(full_path, start, end, &meas, 5);
+                if(ret != SD_OK){
+                    handleErrorSD(ret);
+                    goto func_end;
+                }
+                formatMeasValuesWithTime(data,  &meas, t_now);
+
+                strcpy(full_path, path);
+                strcat(full_path, "/15m.txt");
+                if(!SD.exists(full_path)){
+                    if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+                }
+                ret = appendFile(SD, full_path, data);
+                if(ret != SD_OK) return ret;
+                // Serial.printf("Appended to 15m.txt\n%s\n", data);
+
+                // 1 hour
+                if (tm_now->tm_min == 0){
+                    Serial.println("-------------------> Into 1 hour");
+                    // char data[ONE_REC_MAX_LEN] = "";
+                    // time_t start, end;
+                    // end = time(nullptr);
+                    start = end - 3600; // 60*60
+
+                    // struct meas meas;
+                    strcpy(full_path, path);
+                    strcat(full_path, "/15m.txt");
+                    ret = meanLastValsBetween(full_path, start, end, &meas, 7);
+                    if(ret != SD_OK){
+                        handleErrorSD(ret);
+                        goto func_end;
+                    }
+                    formatMeasValuesWithTime(data,  &meas, t_now);
+
+                    strcpy(full_path, path);
+                    strcat(full_path, "/h.txt");
+                    if(!SD.exists(full_path)){
+                        if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
+                    }
+                    ret = appendFile(SD, full_path, data);
+                    if(ret != SD_OK) return ret;
+                    // Serial.printf("Appended to h.txt\n%s\n", data);
+                }
+            }
+        }
     }
 
-    if ((getESPMin() % 5 == 0) & (getESPSec() == 0)){
-        char data[ONE_REC_MAX_LEN] = "";
-        time_t start, end;
-        end = time(nullptr);
-        start = end - 300;
-
-        struct meas meas = {0};
-        strcpy(full_path, path);
-        strcat(full_path, "/m.txt");
-        ret = meanLastValsBetween(full_path, start, end, &meas, 7);
-        if(ret != SD_OK){
-            handleErrorSD(ret);
-            goto func_end;
-        }
-        // Serial.print("Before formatting:\n");
-        // Serial.printf("voltage: %f\n", meas.voltage);
-        // Serial.printf("current: %f\n", meas.current);
-        // Serial.printf("power: %f\n", meas.power);
-        // Serial.printf("energy: %f\n", meas.energy);
-        // Serial.printf("frequency: %f\n", meas.frequency);
-        // Serial.printf("pf: %f\n", meas.pf);
-
-        formatMeasValuesWithTime(data,  &meas, time(nullptr));
-
-        // Serial.printf("formatted: %s\n", data);
-
-        strcpy(full_path, path);
-        strcat(full_path, "/5m.txt");
-        if(!SD.exists(full_path)){
-            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
-        }
-        ret = appendFile(SD, full_path, data);
-        if(ret != SD_OK) return ret;
-        // Serial.printf("Appended to 5m.txt\n%s\n", data);
-    }
-
-    if ((getESPMin() % 15 == 0) & (getESPSec() == 0)){
-        char data[ONE_REC_MAX_LEN] = "";
-        time_t start, end;
-        end = time(nullptr);
-        start = end - 900; // 60*15
-
-        struct meas meas;
-        strcpy(full_path, path);
-        strcat(full_path, "/5m.txt");
-        ret = meanLastValsBetween(full_path, start, end, &meas, 5);
-        if(ret != SD_OK){
-            handleErrorSD(ret);
-            goto func_end;
-        }
-        formatMeasValuesWithTime(data,  &meas, time(nullptr));
-
-        strcpy(full_path, path);
-        strcat(full_path, "/15m.txt");
-        if(!SD.exists(full_path)){
-            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
-        }
-        ret = appendFile(SD, full_path, data);
-        if(ret != SD_OK) return ret;
-        // Serial.printf("Appended to 15m.txt\n%s\n", data);
-    }
-
-    if ((getESPMin() == 0) & (getESPSec() == 0)){
-        char data[ONE_REC_MAX_LEN] = "";
-        time_t start, end;
-        end = time(nullptr);
-        start = end - 3600; // 60*60
-
-        struct meas meas;
-        strcpy(full_path, path);
-        strcat(full_path, "/15m.txt");
-        ret = meanLastValsBetween(full_path, start, end, &meas, 7);
-        if(ret != SD_OK){
-            handleErrorSD(ret);
-            goto func_end;
-        }
-        formatMeasValuesWithTime(data,  &meas, time(nullptr));
-
-        strcpy(full_path, path);
-        strcat(full_path, "/h.txt");
-        if(!SD.exists(full_path)){
-            if(!makeDirRecursive(SD, path)) return SD_FILE_CREATION_ERROR;
-        }
-        ret = appendFile(SD, full_path, data);
-        if(ret != SD_OK) return ret;
-        // Serial.printf("Appended to h.txt\n%s\n", data);
-    }
-
-    // implemet 5m, 15m, 1h write
-    // need to read back from SD past few values
-    // SD_flags struct should be renewed
     func_end:
     return SD_OK;
 }
@@ -799,6 +828,8 @@ time_t getRecTime(const char *time_str, struct tm ymd){
     // Serial.printf("Sec:  %d\n", ymd.tm_sec);
 
     time_t t1 = mktime(&ymd);
+    // Serial.print("Record time: ");
+    // Serial.println(ctime(&t1));
     return t1;
 }
 
@@ -836,17 +867,17 @@ sd_status getYearMonthDayFromPath(char path[], struct tm *ymd){
 }
 
 
-void updateSDFlagCounter(){
-    if(SD_flags.cnt >= 3600){
-        SD_flags.cnt = 0;
-        SD_flags.f_1hour = 1;
-    }else{
-        SD_flags.cnt++;
-        if(SD_flags.cnt % 60 == 0)   SD_flags.f_1min = 1;
-        if(SD_flags.cnt % 300 == 0)  SD_flags.f_5min = 1;
-        if(SD_flags.cnt % 900 == 0)  SD_flags.f_15min = 1;
-    }
-}
+// void updateSDFlagCounter(){
+//     if(SD_flags.cnt >= 3600){
+//         SD_flags.cnt = 0;
+//         SD_flags.f_1hour = 1;
+//     }else{
+//         SD_flags.cnt++;
+//         if(SD_flags.cnt % 60 == 0)   SD_flags.f_1min = 1;
+//         if(SD_flags.cnt % 300 == 0)  SD_flags.f_5min = 1;
+//         if(SD_flags.cnt % 900 == 0)  SD_flags.f_15min = 1;
+//     }
+// }
 
 void handleErrorSD(sd_status status){
     Serial.print("!!!!!!!!! Error: ");

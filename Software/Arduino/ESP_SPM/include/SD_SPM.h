@@ -32,14 +32,14 @@ typedef enum{
   SD_FILE_CURSOR_OUT_OF_RANGE_ERROR
 } sd_status;
 
-struct SD_event_flags
-{
-  uint8_t f_1min;
-  uint8_t f_5min;
-  uint8_t f_15min;
-  uint8_t f_1hour;
-  uint16_t cnt;
-};
+// struct SD_event_flags
+// {
+//   uint8_t f_1min;
+//   uint8_t f_5min;
+//   uint8_t f_15min;
+//   uint8_t f_1hour;
+//   uint16_t cnt;
+// };
 
 struct SD_1min_mean
 {
@@ -73,7 +73,7 @@ bool insertRecord(fs::FS &fs, const char* path, double volt, double amp, double 
 bool makeDirRecursive(fs::FS &fs, const char *dir);
 void formatPzemValuesWithTime(PZEM004Tv30& pzem);
 sd_status appendToStr();
-void updateSDFlagCounter();
+// void updateSDFlagCounter();
 sd_status SDRoutineEverySec();
 sd_status getStrAtPos(File* file, int pos, char* str, uint8_t length);
 sd_status meanLastValsBetween(const char *path, time_t start, time_t end, struct meas* meas, uint8_t maxRewind);
