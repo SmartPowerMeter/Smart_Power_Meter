@@ -1,4 +1,4 @@
-version: '2.16.0'
+version: '2.12.2'
 
 networks:
   main_network:
@@ -75,6 +75,9 @@ services:
         ipv4_address: 172.25.5.5
   influxdb:
     image: influxdb:2.6.1
+    mem_limit: 1g
+    mem_reservation: 512M
+    cpus: 1
     expose:
       - 8086
     restart: always
@@ -94,6 +97,9 @@ services:
     build: /home/projects/Smart_Power_Meter/Software/SPM_MQTT
     ports:
       - 707:707
+    mem_limit: 512m
+    mem_reservation: 128M
+    cpus: 0.5
     networks:
       main_network:
         ipv4_address: 172.25.5.7
@@ -102,6 +108,9 @@ services:
   # jenkins:
   #   image: jenkins/jenkins:2.387.1-lts
   #   container_name: jenkins
+  #   mem_limit: 1g
+  #   mem_reservation: 128M
+  #   cpus: 0.25
   #   restart: always
   #   user: root
   #   privileged: true
