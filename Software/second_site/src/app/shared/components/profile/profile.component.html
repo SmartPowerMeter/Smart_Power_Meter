@@ -1,5 +1,5 @@
 <div id="User_q" class="d-flex">
-  <div class="d-flex" (click)="toggleShow()" (clickOutside)="isShown = false">
+  <div class="d-flex pointer" (click)="toggleShow()" (clickOutside)="isShown = false">
     <div id="User_s">
       <div [class.bg_border]="isShown" class="bg">
         <div id="img">
@@ -24,7 +24,7 @@
         <img id="User_ba" src="../../../../assets/img/avatar.svg" />
       </div>
     </div>
-    <div id="Duplicate">
+    <div class="pointer" id="Duplicate">
       <div id="Text">
         <span
           ><img class="profile" src="../../../../assets/img/icon.png"
@@ -34,7 +34,7 @@
         <a (click)="btnClicked()" (click)="toggleShow()">YOUR PROFILE</a><br />
       </div>
     </div>
-    <div id="Notification">
+    <div class="pointer" id="Notification">
       <div id="Text_bc">
         <a
           ><img class="settings" src="../../../../assets/img/settings.png"
@@ -44,14 +44,14 @@
         <a (click)="btnClick()" (click)="toggleShow()">SETTINGS</a>
       </div>
     </div>
-    <div id="Rename">
+    <div class="pointer" (click)="onLogout()" id="Rename">
       <div id="Text_bf">
         <span
           ><img class="logout" src="../../../../assets/img/logout.png"
         /></span>
       </div>
       <div id="Lable_bg">
-        <span (click)="onLogout()">SIGN OUT</span>
+        <span>SIGN OUT</span>
       </div>
     </div>
   </div>

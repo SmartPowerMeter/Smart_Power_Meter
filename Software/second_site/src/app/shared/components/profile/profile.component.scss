@@ -3,11 +3,14 @@
 @import "../../../../assets/color-palette.scss";
 @import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
 #User_q {
-  cursor: pointer;
   margin-right: 121px;
   margin-top: -6px;
   position: relative;
 }
+.pointer{
+  cursor: pointer;
+}
+
 .Barry_Armstrong {
   color: $primary-dark;
   font-family: "Roboto", sans-serif;
