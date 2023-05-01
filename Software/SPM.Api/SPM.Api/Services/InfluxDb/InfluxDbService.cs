@@ -27,7 +27,7 @@ namespace SPM.Api.Services.InfluxDb
 
             var measurementReadings = await QueryAsync(async query =>
             {
-                var flux = $"from(bucket:\"{user.GetBucketName()}\") |> range(start: {dateFrom:s}Z, stop: {dateTo:s}Z) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: 1{duration}, fn: median)";
+                var flux = $"from(bucket:\"{user.GetBucketName()}\") |> range(start: {dateFrom:s}Z, stop: {dateTo:s}Z) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: 1{duration}, fn: mean)";
                 var tables = await query.QueryAsync(flux, _settings.Organization);
                 return tables.SelectMany(table =>
                     table.Records.Select(record =>
@@ -47,7 +47,7 @@ namespace SPM.Api.Services.InfluxDb
 
             var measurementReadings = await QueryAsync(async query =>
             {
-                var flux = $"from(bucket:\"{user.GetBucketName()}\") |> range(start: -{time}) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: {duration}s, fn: median)";
+                var flux = $"from(bucket:\"{user.GetBucketName()}\") |> range(start: -{time}) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: {duration}s, fn: mean)";
                 var tables = await query.QueryAsync(flux, _settings.Organization);
                 return tables.SelectMany(table =>
                     table.Records.Select(record =>

@@ -24,36 +24,35 @@ namespace SPM.Api.Controllers
         [HttpPost]
         public async Task<IEnumerable<MeasurementModel>> GetMeasurement(GetMeasurementRequest request)
         {
-            var data = await _measurementService.GetMeasurement(request.MeasurementType, request.TimeRange, request.AggregateDuration);
-
-            return data;
+            return await _measurementService.GetMeasurement(request.MeasurementType, request.TimeRange, request.AggregateDuration);
         }
 
         [Authorize]
         [HttpPost]
         public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(GetRecentMeasurementRequest request)
         {
-            var data = await _measurementService.GetRecentMeasurement(request.MeasurementType, request.TimeType, request.Time);
+            return await _measurementService.GetRecentMeasurement(request.MeasurementType, request.TimeType, request.Time);
+        }
 
-            return data;
+        [Authorize]
+        [HttpGet]
+        public async Task<GetMonthlyEnergyConsumptionResponse> GetMonthlyEnergyConsumption()
+        {
+            return await _measurementService.GetMonthlyEnergyConsumption();
         }
 
         [Authorize]
         [HttpPost]
         public async Task<bool> SetRelayStatus(bool activate)
         {
-            var isActivated = await _mqttService.SetRelayStatus(activate);
-
-            return isActivated;
+            return await _mqttService.SetRelayStatus(activate);
         }
 
         [Authorize]
         [HttpGet]
         public async Task<bool> GetRelayStatus()
         {
-            var isActivated = await _mqttService.GetRelayStatus();
-
-            return isActivated;
+            return await _mqttService.GetRelayStatus();
         }
     }
 }
