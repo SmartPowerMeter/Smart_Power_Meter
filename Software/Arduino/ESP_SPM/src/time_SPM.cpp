@@ -8,38 +8,38 @@ extern PZEM004Tv30 pzem;
 
 
 uint16_t getESPYear(){
-    time_t now; time(&now);
-    struct tm *timeinfo = gmtime(&now);
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
     return timeinfo->tm_year + 1900;
 }
 
 uint8_t getESPMonth(){
-    time_t now; time(&now);
-    struct tm *timeinfo = gmtime(&now);
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
     return timeinfo->tm_mon + 1;
 }
 
 uint8_t getESPDay(){
-    time_t now; time(&now);
-    struct tm *timeinfo = gmtime(&now);
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
     return timeinfo->tm_mday;
 }
 
 uint8_t getESPHour24(){
-    time_t now; time(&now);
-    struct tm *timeinfo = gmtime(&now);
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
     return timeinfo->tm_hour;
 }
 
 uint8_t getESPMin(){
-    time_t now; time(&now);
-    struct tm *timeinfo = gmtime(&now);
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
     return timeinfo->tm_min;
 }
 
 uint8_t getESPSec(){
-    time_t now; time(&now);
-    struct tm *timeinfo = gmtime(&now);
+    time_t now = time(nullptr);
+    struct tm *timeinfo = localtime(&now);
     return timeinfo->tm_sec;
 }
 
@@ -53,11 +53,11 @@ time_status setESPTimeUsingWiFi(char* ssid, char *pass){
             if (cnt > 200) return TIME_WIFI_CONN_TIMEOUT_ERROR;
         }
     }
-
-    configTime(0, 0, "time.nist.gov", "pool.ntp.org", "time.google.com");
+    // config time for Georgia
+    configTime(3600*4, 0, "time.nist.gov", "pool.ntp.org", "time.google.com");
     struct tm tmstruct;
     if (!getLocalTime(&tmstruct, 10000)) return TIME_GETLOCALTIME_TIMEOUT_ERROR;
-    Serial.printf("\nNow is : %d-%02d-%02d %02d:%02d:%02d UTC\n",
+    Serial.printf("\nNow is : %d-%02d-%02d %02d:%02d:%02d\n",
                     tmstruct.tm_year+1900,
                     tmstruct.tm_mon+1, 
                     tmstruct.tm_mday,
