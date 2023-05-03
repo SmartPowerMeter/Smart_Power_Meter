@@ -63,6 +63,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._api.GetRelayStatus().subscribe((res)=>{
+      this.isToggleChecked = res;
+    });
+
     this._api.RecentMeasurementPost(1, 1, 30).subscribe((res)=>{
       this.lineChartCon1 = res.map((item: any) => item.value);
       this.lineChartLabels1 = res.map((item: any) => {

@@ -77,5 +77,5 @@
 </div>
 <div class="chart-container" style="width: 1200px; margin-top: 30px;">
   <canvas  id="MyBarChart" >{{ barChart }}</canvas>
-  <input (input)="updateChart($event.target)" type="range" id="points" min="1" max="10">
+  <input (input)="updateChart($event.target)" type="range" id="points" min="1" max="{{this.maxValue}}">
 </div>

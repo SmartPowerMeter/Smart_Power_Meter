@@ -50,6 +50,7 @@ export class ReportsComponent implements OnInit, OnChanges {
   lineChartAvg: Number[];
   lineChartCon: Number[];
   TimeRange: any = { Day: 1, Week: 2, Month: 3, Year: 4 };
+  maxValue: number = 7;
   MeasurementType: any = {
     Voltage: 1,
     Current: 2,
@@ -211,12 +212,13 @@ export class ReportsComponent implements OnInit, OnChanges {
   }
 
   public updateChart(range: any) {
-    const rangeValue = this.barChartLabels.slice(10 - range.value, 10);
+    const rangeValue = this.barChartLabels.slice(this.maxValue - range.value, this.maxValue);
     //const rangeAvgData = this.barChartAvg.slice(10 - range.value, 10);
-    const rangeConData = this.barChartCon.slice(10 - range.value, 10);
+    const rangeConData = this.barChartCon.slice(this.maxValue - range.value, this.maxValue);
     this.barChart.data.labels = rangeValue;
     //this.barChart.data.datasets[0].data = rangeAvgData;
-    this.barChart.data.datasets[1].data = rangeConData;
+    this.barChart.data.datasets[0].data = rangeConData;
+    console.log(rangeConData)
     this.barChart.update();
   }
 
@@ -229,6 +231,18 @@ export class ReportsComponent implements OnInit, OnChanges {
   }
 
   send(selectOption: string, selectOption1: string) {
+    if(selectOption1 == 'Week'){
+      this.maxValue = 7;
+    }
+    else if(selectOption1 == 'Month') {
+      this.maxValue = 100;
+    }
+    else if(selectOption1 == 'Year') {
+      this.maxValue = 360;
+    }
+
+
+
     this._api
       .MeasurementPost(
         this.MeasurementType[selectOption],
