@@ -25,8 +25,17 @@ void setup() {
   if (time_ret != TIME_OK){
     timeHandleError(time_ret);
   }
+
+
+  // struct tm timett;
+  // timett.tm_year = 2023-1900;
+  // timett.tm_mon = 1-1;
+  // timett.tm_mday = 21;
+  // timett.tm_hour = 1;
+  // timett.tm_min = 14;
+  // timett.tm_sec = 0;
    
-  // time_t tt = time(nullptr) - 5*60;
+  // time_t tt = mktime(&timett);
   // struct timeval tv = {tt, 0};
   // settimeofday(&tv, nullptr);
   // Serial.print("Time after modification: ");

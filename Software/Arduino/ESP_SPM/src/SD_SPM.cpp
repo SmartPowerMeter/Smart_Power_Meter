@@ -439,11 +439,13 @@ void formatPzemValuesWithTime(PZEM004Tv30& pzem, char* output){
 }
 
 void formatMeasValuesWithTime(char* output, struct meas* meas, time_t time){
-    struct tm *dt = localtime(&time);
+    struct tm dt; 
+    localtime_r(&time, &dt);
+    // Serial.printf("Pointer to dt: %d\n", dt);
     sprintf(output, formatStringWithTime,
-                        dt->tm_hour,
-                        dt->tm_min,
-                        dt->tm_sec,
+                        dt.tm_hour,
+                        dt.tm_min,
+                        dt.tm_sec,
                         meas->voltage,
                         meas->current,
                         meas->power,
@@ -524,23 +526,26 @@ sd_status SDRoutineEverySec(){
     //     return SD_OK;
     // }
     t_now = time(nullptr);
-    struct tm *tm_now = localtime(&t_now);
+    struct tm tm_now;
+    localtime_r(&t_now, &tm_now);
 
-    // on every whole second
-    if (tm_now->tm_sec == 0){
+    // at the end of every minute
+    if (tm_now.tm_sec == 59){
         ret = checkCardPrecense(SD_PRECENCE);
         if (ret != SD_OK) {
             memset(append_str, 0, sizeof(append_str));  // clear string if SD card is not inserted
             memset(&meanVals_1min, 0, sizeof(meanVals_1min)); // clear accumulate struct for m.txt
             return ret;
         }
-        tm_now->tm_year = tm_now->tm_year + 1900;
-        tm_now->tm_mon = tm_now->tm_mon + 1;
+        tm_now.tm_sec = 0; 
+        t_now = mktime(&tm_now);
+        tm_now.tm_year = tm_now.tm_year + 1900;
+        tm_now.tm_mon = tm_now.tm_mon + 1;
 
         sprintf(path, "/SPM_DATA/%04d/%02d/%02d",
-                                            tm_now->tm_year,
-                                            tm_now->tm_mon,
-                                            tm_now->tm_mday);
+                                            tm_now.tm_year,
+                                            tm_now.tm_mon,
+                                            tm_now.tm_mday);
 
         // add to s.txt
         strcpy(full_path, path);
@@ -570,12 +575,14 @@ sd_status SDRoutineEverySec(){
 
 
         // 5 min
-        if (tm_now->tm_min % 5 == 0){
-            Serial.println("-------------------> Into 5 minute");
+        if ((tm_now.tm_min+1) % 5 == 0){
+            // Serial.println("-------------------> Into 5 minute");
             // char data[ONE_REC_MAX_LEN] = "";
+            // Serial.printf("1.tm_min = %d\n", tm_now.tm_min);
             time_t start, end;
             end = t_now;
-            start = end - 300;
+            start = end - 240; // 4*60
+            // Serial.printf("2.tm_min = %d\n", tm_now.tm_min);
 
             struct meas meas = {0};
             strcpy(full_path, path);
@@ -585,6 +592,7 @@ sd_status SDRoutineEverySec(){
                 handleErrorSD(ret);
                 goto func_end;
             }
+            // Serial.printf("3.tm_min = %d\n", tm_now.tm_min);
             // Serial.print("Before formatting:\n");
             // Serial.printf("voltage: %f\n", meas.voltage);
             // Serial.printf("current: %f\n", meas.current);
@@ -592,9 +600,9 @@ sd_status SDRoutineEverySec(){
             // Serial.printf("energy: %f\n", meas.energy);
             // Serial.printf("frequency: %f\n", meas.frequency);
             // Serial.printf("pf: %f\n", meas.pf);
-
-            formatMeasValuesWithTime(data,  &meas, t_now);
-
+            // Serial.printf("Pointer to tm_now: %d\n", tm_now);
+            formatMeasValuesWithTime(data,  &meas, start);
+            // Serial.printf("4.tm_min = %d\n", tm_now.tm_min);
             // Serial.printf("formatted: %s\n", data);
 
             strcpy(full_path, path);
@@ -604,15 +612,16 @@ sd_status SDRoutineEverySec(){
             }
             ret = appendFile(SD, full_path, data);
             if(ret != SD_OK) return ret;
+            // Serial.printf("5m appended data: %s\n", data);
             // Serial.printf("Appended to 5m.txt\n%s\n", data);
-
+            // Serial.printf("5.tm_min = %d\n", tm_now.tm_min);
             // 15 min
-            if (tm_now->tm_min % 15 == 0){
-                Serial.println("-------------------> Into 15 minute");
+            if ((tm_now.tm_min+1) % 15 == 0){
+                // Serial.println("-------------------> Into 15 minute");
                 // char data[ONE_REC_MAX_LEN] = "";
                 // time_t start, end;
                 // end = time(nullptr);
-                start = end - 900; // 60*15
+                start = end - 840; // 60*14
 
                 // struct meas meas;
                 strcpy(full_path, path);
@@ -622,7 +631,7 @@ sd_status SDRoutineEverySec(){
                     handleErrorSD(ret);
                     goto func_end;
                 }
-                formatMeasValuesWithTime(data,  &meas, t_now);
+                formatMeasValuesWithTime(data,  &meas, start);
 
                 strcpy(full_path, path);
                 strcat(full_path, "/15m.txt");
@@ -632,14 +641,14 @@ sd_status SDRoutineEverySec(){
                 ret = appendFile(SD, full_path, data);
                 if(ret != SD_OK) return ret;
                 // Serial.printf("Appended to 15m.txt\n%s\n", data);
-
+                // Serial.printf("tm_min = %d\n", tm_now.tm_min);
                 // 1 hour
-                if (tm_now->tm_min == 0){
-                    Serial.println("-------------------> Into 1 hour");
+                if (tm_now.tm_min == 59){
+                    // Serial.println("-------------------> Into 1 hour");
                     // char data[ONE_REC_MAX_LEN] = "";
                     // time_t start, end;
                     // end = time(nullptr);
-                    start = end - 3600; // 60*60
+                    start = end - 3540; // 60*59
 
                     // struct meas meas;
                     strcpy(full_path, path);
@@ -649,7 +658,7 @@ sd_status SDRoutineEverySec(){
                         handleErrorSD(ret);
                         goto func_end;
                     }
-                    formatMeasValuesWithTime(data,  &meas, t_now);
+                    formatMeasValuesWithTime(data,  &meas, start);
 
                     strcpy(full_path, path);
                     strcat(full_path, "/h.txt");
@@ -659,6 +668,7 @@ sd_status SDRoutineEverySec(){
                     ret = appendFile(SD, full_path, data);
                     if(ret != SD_OK) return ret;
                     // Serial.printf("Appended to h.txt\n%s\n", data);
+                    // Serial.printf("tm_min = %d\n", tm_now.tm_min);
                 }
             }
         }
