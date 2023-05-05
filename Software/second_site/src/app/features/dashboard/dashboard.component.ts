@@ -147,10 +147,9 @@ export class DashboardComponent implements OnInit {
   clicked() {
     if (!this.isToggleChecked) this.modalText = "Power will turn off.";
     else this.modalText = "Power will turn on.";
-    this.isToggleChecked = !this.isToggleChecked;
 
-    this._api.SetRelayStatus(this.isToggleChecked).subscribe((res)=>{
-      
+    this._api.SetRelayStatus(!this.isToggleChecked).subscribe((res)=>{
+      this.isToggleChecked = !this.isToggleChecked;
     })
   }
 
