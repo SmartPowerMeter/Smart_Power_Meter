@@ -17,7 +17,7 @@ export interface User {
   styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent implements OnInit {
-  isToggleChecked: boolean = true;
+  isToggleChecked: boolean;
   modalText: string = "Power will turn off.";
   user: User;
   selectedOption: string = "Last 30 Minutes";
@@ -148,6 +148,10 @@ export class DashboardComponent implements OnInit {
     if (!this.isToggleChecked) this.modalText = "Power will turn off.";
     else this.modalText = "Power will turn on.";
     this.isToggleChecked = !this.isToggleChecked;
+
+    this._api.SetRelayStatus(this.isToggleChecked).subscribe((res)=>{
+      
+    })
   }
 
   createLineCharts() {
@@ -292,6 +296,10 @@ export class DashboardComponent implements OnInit {
     this.subscr4.unsubscribe();
     this.subscr5.unsubscribe();
     this.subscr6.unsubscribe();
+
+    // this._api.SetRelayStatus(this.isToggleChecked).subscribe((res)=>{
+    //   console.log(res)
+    // })
   }
 }
 
