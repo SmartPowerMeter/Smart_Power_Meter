@@ -10,16 +10,25 @@
 
 #Register-main {
     overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     #image-left {
-        transform: translate(50%, 0);
+        background-image: url('../../../assets/images/auth/new_tbc.jpg');
+        background-repeat: no-repeat;
+        width: 65%;
+        height: 100vh;
+        //transform: translate(50%, 0);
         img {
+            // height: 100vh;
+            width: 70%;
             height: 100vh;
             object-fit: scale-down;
         }
     }
     .formGroup {
         position: absolute;
-        transform: translate(217px, 60px);
+        transform: translate(1100px, 60px);
         width: 370px;
         top: -1px;
         left: 0;
@@ -106,18 +115,19 @@
     }
 }
 
-@media only screen and(max-width: 1180px) {
-    #Register-main {
-        .formGroup {
-            transform: translate(117px, 60px);
-        }
+@media only screen and (max-width: 600px) {
+    #image-left {
+        width: 100vw !important;
+        height: 100vh !important;
     }
-}
-
-@media only screen and(max-width: 980px) {
     #Register-main {
-        .formGroup {
-            transform: translate(10px, 60px);
-        }
+        flex-direction: column;
+        font-size: 10px !important;
     }
-}
+    .formGroup {
+        transform: translate(20px, 850px) !important;
+    }
+    .signin-text{
+        width: 80% !important;
+    }
+  }
