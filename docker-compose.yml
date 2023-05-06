@@ -68,6 +68,7 @@ services:
         ipv4_address: 172.25.5.4
   second_site:
     build: /home/projects/Smart_Power_Meter/Software/second_site
+    restart: always
     expose:
       - 4200
     networks:
@@ -141,17 +142,15 @@ services:
   #     - /home/data/jenkins/ssh/pub_key.env
 
 
-
-
   mongodb:
     image: mongo:5.0.13
     volumes:
-      - /home/data/graylog/mongodb/mongo_data:/data/db:rw
+      - mongo_data:/data/db
   elasticsearch:
     user: root
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
     volumes:
-      - /home/data/graylog/elastic_search/es_data:/usr/lib/elasticsearch/data:rw
+      - es_data:/usr/share/elasticsearch/data
     environment:
       - http.host=0.0.0.0
       - transport.host=localhost
@@ -166,22 +165,30 @@ services:
     user: root
     image: graylog/graylog:5.0
     volumes:
-    - /home/data/graylog/graylog_data:/usr/share/graylog/data:rw
+      - graylog_data:/usr/share/graylog/data
     environment:
-    - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
-    - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-    - GRAYLOG_HTTP_EXTERNAL_URI=https://161.35.207.10:9000/
+      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_HTTP_EXTERNAL_URI=https://161.35.207.10:9000/
     entrypoint: /usr/bin/tini -- wait-for-it elasticsearch:9200 --  /docker-entrypoint.sh
     links:
-    - mongodb:mongo
-    - elasticsearch
+      - mongodb:mongo
+      - elasticsearch
     restart: always
     depends_on:
-    - mongodb
-    - elasticsearch
+      - mongodb
+      - elasticsearch
     ports:
-    - 9000:9000
-    - 1514:1514
-    - 1514:1514/udp
-    - 12201:12201
-    - 12201:12201/udp
+      - 9000:9000
+      - 1514:1514
+      - 1514:1514/udp
+      - 12201:12201
+      - 12201:12201/udp
+
+volumes:
+  mongo_data:
+    driver: local
+  es_data:
+    driver: local
+  graylog_data:
+    driver: local
