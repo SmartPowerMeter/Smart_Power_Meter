@@ -12,6 +12,13 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-Log.Logger = new LoggerConfiguration().MinimumLevel.Information().Enrich.FromLogContext().WriteTo.Console().CreateLogger();
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .Build())
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+Log.Logger.Information("Broker started");
 
 await host.RunAsync();
