@@ -14,8 +14,10 @@
     flex-direction: row;
     flex-wrap: nowrap;
     #image-left {
-        background-image: url('../../../assets/images/auth/new_tbc.jpg');
+        background-image: url('../../../assets/images/auth/page_cover.jpg');
         background-repeat: no-repeat;
+        //background-position: top;
+        background-size: 100%;
         width: 65%;
         height: 100vh;
         //transform: translate(50%, 0);
