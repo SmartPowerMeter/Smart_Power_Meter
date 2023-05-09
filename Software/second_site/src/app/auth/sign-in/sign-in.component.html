@@ -34,6 +34,8 @@
             <a routerLink="/recover-password" class="recovery-password p-link">Recover password</a>
         </div>
 
+        <p class="error-message" id="password-error" style="margin-top: 10px; color: red; display: none;">Incorrect Password or Email. Please try again.</p>
+
         <app-button [btnClass]="'primary'" class="button" [btnHeight]="'48px'" [btnWidth]="'360px'" type="submit"
             [isDisable]="valid_1 || valid_2" [text]="'SIGN IN'"></app-button>
 

@@ -92,7 +92,9 @@ export class SignInComponent implements OnInit, OnDestroy {
           
         },
         (error) => {
-          alert(error.error);
+          const passwordError = document.getElementById('password-error');
+          passwordError!.style.display = 'block'; // display error message
+        return;
         }
       );
   }
