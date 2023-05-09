@@ -190,25 +190,25 @@ header {
 }
 
 .picture1 {
-  background: url(./images/shalva.jpg);
+  background: url('./images/shalva.jpg');
   background-position: center center;
   background-size: cover;
 }
 
 .picture2 {
-  background: url(./images/irakli.jpg);
+  background: url('./images/irakli.jpg');
   background-position: center center;
   background-size: cover;
 }
 
 .picture3 {
-  background: url(./images/giorgi.jpg);
+  background: url('./images/giorgi.jpg');
   background-position: center center;
   background-size: cover;
 }
 
 .picture4 {
-  background: url(./images/Chkhaidze-David.jpeg);
+  background: url('./images/Chkhaidze-David.jpeg');
   background-position: center center;
   background-size: cover;
 }
