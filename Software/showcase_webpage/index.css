@@ -108,6 +108,7 @@ header {
   top: 90px;
   right: 30px;
   transition: all 0.3s;
+  max-width: 90%;
 }
 
 .first-section-info :nth-child(1) {
