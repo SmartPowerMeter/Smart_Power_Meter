@@ -1199,7 +1199,7 @@ body::-webkit-scrollbar-thumb {
     margin-top: 250px;
   }
   .fifth-section-inner2 :nth-child(2) {
-    max-width: 400px;
+    max-width: 550px;
   }
 }
 
