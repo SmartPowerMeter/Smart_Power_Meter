@@ -88,10 +88,15 @@
         <h1 id="text19">The Smart Meter</h1>
 
         <p id="text20">
-          A Smart Power Meter is an electronic device that measures
-          and records the amount of electricity consumed in a home or 
-          building. Smart Meter can provide real-time information on 
-          electricity consumption and enables you to control power mode online.
+          A Smart Power Meter is an electronic device that measures and records
+          the amount of electricity consumed in a home or building. Smart Meter
+          can provide real-time information on electricity consumption and
+          enables you to control power mode online. Check it out
+          <a
+            style="text-decoration: none; font-size: 20px"
+            href="smartpowermeter.ge"
+            >here.</a
+          >
         </p>
 
         <!-- <div class="first-section-info-inner">
@@ -685,21 +690,21 @@
         }
       }
 
-      function myFunction () {
+      function myFunction() {
         if (localStorage.getItem("cnt") != null) {
-        temp = localStorage.getItem("cnt")
-        temp--
-        localStorage.setItem("cnt", temp)
-        mode()
+          temp = localStorage.getItem("cnt");
+          temp--;
+          localStorage.setItem("cnt", temp);
+          mode();
         }
       }
 
       function showContent() {
-        document.body.style.visibility = 'visible';
+        document.body.style.visibility = "visible";
         document.body.style.opacity = 1;
       }
 
-      window.addEventListener('DOMContentLoaded', function () {
+      window.addEventListener("DOMContentLoaded", function () {
         myFunction();
         showContent();
       });
