@@ -3,15 +3,18 @@
 #include <WiFiManager.h>
 #include <PZEM004Tv30.h>
 #include "time.h"
+#include <Preferences.h>
 
 PZEM004Tv30 pzem(Serial2, 16, 17);
 
 #define RELAY 26
 
+Preferences preferences;
+
 // MQTT Broker
-const char *mqtt_broker = "192.168.1.27";
-const char *customerId = "bf227d0cb4b2";
-const char *topic = "measurement-bf227d0cb4b2";
+const char *mqtt_broker = "161.35.207.10";
+String customerId;
+String topic;
 const char *mqtt_username = "client";
 const char *mqtt_password = "pass";
 const int mqtt_port = 707;
@@ -34,13 +37,12 @@ void setup() {
 
   WiFiManager wm;
 
-  // reset settings - wipe stored credentials for testing, these are stored by the esp library
   //wm.resetSettings();
 
-  WiFiManagerParameter data("CustomerId", "Enter your string here", "default string", 50);
-  wm.addParameter(&data);
-    
-  bool connected = wm.autoConnect("AutoConnectAP","password"); // password protected ap
+  WiFiManagerParameter enteredCustomerId("CustomerId", "Customer Id", "", 50);
+  wm.addParameter(&enteredCustomerId);
+
+  bool connected = wm.autoConnect("SmartPowerMeter", "password");
   if(!connected) {
       Serial.println("Failed to connect");
       ESP.restart();
@@ -48,6 +50,22 @@ void setup() {
   else {
       Serial.println("Connected to the WIFI");
   }
+
+  preferences.begin("Credentials", false);
+
+  customerId = preferences.getString("CustomerId", "");
+
+  String id = String(enteredCustomerId.getValue());
+  id.trim();
+
+  if(!id.isEmpty()){
+    preferences.putString("CustomerId", enteredCustomerId.getValue());
+    customerId = enteredCustomerId.getValue();
+  }
+  
+  preferences.end();
+
+  topic = "measurement-" + customerId;
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
@@ -57,11 +75,12 @@ void setup() {
 
 void reconnect() {
   while (!client.connected()) {
-    if (!client.connect(customerId, mqtt_username, mqtt_password)) {
+    if (!client.connect(customerId.c_str(), mqtt_username, mqtt_password)) {
       delay(5000);
     }
     else{
-      client.subscribe("relay-bf227d0cb4b2");
+      String relayState = "relay-" + customerId;
+      client.subscribe(relayState.c_str());
     }
   }
 }
@@ -73,9 +92,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(RELAY, HIGH);
   }
 
-int state = digitalRead(RELAY);
-String stateStr = String(state);
-client.publish("relay-state-bf227d0cb4b2", stateStr.c_str());
+  String relayStateTopic = "relay-state-" + customerId;
+
+  int state = digitalRead(RELAY);
+  String stateStr = String(state);
+  client.publish(relayStateTopic.c_str(), stateStr.c_str());
 }
 
 void loop() {
@@ -91,7 +112,6 @@ void loop() {
   double frequency = pzem.frequency();
   double pf = pzem.pf();
   String timeStamp = GetLocalTime();
-  Serial.println(timeStamp);
 
   if(!isnan(voltage) && !isnan(current) && !isnan(power) && !isnan(energy) && !isnan(frequency) && !isnan(pf))
   {
@@ -108,9 +128,7 @@ void loop() {
     char json[200];
     serializeJson(measurement, json);
 
-    Serial.println(json);
-
-    client.publish(topic, json);
+    client.publish(topic.c_str(), json);
   }
 
   delay(1000);
