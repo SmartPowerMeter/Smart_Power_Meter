@@ -108,6 +108,7 @@ header {
   top: 90px;
   right: 30px;
   transition: all 0.3s;
+  max-width: 90%;
 }
 
 .first-section-info :nth-child(1) {
@@ -190,25 +191,25 @@ header {
 }
 
 .picture1 {
-  background: url(./images/shalva.jpg);
+  background: url('./images/shalva.jpg');
   background-position: center center;
   background-size: cover;
 }
 
 .picture2 {
-  background: url(./images/irakli.avif);
+  background: url('./images/Irakli.jpg');
   background-position: center center;
   background-size: cover;
 }
 
 .picture3 {
-  background: url(./images/giorgi.jpg);
+  background: url('./images/giorgi.jpg');
   background-position: center center;
   background-size: cover;
 }
 
 .picture4 {
-  background: url(./images/Chkhaidze-David.jpeg);
+  background: url('./images/Chkhaidze-David.jpeg');
   background-position: center center;
   background-size: cover;
 }
@@ -1198,7 +1199,7 @@ body::-webkit-scrollbar-thumb {
     margin-top: 250px;
   }
   .fifth-section-inner2 :nth-child(2) {
-    max-width: 400px;
+    max-width: 550px;
   }
 }
 

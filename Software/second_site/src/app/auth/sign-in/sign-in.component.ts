@@ -92,9 +92,17 @@ export class SignInComponent implements OnInit, OnDestroy {
           
         },
         (error) => {
-          alert(error.error);
+          const passwordError = document.getElementById('password-error');
+          passwordError!.style.display = 'block'; // display error message
+        return;
         }
       );
+  }
+
+  removeMessage(){
+    console.log('keyup')
+    const passwordError = document.getElementById('password-error');
+    passwordError!.style.display = 'none'; // display error message
   }
 
   ngOnDestroy(): void {

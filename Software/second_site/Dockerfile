@@ -25,7 +25,7 @@ useradd -s /bin/bash -m vscode
 groupadd docker
 usermod -aG docker vscode
 EOF
-# install Docker tools (cli, buildx, compose)
+#  install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
 
 ENTRYPOINT ["ng", "serve", "--host", "0.0.0.0", "--disable-host-check"]

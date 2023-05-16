@@ -14,15 +14,17 @@
     flex-direction: row;
     flex-wrap: nowrap;
     #image-left {
-        background-image: url('../../../assets/images/auth/new_tbc.jpg');
+        background-image: url('../../../assets/images/auth/page_cover.jpg');
         background-repeat: no-repeat;
+        //background-position: top;
+        background-size: 100%;
         width: 65%;
         height: 100vh;
         //transform: translate(50%, 0);
         img {
             // height: 100vh;
-            width: 70%;
-            height: 100vh;
+            //width: 70%;
+            height: 100%;
             object-fit: scale-down;
         }
     }
@@ -129,5 +131,31 @@
     }
     .signin-text{
         width: 80% !important;
+    }
+  }
+
+
+
+  @media only screen and (min-width: 601px) and (max-width: 1500px) {
+    #image-left{
+        background-size: cover !important;
+    }
+  }
+
+  @media only screen and (min-width: 1001px) and (max-width: 1200px) {
+    .formGroup{
+        left: -30% !important;
+    }
+  }
+
+  @media only screen and (min-width: 800px) and (max-width: 1000px) {
+    .formGroup{
+        left: -40% !important;
+    }
+  }
+
+  @media only screen and (min-width: 601px) and (max-width: 799px) {
+    .formGroup{
+        left: -80% !important;
     }
   }
