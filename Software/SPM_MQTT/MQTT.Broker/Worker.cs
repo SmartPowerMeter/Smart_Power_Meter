@@ -54,11 +54,11 @@ namespace MQTT.Broker
 
         private async Task ValidatingConnectionAsync(ValidatingConnectionEventArgs arg)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
-
-            if (arg.ClientId != "admin")
+            if (arg.ClientId != "admin" && arg.ClientId != "relay")
             {
+                using var scope = _serviceProvider.CreateScope();
+                var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
+
                 _user = await dbService.GetUser(arg.ClientId);
 
                 if (_user == null)
@@ -70,12 +70,12 @@ namespace MQTT.Broker
 
         private async Task ClientConnectedAsync(ClientConnectedEventArgs arg)
         {
-            await Task.Run(() => _logger.LogInformation($"New connection: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}, UserName = {arg.UserName}"));
+            await Task.Run(() => _logger.LogInformation($"{DateTimeOffset.Now} - New connection: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}"));
         }
 
         private async Task MessageReceivedAsync(InterceptingPublishEventArgs arg)
         {
-            if (!arg.ApplicationMessage.Topic.Contains("relay"))
+            if (arg.ApplicationMessage.Topic.Contains("measurement"))
             {
                 var payload = arg.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(arg.ApplicationMessage?.Payload);
 

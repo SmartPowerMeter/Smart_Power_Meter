@@ -6,10 +6,12 @@ namespace MQTT.Broker.Services.SqlDb
     public class DbService : IDbService
     {
         private readonly string _connectionString;
+        private readonly ILogger<DbService> _logger;
 
-        public DbService(IConfiguration configuration)
+        public DbService(IConfiguration configuration, ILogger<DbService> logger)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _logger = logger;
         }
 
         public async Task<UserData> GetUser(string customerId)
@@ -37,8 +39,9 @@ namespace MQTT.Broker.Services.SqlDb
                     return user;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex.ToString());
             }
             finally
             {
