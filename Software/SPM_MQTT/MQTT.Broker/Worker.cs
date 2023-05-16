@@ -81,9 +81,13 @@ namespace MQTT.Broker
 
                 try
                 {
+                    using var scope = _serviceProvider.CreateScope();
+                    var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
+
+                    _user = await dbService.GetUser(arg.ClientId);
+
                     var data = JsonSerializer.Deserialize<MeasurementData>(payload);
 
-                    using var scope = _serviceProvider.CreateScope();
                     var influxDbService = scope.ServiceProvider.GetRequiredService<InfluxDbService>();
 
                     influxDbService.WritePoint(nameof(data.Voltage), data.Voltage, data.TimeStamp, _user);
