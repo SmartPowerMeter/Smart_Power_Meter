@@ -197,14 +197,14 @@ header {
 }
 
 .picture2 {
-  background: url('./images/Irakli.jpg');
-  background-position: center center;
+  background: url('./images/IrakliGrad.jpg');
+  background-position: top center;
   background-size: cover;
 }
 
 .picture3 {
   background: url('./images/giorgi.jpg');
-  background-position: center center;
+  background-position: top center;
   background-size: cover;
 }
 
@@ -658,6 +658,8 @@ body::-webkit-scrollbar-thumb {
     margin-top: 30px;
   }
 
+  
+
   #hamburger {
     display: flex;
   }
@@ -815,13 +817,13 @@ body::-webkit-scrollbar-thumb {
     grid-template-columns: repeat(4, 20%);
   }
   .second-section-video {
-    height: 400px;
+    height: 600px;
   }
 }
 
 @media screen and (max-width: 957px) {
   .second-section-videos {
-    grid-template-columns: repeat(2, 300px);
+    grid-template-columns: repeat(2, 250px);
   }
 }
 
@@ -845,7 +847,7 @@ body::-webkit-scrollbar-thumb {
 
 @media screen and (max-width: 413px) {
   .second-section-videos {
-    grid-template-columns: repeat(1, 80%);
+    grid-template-columns: repeat(1, 60%);
   }
 }
 
