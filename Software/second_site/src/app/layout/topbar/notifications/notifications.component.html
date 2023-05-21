@@ -1,6 +1,6 @@
-<div class="container-head">
+<!-- <div class="container-head">
     <fa-icon class="notf" [icon]="['fas','bell']" [styles]="{'color': '#98a9bc'}" (click)="toggleShow()"></fa-icon>
-</div>
+</div> -->
 <div class="notf-container" *ngIf="show">
     <div class="single-notification" *ngFor="let notf of notificationData.reverse()">
         <div class="notf-text" [routerLink]="notf.link">
