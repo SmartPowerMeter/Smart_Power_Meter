@@ -137,11 +137,31 @@ export class ApiService {
       );
   }
 
-  SetRelayStatus(Activate: boolean){
-    return this._http.post<any>(`https://api.smartpowermeter.ge/Measurement/SetRelayStatus?Activate=${Activate}`, {}).pipe(map((e)=>{
-      return e;
-    }))
+  SetRelayStatus(Activate: boolean) {
+    return this._http
+      .post<any>(
+        `https://api.smartpowermeter.ge/Measurement/SetRelayStatus?Activate=${Activate}`,
+        {}
+      )
+      .pipe(
+        map((e) => {
+          return e;
+        })
+      );
   }
+
+  GetMonthlyEnergyConsumption() {
+    return this._http
+      .get(
+        `https://api.smartpowermeter.ge/Measurement/GetMonthlyEnergyConsumption`
+      )
+      .pipe(
+        map((e) => {
+          return e;
+        })
+      );
+  }
+
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http
