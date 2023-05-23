@@ -1,3 +1,4 @@
+import { ThrowStmt } from "@angular/compiler";
 import { Component, OnInit } from "@angular/core";
 import { Chart } from "chart.js";
 import { ChartConfiguration } from "chart.js";
@@ -9,6 +10,8 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  totalConsumedEnergy: number;
+  totalCost: number;
 }
 
 @Component({
@@ -55,6 +58,7 @@ export class DashboardComponent implements OnInit {
   private subscr6: Subscription;
   private subscr7: Subscription;
   private intervalId: any;
+
 
   constructor(public _api: ApiService) {
     this._api.GetUser().subscribe((res) => {
@@ -142,6 +146,11 @@ export class DashboardComponent implements OnInit {
       this.send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time);
     }, 1000);
 
+    this._api.GetMonthlyEnergyConsumption().subscribe((res)=>{
+      const obj: any = res;
+      this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
+      this.user.totalCost = obj.totalCost;
+    })
   }
 
   clicked() {

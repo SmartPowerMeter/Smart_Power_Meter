@@ -90,7 +90,7 @@
                 color: $secondary-dark;
             }
             .recovery-password {
-                margin-left: 115px;
+                margin-left: 0px;
                 text-decoration: none;
                 color: $primary-dark;
             }
@@ -127,7 +127,7 @@
         font-size: 10px !important;
     }
     .formGroup {
-        transform: translate(20px, 850px) !important;
+        transform: translate(20px, 400px) !important;
     }
     .signin-text{
         width: 80% !important;

@@ -1,6 +1,6 @@
 import { Subscription } from "rxjs";
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { UserService } from "src/app/services/user.service";
 import { ApiService } from "../../services/api.service";
@@ -12,35 +12,35 @@ import { ApiService } from "../../services/api.service";
 })
 export class SignUpComponent implements OnInit, OnDestroy {
   public boolValid: boolean = true;
-
+  
+  public forms: FormGroup = new FormGroup({});
+  public valid_1: boolean = true;
+  public valid_2: boolean = true;
   private destr_0: any;
   private destr_1: any;
   private destr_2: any;
   private destr_3: any;
-
   public error_p_class = "register_error";
 
   public input_valid_1: string = "";
   public input_valid_2: string = "";
   public input_valid_3: string = "";
 
+
   constructor(
+    private fb: FormBuilder,
     private _api: ApiService,
     private _router: Router,
     private user: UserService
-  ) {}
+  ) {
+    this.forms = this.fb.group({
+      full_name: new FormControl("", [Validators.required]),
+      Email: new FormControl("", [Validators.required, Validators.email]),
+      Password: new FormControl("", [Validators.required]),
+      isConnected: new FormControl(false),
+    });
+  }
 
-  public forms = new FormGroup({
-    full_name: new FormControl("", [Validators.required]),
-
-    Email: new FormControl("", [Validators.required, Validators.email]),
-
-    Password: new FormControl("", [Validators.required]),
-
-    isConnected: new FormControl(false),
-
-    //agree_terms: new FormControl("", [Validators.required]),
-  });
   ngOnInit(): void {
     this.check();
     //==============

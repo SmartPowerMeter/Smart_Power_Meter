@@ -10,6 +10,7 @@ import { AccountsListComponent } from "./features/accounts/accounts-list/account
 import { DashboardComponent } from "./features/dashboard/dashboard.component";
 import { ReportsComponent } from "./features/reports/reports.component";
 import { SettingsComponent } from "./features/settings/settings.component";
+import { UsersComponent } from "./features/users/users.component";
 // import { TransactionsComponent } from './features/transactions/transactions.component';
 // import { InfoPageComponent } from "./accounts/info-page/info-page.component";
 
@@ -34,6 +35,8 @@ const routes: Routes = [
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
   { path: "reports", component: ReportsComponent, canActivate: [AuthGuard] },
   { path: "settings", component: SettingsComponent, canActivate: [AuthGuard] },
+  { path: "users", component: UsersComponent, canActivate: [AuthGuard] },
+  
 
   // { path: 'account-list', component: AccountsListComponent },
   // { path: 'info', component:InfoPageComponent },

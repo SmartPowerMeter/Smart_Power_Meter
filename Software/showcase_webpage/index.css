@@ -156,7 +156,7 @@ header {
 }
 
 .second-section-video {
-  height: 800px;
+  height: 550px;
   background-color: white;
   box-shadow: -1px 2px 8px rgba(0, 0, 0, 0.4);
   cursor: pointer;
@@ -185,31 +185,32 @@ header {
 }
 
 .pictures {
-  height: 40%;
+  /**height: 40%;**/
+  height: 300px;
   border: 3px solid white;
   position: relative;
 }
 
 .picture1 {
-  background: url('./images/shalva.jpg');
+  background: url("./images/shalva.jpg");
   background-position: center center;
   background-size: cover;
 }
 
 .picture2 {
-  background: url('./images/Irakli.jpg');
-  background-position: center center;
+  background: url("./images/IrakliGrad.JPG");
+  background-position: top center;
   background-size: cover;
 }
 
 .picture3 {
-  background: url('./images/giorgi.jpg');
-  background-position: center center;
+  background: url("./images/giorgi_Grad.jpg");
+  background-position: top center;
   background-size: cover;
 }
 
 .picture4 {
-  background: url('./images/Chkhaidze-David.jpeg');
+  background: url("./images/Chkhaidze-David.jpeg");
   background-position: center center;
   background-size: cover;
 }
@@ -815,13 +816,17 @@ body::-webkit-scrollbar-thumb {
     grid-template-columns: repeat(4, 20%);
   }
   .second-section-video {
-    height: 400px;
+    height: 600px;
   }
 }
 
 @media screen and (max-width: 957px) {
   .second-section-videos {
-    grid-template-columns: repeat(2, 300px);
+    grid-template-columns: repeat(2, 250px);
+    height: 600px;
+  }
+  .dates-content {
+    margin-top: 650px;
   }
 }
 
@@ -845,7 +850,13 @@ body::-webkit-scrollbar-thumb {
 
 @media screen and (max-width: 413px) {
   .second-section-videos {
-    grid-template-columns: repeat(1, 80%);
+    grid-template-columns: repeat(1, 60%);
+  }
+  .dates-content {
+    margin-top: 1603px;
+  }
+  .second-section-video {
+    height: 520px;
   }
 }
 

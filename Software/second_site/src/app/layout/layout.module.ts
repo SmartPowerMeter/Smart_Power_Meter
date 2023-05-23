@@ -10,6 +10,7 @@ import { FooterComponent } from "./footer/footer.component";
 import { NewsComponent } from "../features/news/news.component";
 import { NotificationsComponent } from "./topbar/notifications/notifications.component";
 import {InfiniteScrollModule} from "ngx-infinite-scroll";
+import { UsersComponent } from "../features/users/users.component";
 
 const routes: Routes = [
   {
@@ -73,6 +74,10 @@ const routes: Routes = [
         path: "news",
         component: NewsComponent,
       },
+      {
+        path: "users",
+        component: UsersComponent
+      }
     ],
   },
 ];
