@@ -32,6 +32,9 @@
             <fa-icon [icon]="['fas','cog']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">SETTINGS</p>
         </a>
+        <a [routerLink]="['users']" routerLinkActive="active">
+            <fa-icon [icon]="['fas','user']"></fa-icon>
+            <p [ngClass]="{disappear: isCollapsed}">Users</p></a>
         <!-- <a [routerLink]="['invoices']" routerLinkActive="active">
             <fa-icon [icon]="['fas','file-invoice']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">INVOICES</p>

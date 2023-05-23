@@ -18,6 +18,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { LeftChartService } from './features/dashboard/funds-overview/leftChart.service';
 import { RightChartService } from './features/dashboard/funds-overview/rightChart.service';
 import * as Popper from 'popper.js';
+import { UsersComponent } from './features/users/users.component';
 
 @NgModule({
 	declarations: [
@@ -25,6 +26,7 @@ import * as Popper from 'popper.js';
 		RecoverPassComponent,
 		SignInComponent,
 		SignUpComponent,
+  UsersComponent,
 	],
 	imports: [
 		BrowserModule,
