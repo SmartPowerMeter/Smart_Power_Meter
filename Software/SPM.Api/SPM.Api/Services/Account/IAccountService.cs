@@ -9,5 +9,9 @@ namespace SPM.Api.Services.Account
         Task<LoginUserResponse> LoginUser(LoginUserRequest request);
 
         Task<GetUserDataResponse> GetUserData();
+
+        Task ChangePassword(string newPassword);
+
+        Task RecoverPassword(string email);
     }
 }

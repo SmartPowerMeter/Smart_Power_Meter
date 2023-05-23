@@ -23,7 +23,8 @@ namespace SPM.Api.Services.Jwt
 
             var claims = new[] {
                 new Claim(ClaimsConstants.Id, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimsConstants.UserType, ((int)user.UserType).ToString())
             };
 
             var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],

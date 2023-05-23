@@ -55,5 +55,10 @@ namespace SPM.Api.Core.Domain.Models
         {
             RelayEnabled = enabled;
         }
+
+        public void SetPassword(string password)
+        {
+            Password = password;
+        }
     }
 }
