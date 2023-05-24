@@ -1,6 +1,7 @@
 ﻿using SPM.Api.Data;
 using SPM.Api.Core.Helpers;
 using SPM.Api.Services.Jwt;
+using SPM.Api.Services.Email;
 using SPM.Api.Core.Exceptions;
 using SPM.Api.Core.WorkContexts;
 using SPM.Api.Core.Domain.Enums;
@@ -18,13 +19,15 @@ namespace SPM.Api.Services.Account
         private readonly SPMDbContext _dbContext;
         private readonly IWorkContext _workContext;
         private readonly IInfluxDbService _influxDbService;
+        private readonly IEmailService _emailService;
 
-        public AccountService(IJwtService jwtService, SPMDbContext dbContext, IWorkContext workContext, IInfluxDbService influxDbService)
+        public AccountService(IJwtService jwtService, SPMDbContext dbContext, IWorkContext workContext, IInfluxDbService influxDbService, IEmailService emailService)
         {
             _jwtService = jwtService;
             _dbContext = dbContext;
             _workContext = workContext;
             _influxDbService = influxDbService;
+            _emailService = emailService;
         }
 
         public async Task RegisterUser(RegisterUserRequest request)
@@ -82,6 +85,29 @@ namespace SPM.Api.Services.Account
             };
 
             return response;
+        }
+
+        public async Task ChangePassword(string newPassword)
+        {
+            var user = await _dbContext.User.FirstAsync(x => x.Email == _workContext.CurrentUser.Email);
+
+            user.SetPassword(EncryptionHelper.HashPasword(newPassword));
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RecoverPassword(string email)
+        {
+            var user = await _dbContext.User.FirstOrDefaultAsync(x => x.Email == email);
+
+            if (user == null)
+                throw new NotFoundException();
+            
+            var temporaryPassword = Guid.NewGuid().ToString();
+
+            user.SetPassword(EncryptionHelper.HashPasword(temporaryPassword));
+            await _dbContext.SaveChangesAsync();
+
+            await _emailService.SendRecoveryEmail(user.Email, temporaryPassword);
         }
     }
 }

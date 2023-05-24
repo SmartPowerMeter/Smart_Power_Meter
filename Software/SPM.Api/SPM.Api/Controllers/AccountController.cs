@@ -34,5 +34,18 @@ namespace SPM.Api.Controllers
         {
             return await _accountService.GetUserData();
         }
+
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task ChangePassword(string newPassword)
+        {
+            await _accountService.ChangePassword(newPassword);
+        }
+
+        [HttpPost("[action]")]
+        public async Task RecoverPassword(string email)
+        {
+            await _accountService.RecoverPassword(email);
+        }
     }
 }

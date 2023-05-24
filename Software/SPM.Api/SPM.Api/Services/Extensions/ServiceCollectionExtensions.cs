@@ -11,6 +11,8 @@ using SPM.Api.Services.Measurements;
 using Microsoft.IdentityModel.Tokens;
 using SPM.Api.Core.WorkContexts.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using SPM.Api.Core.Domain.Enums;
+using SPM.Api.Services.Email;
 
 namespace SPM.Api.Services.Extensions
 {
@@ -23,6 +25,7 @@ namespace SPM.Api.Services.Extensions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IMQTTService, MQTTService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddJwt(configuration);
             services.AddSwagger();
@@ -99,7 +102,8 @@ namespace SPM.Api.Services.Extensions
                     var user = new LoggedInUser
                     {
                         Id = int.Parse(identity.FindFirst(ClaimsConstants.Id).Value),
-                        Email = identity.FindFirst(ClaimTypes.Email).Value
+                        Email = identity.FindFirst(ClaimTypes.Email).Value,
+                        UserType = (UserType)int.Parse(identity.FindFirst(ClaimsConstants.UserType).Value)
                     };
 
                     workContext.SetUser(user);

@@ -3,6 +3,7 @@
     public enum UserType
     {
         Connected = 1,
-        Seperate = 2
+        Seperate = 2,
+        Admin = 100
     }
 }
