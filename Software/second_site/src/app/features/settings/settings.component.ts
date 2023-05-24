@@ -18,13 +18,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
 	private Sub: Subscription;
 
 	constructor(
-		private settingsService: SettingsService,
+		public settingsService: SettingsService,
 		private userService: UserService,
 		private apiService: ApiService,
 		private router: Router
 	) {}
 
 	ngOnInit(): void {
+		this.settingsService.updatedOrNot = false;
 		this.Sub = this.settingsService.showCancelButton.subscribe(
 			value => (this.showCancelButton = value)
 		);

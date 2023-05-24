@@ -14,10 +14,10 @@
 					class="bi bi-question-square settings-icon fa-lg btn-outline-secondary"
 				></i>
 
-				<app-input-field [label]="'Current password'" [inputClass]="passInputValidClass">
+				<app-input-field [label]="'New password'" [inputClass]="passInputValidClass" (keyup)="oldPassword()">
 					<input
 						type="password"
-						placeholder="Enter your password"
+						placeholder="Enter New Password"
 						formControlName="oldPassword"
 					/>
 				</app-input-field>
@@ -29,10 +29,10 @@
 					class="bi bi-question-square settings-icon fa-lg btn-outline-secondary"
 				></i>
 
-				<app-input-field [label]="'New password'" [inputClass]="passInputValidClass">
+				<app-input-field [label]="'Repeat New password'" [inputClass]="passInputValidClass" (keyup)="newPassword()">
 					<input
 						type="password"
-						placeholder="Enter New Password"
+						placeholder="Repeat New Password"
 						formControlName="newPassword"
 					/>
 				</app-input-field>

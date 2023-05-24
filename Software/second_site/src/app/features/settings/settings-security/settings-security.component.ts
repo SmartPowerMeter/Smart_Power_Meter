@@ -69,6 +69,14 @@ export class SettingsSecurityComponent implements OnInit, OnDestroy {
 			)
 			.subscribe();
 	}
+    
+	oldPassword(){
+		this.settingsService.oldPassword = this.form.controls['oldPassword'].value;
+	}
+
+	newPassword(){
+		this.settingsService.newPassword = this.form.controls['newPassword'].value;
+	}
 
 	onUpdateSettingsClick() {
 		if (this.form.valid) {
