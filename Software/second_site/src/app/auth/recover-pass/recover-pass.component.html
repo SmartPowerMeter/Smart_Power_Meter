@@ -23,7 +23,9 @@
         
 
         <p class="error-message" id="password-error" style="margin-top: 10px; color: red; display: none;">Incorrect Password or Email. Please try again.</p>
-
+        
+        <p *ngIf="this.emailSend" style="color: green;">Email Sent</p>
+        <p *ngIf="this.emailSend == false" style="color: red;">Email Can Not Be Sent</p>
         <div class="user-submit" style="margin-top: 10px;">
             <label for="submit"></label>
             <app-button [btnClass]="'primary'" [btnHeight]="'46px'" [btnWidth]="'360px'" id="submit" type="submit" [isDisable]="valid" [text]="'SEND CONFIRMATION'"></app-button>

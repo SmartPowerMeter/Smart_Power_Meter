@@ -174,6 +174,19 @@ export class ApiService {
         })
       );
   }
+
+  RecoverPassword (email: string){
+  return this._http
+  .post<any>(
+    `https://api.smartpowermeter.ge/Account/RecoverPassword?email=${email}`,
+    {}
+  )
+  .pipe(
+    map((e) => {
+      return e;
+    })
+  );
+  }
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http

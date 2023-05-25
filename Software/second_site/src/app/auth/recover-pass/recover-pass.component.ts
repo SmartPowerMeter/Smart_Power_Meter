@@ -14,7 +14,7 @@ export class RecoverPassComponent implements OnInit, OnDestroy {
   private destr: any;
   public form: FormGroup = new FormGroup({});
   public form_2: FormGroup = new FormGroup({});
-
+  public emailSend: boolean;
   protected Recover_Id: any;
   protected currntEmail: any;
   protected currntFullName: any;
@@ -59,30 +59,36 @@ export class RecoverPassComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     // console.log("success");
-    this.modalTriger = true;
-    this._api.Get_User_Id_With_Email().subscribe(
-      (res) => {
-        const user = res.find((params: any) => {
-          return params.email == this.form.get("email")?.value;
-        });
-        if (user) {
-          this.triger1 = true;
-          this.triger2 = false;
-          this.Recover_Id = user.id;
-          this.currntEmail = this.form.get("email")?.value;
-          this.currntFullName = user.Full_Name;
-          this.currentAgree = user.Agree_Term;
-        } else {
-          this.triger1 = false;
-          this.triger2 = true;
-        }
-        // this.form.reset()
-        this.ValueForInput = "";
-      },
-      (error) => {
-        alert(error.error);
-      }
-    );
+    // this.modalTriger = true;
+    // this._api.Get_User_Id_With_Email().subscribe(
+    //   (res) => {
+    //     const user = res.find((params: any) => {
+    //       return params.email == this.form.get("email")?.value;
+    //     });
+    //     if (user) {
+    //       this.triger1 = true;
+    //       this.triger2 = false;
+    //       this.Recover_Id = user.id;
+    //       this.currntEmail = this.form.get("email")?.value;
+    //       this.currntFullName = user.Full_Name;
+    //       this.currentAgree = user.Agree_Term;
+    //     } else {
+    //       this.triger1 = false;
+    //       this.triger2 = true;
+    //     }
+    //     // this.form.reset()
+    //     this.ValueForInput = "";
+    //   },
+    //   (error) => {
+    //     alert(error.error);
+    //   }
+    // );
+    this._api.RecoverPassword(this.form.get("email")?.value).subscribe((res)=>{
+      this.emailSend = true;
+    },
+    (error)=>{
+      this.emailSend = false;
+    });
   }
 
   Update() {

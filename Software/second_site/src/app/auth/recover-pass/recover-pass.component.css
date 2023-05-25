@@ -1,0 +1,162 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  /* Firefox */
+}
+
+#Register-main {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+#Register-main #image-left {
+  background-image: url("../../../assets/images/auth/page_cover.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 65%;
+  height: 100vh;
+}
+#Register-main #image-left img {
+  height: 100%;
+  -o-object-fit: scale-down;
+     object-fit: scale-down;
+}
+#Register-main .formGroup {
+  position: absolute;
+  transform: translate(1100px, 60px);
+  width: 370px;
+  top: -1px;
+  left: 0;
+}
+#Register-main .formGroup .header-text {
+  font-family: "Roboto", sans-serif;
+  color: #4eabe9;
+  font-size: 18px;
+  line-height: 24px;
+}
+#Register-main .formGroup .header-text span {
+  line-height: 27px;
+  font-size: 20px;
+  color: #4eabe9;
+}
+#Register-main .formGroup .name_of_action {
+  margin-top: 44px;
+}
+#Register-main .formGroup .name_of_action .signin-header {
+  font-size: 30px;
+  line-height: 37px;
+  word-spacing: 1px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+#Register-main .formGroup .name_of_action .signin-text {
+  font-size: 14px;
+  line-height: 21px;
+  word-spacing: 0;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  margin-top: 11px;
+}
+#Register-main .formGroup .user-input-check-1 {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+#Register-main .formGroup .user-input-check-2 {
+  margin-top: 9px;
+  display: flex;
+  flex-direction: column;
+}
+#Register-main .formGroup .remember-section {
+  margin-top: 11px;
+  padding-top: 12px;
+}
+#Register-main .formGroup .remember-section #checkbox {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  vertical-align: top;
+  margin-right: 10px;
+}
+#Register-main .formGroup .remember-section label {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #778ca2;
+}
+#Register-main .formGroup .remember-section .recovery-password {
+  margin-left: 115px;
+  text-decoration: none;
+  color: #252631;
+}
+#Register-main .formGroup .button {
+  margin-top: 27px;
+}
+#Register-main .formGroup .last-part {
+  margin-top: 20px;
+}
+#Register-main .formGroup .last-part .signup-text {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #98a9bc;
+}
+#Register-main .formGroup .last-part .signup {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #252631;
+}
+
+@media only screen and (max-width: 600px) {
+  #image-left {
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+  #Register-main {
+    flex-direction: column;
+    font-size: 10px !important;
+  }
+  .formGroup {
+    transform: translate(20px, 400px) !important;
+  }
+  .signin-text {
+    width: 80% !important;
+  }
+}
+@media only screen and (min-width: 601px) and (max-width: 1500px) {
+  #image-left {
+    background-size: cover !important;
+  }
+}
+@media only screen and (min-width: 1001px) and (max-width: 1200px) {
+  .formGroup {
+    left: -30% !important;
+  }
+}
+@media only screen and (min-width: 800px) and (max-width: 1000px) {
+  .formGroup {
+    left: -40% !important;
+  }
+}
+@media only screen and (min-width: 601px) and (max-width: 799px) {
+  .formGroup {
+    left: -80% !important;
+  }
+}
+#checkbox {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  margin-top: 10px;
+}
+
+.terms {
+  margin-left: 30px;
+  margin-top: -27px;
+}/*# sourceMappingURL=recover-pass.component.css.map */
