@@ -22,6 +22,7 @@ export class RecoverPassComponent implements OnInit, OnDestroy {
 
   public triger1: boolean = true;
   public triger2: boolean = false;
+  public visible: boolean = false;
 
   private input: any;
   public valid: boolean = true;
@@ -85,10 +86,19 @@ export class RecoverPassComponent implements OnInit, OnDestroy {
     // );
     this._api.RecoverPassword(this.form.get("email")?.value).subscribe((res)=>{
       this.emailSend = true;
+      document.getElementById('emailSent')!.style.display = 'block';
     },
     (error)=>{
       this.emailSend = false;
+      document.getElementById('emailNotSent')!.style.display = 'block';
     });
+  }
+
+  removeMessage(){
+    const emailSent = document.getElementById('emailSent');
+    emailSent!.style.display = 'none'; // display error message
+    const emailNotSent = document.getElementById('emailNotSent');
+    emailNotSent!.style.display = 'none'; // display error message
   }
 
   Update() {

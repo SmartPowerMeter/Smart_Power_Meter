@@ -14,8 +14,8 @@
             </p>
         </div>
         
-        <div class="user-input" style="margin-top: 15px;">
-            <app-input-field [label]="'Your email'" [inputClass]="input_class" [formGroup]="form" [inputClass]="''">
+        <div class="user-input" style="margin-top: 15px; " >
+            <app-input-field (keyup)="removeMessage()" [label]="'Your email'" [inputClass]="input_class" [formGroup]="form" [inputClass]="''">
                 <input formControlName="email" id="email" type="email" #asd placeholder="Enter your email" [disabled]="false" />
             </app-input-field>
         </div>
@@ -24,16 +24,20 @@
 
         <p class="error-message" id="password-error" style="margin-top: 10px; color: red; display: none;">Incorrect Password or Email. Please try again.</p>
         
-        <p *ngIf="this.emailSend" style="color: green;">Email Sent</p>
-        <p *ngIf="this.emailSend == false" style="color: red;">Email Can Not Be Sent</p>
+        <p id="emailSent" style="color: green; display: none;">Email Sent</p>
+        <p id="emailNotSent"  style="color: red; display: none;">Email Can Not Be Sent</p>
         <div class="user-submit" style="margin-top: 10px;">
             <label for="submit"></label>
             <app-button [btnClass]="'primary'" [btnHeight]="'46px'" [btnWidth]="'360px'" id="submit" type="submit" [isDisable]="valid" [text]="'SEND CONFIRMATION'"></app-button>
         </div>
 
-        <footer class="last-part">
+        <!-- <footer class="last-part">
             <span class="signup-text">Don’t have an account?</span>&nbsp;
             <a routerLink="/sign-up" class="signup p-link">Sign up here</a>
+        </footer> -->
+        <footer class="last-part">
+            <span class="signup-text">If you Have Account then</span>&nbsp;
+            <a routerLink="/sign-in" class="signup p-link">Sign In here</a>
         </footer>
     </form>
 </div>
