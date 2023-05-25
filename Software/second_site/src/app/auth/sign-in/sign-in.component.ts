@@ -100,7 +100,6 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   removeMessage(){
-    console.log('keyup')
     const passwordError = document.getElementById('password-error');
     passwordError!.style.display = 'none'; // display error message
   }
