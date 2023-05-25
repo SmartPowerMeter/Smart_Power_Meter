@@ -30,14 +30,14 @@ export class RecoverPassComponent implements OnInit, OnDestroy {
   public input_class: any = "";
 
   public modalTriger: boolean = false;
-
+ //password: ["", [Validators.required]],
   constructor(
     private _fb: FormBuilder,
     private _api: ApiService,
     private _http: HttpClient,
     private router: Router
   ) {
-    this.form_2 = this._fb.group({
+    this.form = this._fb.group({
       password: ["", [Validators.required]],
     });
   }
