@@ -30,10 +30,10 @@ namespace SPM.Api.Services.Measurements
             return data;
         }
 
-        public async Task<GetMonthlyEnergyConsumptionResponse> GetMonthlyEnergyConsumption()
+        public async Task<GetEnergyConsumptionResponse> GetEnergyConsumption(TimeRange timeRange)
         {
             var currentDate = DateTimeOffset.Now;
-            var data = await _influxDbService.GetMeasurement("Energy", currentDate.StartTime(TimeRange.Month), currentDate, AggregateDuration.Hour.ToStringDuration());
+            var data = await _influxDbService.GetMeasurement("Energy", currentDate.StartTime(timeRange), currentDate, AggregateDuration.Hour.ToStringDuration());
 
             var last = data.Where(x => x.Value != 0).Last().Value;
             var first = data.Where(x => x.Value != 0).Min(x => x.Value);
@@ -42,12 +42,14 @@ namespace SPM.Api.Services.Measurements
             var tariff = GetTariff(consumedEnergy);
             var cost = consumedEnergy * tariff;
 
-            return new GetMonthlyEnergyConsumptionResponse
+            return new GetEnergyConsumptionResponse
             {
                 TotalConsumedEnergy = Math.Round(consumedEnergy, 2),
                 TotalCost = Math.Round(cost, 2)
             };
         }
+
+        #region Utilities
 
         private string GetTime(TimeType timeType, int time)
         {
@@ -83,5 +85,7 @@ namespace SPM.Api.Services.Measurements
             else
                 return 0.26537;
         }
+
+        #endregion
     }
 }

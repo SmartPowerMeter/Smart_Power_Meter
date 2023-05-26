@@ -10,6 +10,6 @@ namespace SPM.Api.Services.Measurements
 
         Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(MeasurementType measurement, TimeType timeType, int time);
 
-        Task<GetMonthlyEnergyConsumptionResponse> GetMonthlyEnergyConsumption();
+        Task<GetEnergyConsumptionResponse> GetEnergyConsumption(TimeRange timeRange);
     }
 }

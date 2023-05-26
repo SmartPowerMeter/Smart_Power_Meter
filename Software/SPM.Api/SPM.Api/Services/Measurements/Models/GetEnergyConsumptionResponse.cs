@@ -1,6 +1,6 @@
 ﻿namespace SPM.Api.Services.Measurements.Models
 {
-    public class GetMonthlyEnergyConsumptionResponse
+    public class GetEnergyConsumptionResponse
     {
         public double TotalConsumedEnergy { get; set; }
 

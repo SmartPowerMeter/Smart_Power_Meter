@@ -4,6 +4,7 @@ using SPM.Api.Services.Measurements;
 using SPM.Api.Services.InfluxDb.Models;
 using Microsoft.AspNetCore.Authorization;
 using SPM.Api.Services.Measurements.Models;
+using SPM.Api.Core.Domain.Enums;
 
 namespace SPM.Api.Controllers
 {
@@ -36,9 +37,9 @@ namespace SPM.Api.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<GetMonthlyEnergyConsumptionResponse> GetMonthlyEnergyConsumption()
+        public async Task<GetEnergyConsumptionResponse> GetEnergyConsumption(TimeRange timeRange)
         {
-            return await _measurementService.GetMonthlyEnergyConsumption();
+            return await _measurementService.GetEnergyConsumption(timeRange);
         }
 
         [Authorize]
