@@ -150,10 +150,10 @@ export class ApiService {
       );
   }
 
-  GetMonthlyEnergyConsumption() {
+  GetEnergyConsumption(timeRange: number) {
     return this._http
       .get(
-        `https://api.smartpowermeter.ge/Measurement/GetMonthlyEnergyConsumption`
+        `https://api.smartpowermeter.ge/Measurement/GetEnergyConsumption?timeRange=${timeRange}`
       )
       .pipe(
         map((e) => {
@@ -175,17 +175,17 @@ export class ApiService {
       );
   }
 
-  RecoverPassword (email: string){
-  return this._http
-  .post<any>(
-    `https://api.smartpowermeter.ge/Account/RecoverPassword?email=${email}`,
-    {}
-  )
-  .pipe(
-    map((e) => {
-      return e;
-    })
-  );
+  RecoverPassword(email: string) {
+    return this._http
+      .post<any>(
+        `https://api.smartpowermeter.ge/Account/RecoverPassword?email=${email}`,
+        {}
+      )
+      .pipe(
+        map((e) => {
+          return e;
+        })
+      );
   }
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {

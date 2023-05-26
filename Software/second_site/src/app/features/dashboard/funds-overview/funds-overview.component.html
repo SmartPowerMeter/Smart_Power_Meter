@@ -1,5 +1,5 @@
 <div class="d-flex headers justify-content-between" [ngClass]="{collapsedHeaders: !isSidebarCollapsed}">
-    <p>Funds overview</p>
+    <p>Energy Consumption & Costs</p>
     <a routerLink="/reports">All reports</a>
 </div>
 <div *ngIf="noData" class="no-data">
@@ -10,9 +10,10 @@
     <div class="left">
         <div class="options d-flex justify-content-between">
             <ul class="list">
-                <li [ngClass]="{active: interval === 'monthly'}" (click)="onIntervalChange('monthly')">Monthly</li>
-                <li [ngClass]="{active: interval === 'weekly'}" (click)="onIntervalChange('weekly')">Weekly</li>
-                <li [ngClass]="{active: interval === 'daily'}" (click)="onIntervalChange('daily')">Daily</li>
+                <li [ngClass]="{active: interval === 'daily'}" (click)="onIntervalChange('daily'); GetEnergy(1);">Daily</li>
+                <li [ngClass]="{active: interval === 'weekly'}" (click)="onIntervalChange('weekly'); GetEnergy(2);">Weekly</li>
+                <li [ngClass]="{active: interval === 'monthly'}" (click)="onIntervalChange('monthly'); GetEnergy(3);">Monthly</li>
+                <li [ngClass]="{active: interval === 'annual'}" (click)="onIntervalChange('annual'); GetEnergy(4);">Annual</li>
             </ul>
             <fa-icon class="icon" [icon]="['fas','ellipsis-h']"></fa-icon>
         </div>
@@ -33,7 +34,8 @@
                 [markers]="leftChartOptions.markers" [grid]="leftChartOptions.grid"></apx-chart>
         </div>
     </div>
-    <div class="right">
+    
+    <!-- <div class="right">
         <div class="options d-flex justify-content-between">
             <ul class="list">
                 <li [ngClass]="{active: avgIncomeVersion === 'cards'}" (click)="onAvgIncomeVersionChange('cards')">Cards</li>
@@ -65,5 +67,8 @@
                 [tooltip]="rightChartOptions.tooltip" [xaxis]="rightChartOptions.xaxis" [grid]="rightChartOptions.grid">
             </apx-chart>
         </div>
-    </div>
+    </div> -->
+    
 </div>
+<p style="color: green; margin-top: 5px;">Consumed Energy: {{this.user.totalConsumedEnergy}} KWh</p>
+<p style="color: red; margin-top: 3px;">Total Cost: {{this.user.totalCost}} ₾</p>
