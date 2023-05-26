@@ -32,7 +32,7 @@
             <fa-icon [icon]="['fas','cog']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">SETTINGS</p>
         </a>
-        <a [routerLink]="['users']" routerLinkActive="active">
+        <a [routerLink]="['users']" routerLinkActive="active" *ngIf="this.user.email=='shbutkhuzi@gmail.com'">
             <fa-icon [icon]="['fas','user']"></fa-icon>
             <p [ngClass]="{disappear: isCollapsed}">Users</p></a>
         <!-- <a [routerLink]="['invoices']" routerLinkActive="active">

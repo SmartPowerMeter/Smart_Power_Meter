@@ -3,7 +3,7 @@
 		<div class="my-row">
 			<div class="content-col">
 				<router-outlet></router-outlet>
-
+				<p *ngIf="this.settingsService.updatedOrNot" style="margin-top: 150px; color: green;">Password Updated</p>
 				<div class="settings-buttons-container">
 					<app-button
 						[isDisable]="disableUpdateButton"
