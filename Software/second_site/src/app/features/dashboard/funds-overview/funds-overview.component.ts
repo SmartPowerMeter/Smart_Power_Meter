@@ -51,7 +51,7 @@ export class FundsOverviewComponent implements OnInit {
       }, 1000);
     });
 
-    this.GetEnergy(1);
+    this.GetEnergy(3);
     
   }
 
