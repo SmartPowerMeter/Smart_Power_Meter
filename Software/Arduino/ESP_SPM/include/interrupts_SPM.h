@@ -8,5 +8,9 @@ void init1SecInterrupt();
 void IRAM_ATTR every1Sec();
 void onSDInsert();
 void initSDInterrupt();
+void initUserButtonInterrupt();
+void onFallingUserButton();
+void usrButtonLoopCheck();
+void usrButtonAction();
 
 #endif

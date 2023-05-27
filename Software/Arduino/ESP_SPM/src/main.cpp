@@ -5,6 +5,9 @@
 #include "pzem_004t_SPM.h"
 #include "time_SPM.h"
 #include "interrupts_SPM.h"
+#include "utils.h"
+#include "SIM800L_SPM.h"
+#include "WiFiManager_SPM.h"
 
 PZEM004Tv30 pzem = pzemInit();
 
@@ -13,18 +16,28 @@ void setup() {
 
   pinMode(SIM800_EN, OUTPUT);
   pinMode(RELAY, OUTPUT);
+  digitalWrite(RELAY, HIGH);
+  pinMode(POWER_4_1_EN, OUTPUT);
   digitalWrite(SIM800_EN, HIGH);
-  digitalWrite(RELAY, LOW);
+  digitalWrite(POWER_4_1_EN, HIGH);
+
+  Serial.printf("ESP Unique: %lu\n", getUnique());
 
   sd_status sd_ret = allCardChecks(SD, SD_PRECENCE);
   if(sd_ret != SD_OK){
     handleErrorSD(sd_ret);
   }
 
-  time_status time_ret = setESPTimeUsingWiFi((char*)"SHAKO", (char*)"stereometria2001");
-  if (time_ret != TIME_OK){
-    timeHandleError(time_ret);
-  }
+  // time_status time_ret = setESPTimeUsingWiFi((char*)"SHAKO", (char*)"stereometria2001");
+  // if (time_ret != TIME_OK){
+  //   timeHandleError(time_ret);
+  // }
+
+  initGSMSupport();
+
+  initWiFiManager();
+
+
 
 
   // struct tm timett;
@@ -41,10 +54,12 @@ void setup() {
   // Serial.print("Time after modification: ");
   // Serial.println(ctime(&tt));
 
-  pinMode(22, OUTPUT);  // for testing
+  // pinMode(22, OUTPUT);  // for testing
   init1SecInterrupt();
   initSDInterrupt();
-
+  initUserButtonInterrupt();
+  
+  // esp_efuse_mac_get_default(mac);
 
   // SD.end();
 
@@ -128,6 +143,7 @@ void loop() {
 
   initSDOnInterrupt();
   everySecond();
+  usrButtonLoopCheck();
 
   // pzem_status pzem_ret = pzemReadValues(pzem);
   // if (pzem_ret != PZEM_OK) pzemHandleError(pzem_ret);

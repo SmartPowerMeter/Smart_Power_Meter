@@ -29,7 +29,7 @@ extern PZEM004Tv30 pzem;
 extern bool f_SD_fall_edge;
 extern unsigned long SD_insert_start;
 
-uint8_t SD_CARD_WRITE_ENABLE = 1;
+uint8_t SD_CARD_WRITE_ENABLE = 0;
 
 // struct SD_event_flags SD_flags = {0};
 struct SD_1min_mean meanVals_1min = {0};
@@ -890,6 +890,7 @@ sd_status getYearMonthDayFromPath(char path[], struct tm *ymd){
 // }
 
 void handleErrorSD(sd_status status){
+    if (status == SD_WRITE_NOT_ALLOWED) return;
     Serial.print("!!!!!!!!! Error: ");
     if(status == SD_ABSENT){
         Serial.println("SD Card is not inserted");
