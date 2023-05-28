@@ -129,7 +129,7 @@ export class ApiService {
 
   GetRelayStatus() {
     return this._http
-      .get<any>("https://api.smartpowermeter.ge/Measurement/GetRelayStatus")
+      .get<any>("https://api.smartpowermeter.ge/Relay/GetRelayStatus")
       .pipe(
         map((e) => {
           return e;
@@ -140,7 +140,7 @@ export class ApiService {
   SetRelayStatus(Activate: boolean) {
     return this._http
       .post<any>(
-        `https://api.smartpowermeter.ge/Measurement/SetRelayStatus?Activate=${Activate}`,
+        `https://api.smartpowermeter.ge/Relay/SetRelayStatus?activate${Activate}`,
         {}
       )
       .pipe(

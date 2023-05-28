@@ -31,8 +31,16 @@ void setup() {
   Serial.begin(115200);
 
   pinMode(RELAY, OUTPUT);
-  digitalWrite(RELAY, LOW);
 
+  String relayState = GetStringValue("Relay", "RelayState");
+
+  if (relayState == "1"){
+    digitalWrite(RELAY, LOW);
+  }
+  else{
+    digitalWrite(RELAY, HIGH);
+  }
+  
   WiFi.mode(WIFI_STA);
 
   WiFiManager wm;
@@ -51,19 +59,21 @@ void setup() {
       Serial.println("Connected to the WIFI");
   }
 
-  preferences.begin("Credentials", false);
-
-  customerId = preferences.getString("CustomerId", "");
+  customerId = GetStringValue("Credentials", "CustomerId");
 
   String id = String(enteredCustomerId.getValue());
   id.trim();
 
   if(!id.isEmpty()){
-    preferences.putString("CustomerId", enteredCustomerId.getValue());
+    SaveStringValue("Credentials", "CustomerId", enteredCustomerId.getValue());
     customerId = enteredCustomerId.getValue();
   }
-  
-  preferences.end();
+  else{
+    if(customerId.isEmpty()){
+      wm.resetSettings();
+      ESP.restart();
+    }
+  }
 
   topic = "measurement-" + customerId;
 
@@ -88,8 +98,10 @@ void reconnect() {
 void callback(char* topic, byte* payload, unsigned int length) {
   if ((char)payload[0] == '1') {
     digitalWrite(RELAY, LOW);
+    SaveStringValue("Relay", "RelayState", "1");
   } else {
     digitalWrite(RELAY, HIGH);
+    SaveStringValue("Relay", "RelayState", "0");
   }
 
   String relayStateTopic = "relay-state-" + customerId;
@@ -135,6 +147,22 @@ void loop() {
 }
 
 ///////////////////////////////////////////////////////
+
+void SaveStringValue(String namespaceName, String key, String value){
+
+  preferences.begin(namespaceName.c_str(), false);
+  preferences.putString(key.c_str(), value);
+  preferences.end();
+}
+
+String GetStringValue(String namespaceName, String key){
+
+  preferences.begin(namespaceName.c_str(), false);
+  String value = preferences.getString(key.c_str(), "");
+  preferences.end();
+
+  return value;
+}
 
 String GetLocalTime(){
   struct tm timeinfo;
