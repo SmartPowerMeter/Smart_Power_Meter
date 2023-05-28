@@ -4,15 +4,32 @@
       <th>User Name:</th>
       <th>Email:</th>
       <th>Power Mode:</th>
+      <th>Customer Power Mode:</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let person of people">
+    <tr *ngFor="let person of people; let i = index" (click)="rowClicked(i)">
       <td>{{ person.firstName.concat(' ' + person.lastName) }}</td>
       <td>{{ person.email }}</td>
       <td>
         <label
           data-toggle="modal"
+          data-target="#exampleModal"
+          class="toggle-switch"
+          style="cursor: pointer"
+        >
+          <input
+            id="tog1"
+            type="checkbox"
+            [checked]="person.adminRelayEnabled"
+            style="margin-left: 10px"
+          />
+          <span class="slider"></span>
+        </label>
+      </td>
+      <td>
+        <label
+          data-toggle=""
           data-target="#exampleModal"
           class="toggle-switch"
           style="cursor: pointer"
@@ -60,7 +77,7 @@
           type="button"
           class="btn btn-success"
           data-dismiss="modal"
-          (click)="clicked($event)"
+          (click)="clicked()"
         >
           Yes
         </button>
