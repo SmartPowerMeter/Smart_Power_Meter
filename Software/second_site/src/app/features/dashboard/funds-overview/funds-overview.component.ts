@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { LayoutService } from "src/app/layout/services/layout.service";
 import { leftChartOptions, LeftChartService } from "./leftChart.service";
 import { rightChartOptions, RightChartService } from "./rightChart.service";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
   selector: "app-funds-overview",
@@ -9,6 +10,7 @@ import { rightChartOptions, RightChartService } from "./rightChart.service";
   styleUrls: ["./funds-overview.component.scss"],
 })
 export class FundsOverviewComponent implements OnInit {
+  user: any;
   isSidebarCollapsed: boolean;
   noData = false;
   shownTotal: "income" | "expenses" = "income";
@@ -33,7 +35,8 @@ export class FundsOverviewComponent implements OnInit {
   constructor(
     private layoutService: LayoutService,
     private leftChartService: LeftChartService,
-    private rightChartService: RightChartService
+    private rightChartService: RightChartService,
+    private _api: ApiService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +50,9 @@ export class FundsOverviewComponent implements OnInit {
         this.renderRightChart();
       }, 1000);
     });
+
+    this.GetEnergy(3);
+    
   }
 
   onIntervalChange(interval: string) {
@@ -116,4 +122,11 @@ export class FundsOverviewComponent implements OnInit {
       this.interval
     );
   }
+
+  GetEnergy(timeRange: number){
+    this._api.GetEnergyConsumption(timeRange).subscribe((res)=>{
+      this.user = res;
+    })
+  }
+
 }

@@ -146,7 +146,7 @@ export class DashboardComponent implements OnInit {
       this.send(this.serviceParams[this.selectedOption].timeType, this.serviceParams[this.selectedOption].time);
     }, 1000);
 
-    this._api.GetMonthlyEnergyConsumption().subscribe((res)=>{
+    this._api.GetEnergyConsumption(1).subscribe((res)=>{
       const obj: any = res;
       this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
       this.user.totalCost = obj.totalCost;
