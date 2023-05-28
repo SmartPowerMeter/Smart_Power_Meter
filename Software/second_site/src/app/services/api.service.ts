@@ -187,6 +187,18 @@ export class ApiService {
         })
       );
   }
+
+  GetAdminUsers() {
+    return this._http
+      .get(
+        `https://api.smartpowermeter.ge/Admin/Account/GetUsers`
+      )
+      .pipe(
+        map((e) => {
+          return e;
+        })
+      );
+  }
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http

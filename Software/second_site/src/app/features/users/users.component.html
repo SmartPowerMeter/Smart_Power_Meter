@@ -8,8 +8,8 @@
   </thead>
   <tbody>
     <tr *ngFor="let person of people">
-      <td>{{ person.FullName }}</td>
-      <td>{{ person.Email }}</td>
+      <td>{{ person.firstName.concat(' ' + person.lastName) }}</td>
+      <td>{{ person.email }}</td>
       <td>
         <label
           data-toggle="modal"
@@ -20,7 +20,7 @@
           <input
             id="tog1"
             type="checkbox"
-            [checked]="isToggleChecked"
+            [checked]="person.customerRelayEnabled"
             style="margin-left: 10px"
           />
           <span class="slider"></span>
@@ -60,7 +60,7 @@
           type="button"
           class="btn btn-success"
           data-dismiss="modal"
-          (click)="clicked()"
+          (click)="clicked($event)"
         >
           Yes
         </button>
