@@ -1,10 +1,16 @@
 #include "time_SPM.h"
 #include "pzem_004t_SPM.h"
 #include "SD_SPM.h"
+#include "mqtt_SPM.h"
 
 extern bool f_1sec_event;
+char formatedDateTime_c[30];
 
+extern char currMeasJson[200];
 extern PZEM004Tv30 pzem;
+extern PubSubClient* mqtt_client;
+extern String topic;
+extern const char* topic_c;
 
 
 uint16_t getESPYear(){
@@ -49,9 +55,25 @@ uint8_t getESPSec(){
     return timeinfo.tm_sec;
 }
 
+char* getMQTTFormatedCurrTime(){
+    time_t now = time(nullptr);
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);
+
+    sprintf(formatedDateTime_c, "%04d-%02d-%02dT%02d:%02d:%02d", timeinfo.tm_year + 1900,
+                                                                 timeinfo.tm_mon + 1,
+                                                                 timeinfo.tm_mday,
+                                                                 timeinfo.tm_hour,
+                                                                 timeinfo.tm_min,
+                                                                 timeinfo.tm_sec);
+
+    return formatedDateTime_c;
+}
+
 time_status setESPTimeUsingWiFi(char* ssid, char *pass){
     if (WiFi.isConnected() != WL_CONNECTED){
-        WiFi.begin(ssid, pass);
+        Serial.println("WiFi Connection for updating Time in progress");
+        // WiFi.begin(ssid, pass);
         uint8_t cnt = 0;
         while (WiFi.status() != WL_CONNECTED) {
             delay(10);
@@ -85,7 +107,16 @@ void everySecond(){
     if (pzem_ret != PZEM_OK){
         pzemHandleError(pzem_ret);
     }
+    // start = micros();
+    measToJson(pzem);
+    // end = micros();
+    // Serial.printf("MeasToJson() took: %lu microseconds\n", end-start);
     // Serial.printf("Reading measurements took: %lu microseconds\n", end-start);
+
+    // publish measurement
+    if (mqtt_client->connected() && mqtt_client->publish(topic_c, currMeasJson)){
+        Serial.printf("%s: %s\n", topic_c, currMeasJson);
+    }
 
     start = micros();
     sd_status sd_ret = SDRoutineEverySec();
@@ -93,7 +124,7 @@ void everySecond(){
     if (sd_ret != SD_OK){
         handleErrorSD(sd_ret);
     }
-    Serial.printf("SDRoutineEverySec() took: %lu microseconds\n", end-start);
+    // Serial.printf("SDRoutineEverySec() took: %lu microseconds\n", end-start);
 }
 
 void timeHandleError(time_status status){

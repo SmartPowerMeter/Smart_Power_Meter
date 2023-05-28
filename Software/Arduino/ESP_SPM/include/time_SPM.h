@@ -16,6 +16,7 @@ uint8_t getESPDay();
 uint8_t getESPHour24();
 uint8_t getESPMin();
 uint8_t getESPSec();
+char* getMQTTFormatedCurrTime();
 time_status setESPTimeUsingWiFi(char* ssid, char *pass);
 void everySecond();
 

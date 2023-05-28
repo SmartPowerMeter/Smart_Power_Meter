@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "SIM800L_SPM.h"
 #include "WiFiManager_SPM.h"
+#include "mqtt_SPM.h"
 
 PZEM004Tv30 pzem = pzemInit();
 
@@ -28,16 +29,19 @@ void setup() {
     handleErrorSD(sd_ret);
   }
 
-  // time_status time_ret = setESPTimeUsingWiFi((char*)"SHAKO", (char*)"stereometria2001");
-  // if (time_ret != TIME_OK){
-  //   timeHandleError(time_ret);
-  // }
-
   initGSMSupport();
 
   initWiFiManager();
+  getAllConf();
 
 
+  time_status time_ret = setESPTimeUsingWiFi((char*)"SHAKO", (char*)"stereometria2001");
+  if (time_ret != TIME_OK){
+    timeHandleError(time_ret);
+  }
+
+
+  initMQTT();
 
 
   // struct tm timett;
@@ -77,7 +81,7 @@ void setup() {
 
   // SD.begin();
 
-
+  
 
 
 
@@ -141,6 +145,7 @@ void setup() {
 
 void loop() {
 
+  MQTTLoop();
   initSDOnInterrupt();
   everySecond();
   usrButtonLoopCheck();

@@ -10,10 +10,15 @@
 
 #include "TinyGsmClient.h"
 
+//for debugging
+// #define DUMP_AT_COMMANDS
+
 typedef enum{
   SIM800L_OK = 0,
   SIM800L_ABSENT,
-  SIM800L_CHECK_AND_SAVE_ERROR
+  SIM800L_CHECK_AND_SAVE_ERROR,
+  SIM800L_SIM_UNLOCK_ERROR,
+  SIM800L_GPRS_CONNECTION_ERROR
 } sim800l_status;
 
 
@@ -21,5 +26,8 @@ sim800l_status checkSIM800LPrecense();
 sim800l_status checkAndSaveGSMSupport();
 volatile bool getGSMSupport();
 sim800l_status initGSMSupport();
+sim800l_status initSequenceSIM800L();
+
+void handleSIM800LError(sim800l_status status);
 
 #endif

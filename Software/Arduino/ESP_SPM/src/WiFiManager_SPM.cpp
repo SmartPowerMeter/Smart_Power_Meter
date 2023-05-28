@@ -16,14 +16,30 @@ WiFiManagerParameter enteredGSMConfGPRSUser("GSMConfGPRSUser", "Provide GPRS Use
 WiFiManagerParameter enteredGSMConfGPRSPass("GSMConfGPRSPass", "Provide GPRS Password if present", "", 30);
 
 
+bool SDConf = 0;
+bool GSMConf = 0;
+String CustomerId;
+String GSMConfAPN;
+String GSMConfPIN;
+String GSMConfGPRSUser;
+String GSMConfGPRSPass;
+
+const char* CustomerId_c;
+const char* GSMConfAPN_c;
+const char* GSMConfPIN_c;
+const char* GSMConfGPRSUser_c;
+const char* GSMConfGPRSPass_c;
+
+
 volatile void initWiFiManager(){
+    // WiFi.mode(WIFI_STA);
     // wm.resetSettings();
     const char * menu[] = {"wifi"};
     wm.setMenu(menu, 1);
     wm.setBreakAfterConfig(true);
     wm.setSaveParamsCallback(saveParamCallback);
-    wm.setConnectTimeout(5);
-    wm.setSaveConnectTimeout(5);
+    wm.setConnectTimeout(10);
+    wm.setSaveConnectTimeout(10);
     wm.setConnectRetries(1);
     // wm.setSaveConnect(false);
 
@@ -126,6 +142,84 @@ bool getGSMConf(){
     return param;
 }
 
+bool getSDConf(){
+    initSetupParams.begin("initParams");
+
+    bool param = initSetupParams.getBool("SDConf");
+
+    initSetupParams.end();
+    return param;
+}
+
+String getCustomerId(){
+    initSetupParams.begin("initParams");
+    String id = initSetupParams.getString("CustomerId");
+    initSetupParams.end();
+
+    return id;
+}
+
+String getGSMConfAPN(){
+    initSetupParams.begin("initParams");
+    String id = initSetupParams.getString("GSMConfAPN");
+    initSetupParams.end();
+
+    return id;
+}
+
+String getGSMConfPIN(){
+    initSetupParams.begin("initParams");
+    String id = initSetupParams.getString("GSMConfPIN");
+    initSetupParams.end();
+
+    return id;
+}
+
+String getGSMConfGPRSUser(){
+    initSetupParams.begin("initParams");
+    String id = initSetupParams.getString("GSMConfGPRSU");
+    initSetupParams.end();
+
+    return id;
+}
+
+String getGSMConfGPRSPass(){
+    initSetupParams.begin("initParams");
+    String id = initSetupParams.getString("GSMConfGPRSP");
+    initSetupParams.end();
+
+    return id;
+}
+
+
+void getAllConf(){
+    initSetupParams.begin("initParams");
+
+    SDConf          = initSetupParams.getBool("SDConf");
+    GSMConf         = initSetupParams.getBool("GSMConf");
+    CustomerId      = initSetupParams.getString("CustomerId");
+    GSMConfAPN      = initSetupParams.getString("GSMConfAPN");
+    GSMConfPIN      = initSetupParams.getString("GSMConfPIN");
+    GSMConfGPRSUser = initSetupParams.getString("GSMConfGPRSU");
+    GSMConfGPRSPass = initSetupParams.getString("GSMConfGPRSP");
+
+    Serial.println("---------> Reading All Configuration Parameters");
+    Serial.printf("CustomerId:      %s\n", CustomerId);
+    Serial.printf("SDConf:          %d\n", SDConf);
+    Serial.printf("GSMConf:         %d\n", GSMConf);
+    Serial.printf("GSMConfAPN:      %s\n", GSMConfAPN);
+    Serial.printf("GSMConfPIN:      %s\n", GSMConfPIN);
+    Serial.printf("GSMConfGPRSUser: %s\n", GSMConfGPRSUser);
+    Serial.printf("GSMConfGPRSPass: %s\n", GSMConfGPRSPass);
+
+    initSetupParams.end();
+
+    CustomerId_c = CustomerId.c_str();
+    GSMConfAPN_c = GSMConfAPN.c_str();
+    GSMConfPIN_c = GSMConfPIN.c_str();
+    GSMConfGPRSUser_c = GSMConfGPRSUser.c_str();
+    GSMConfGPRSPass_c = GSMConfGPRSPass.c_str();
+}
 
 void setGSMConf(bool val){
     initSetupParams.begin("initParams");
