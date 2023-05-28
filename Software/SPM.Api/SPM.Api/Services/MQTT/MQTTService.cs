@@ -2,27 +2,24 @@
 using System.Text;
 using SPM.Api.Data;
 using MQTTnet.Client;
-using SPM.Api.Core.WorkContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace SPM.Api.Services.MQTT
 {
     public class MQTTService : IMQTTService
     {
-        private readonly IWorkContext _workContext;
         private readonly SPMDbContext _dbContext;
         private readonly string _brokerUrl;
 
-        public MQTTService(IWorkContext workContext, SPMDbContext dbContext, IConfiguration configuration)
+        public MQTTService(SPMDbContext dbContext, IConfiguration configuration)
         {
-            _workContext = workContext;
             _dbContext = dbContext;
             _brokerUrl = configuration.GetValue<string>("BrokerUrl");
         }
 
-        public async Task<bool> SetRelayStatus(bool activate)
+        public async Task<bool> SetRelayStatus(string customerId, bool activate, bool isAdminCommand)
         {
-            var user = await _dbContext.User.FirstAsync(x => x.Id == _workContext.CurrentUser.Id);
+            var user = await _dbContext.User.FirstAsync(x => x.CustomerId == customerId);
 
             var options = new MqttClientOptionsBuilder()
                 .WithClientId("admin")
@@ -41,7 +38,22 @@ namespace SPM.Api.Services.MQTT
             {
                 var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
-                user.SetRelayState(payload == "0");
+                bool isEnabled = payload == "0";
+
+                if (isAdminCommand)
+                {
+                    user.SetAdminRelayState(isEnabled);
+
+                    if (!isEnabled)
+                        user.SetCustomerRelayState(isEnabled);
+                }
+                else
+                {
+                    if (user.AdminRelayEnabled)
+                        user.SetCustomerRelayState(isEnabled);
+
+                }
+
                 await _dbContext.SaveChangesAsync();
             };
 
@@ -63,14 +75,14 @@ namespace SPM.Api.Services.MQTT
 
             await Task.Delay(1500);
 
-            return user.RelayEnabled;
+            return user.CustomerRelayEnabled;
         }
 
-        public async Task<bool> GetRelayStatus()
+        public async Task<bool> GetRelayStatus(string customerId)
         {
-            var user = await _dbContext.User.FirstAsync(x => x.Id == _workContext.CurrentUser.Id);
+            var user = await _dbContext.User.FirstAsync(x => x.CustomerId == customerId);
 
-            return user.RelayEnabled;
+            return user.CustomerRelayEnabled;
         }
     }
 }

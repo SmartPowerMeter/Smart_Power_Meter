@@ -2,8 +2,8 @@
 {
     public interface IMQTTService
     {
-        Task<bool> SetRelayStatus(bool activate);
+        Task<bool> SetRelayStatus(string customerId, bool activate, bool isAdminCommand);
 
-        Task<bool> GetRelayStatus();
+        Task<bool> GetRelayStatus(string customerId);
     }
 }

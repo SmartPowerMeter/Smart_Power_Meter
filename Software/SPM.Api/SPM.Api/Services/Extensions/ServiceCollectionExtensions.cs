@@ -1,18 +1,21 @@
 ﻿using System.Text;
 using SPM.Api.Services.Jwt;
 using SPM.Api.Services.MQTT;
-using SPM.Api.Core.Constants;
 using System.Security.Claims;
-using SPM.Api.Services.Account;
+using SPM.Api.Services.Email;
+using SPM.Api.Core.Extensions;
 using Microsoft.OpenApi.Models;
 using SPM.Api.Core.WorkContexts;
 using SPM.Api.Services.InfluxDb;
+using SPM.Api.Services.Admin.Relay;
 using SPM.Api.Services.Measurements;
+using SPM.Api.Services.Admin.Account;
 using Microsoft.IdentityModel.Tokens;
-using SPM.Api.Core.WorkContexts.Models;
+using SPM.Api.Services.Customer.Relay;
+using SPM.Api.Services.Customer.Account;
+using SPM.Api.Services.Admin.Measurement;
+using SPM.Api.Services.Customer.Measurement;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using SPM.Api.Core.Domain.Enums;
-using SPM.Api.Services.Email;
 
 namespace SPM.Api.Services.Extensions
 {
@@ -22,10 +25,17 @@ namespace SPM.Api.Services.Extensions
         {
             services.AddScoped<IInfluxDbService, InfluxDbService>();
             services.AddScoped<IMeasurementService, MeasurementService>();
-            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IMQTTService, MQTTService>();
             services.AddScoped<IEmailService, EmailService>();
+
+            services.AddScoped<ICustomerRelayService, CustomerRelayService>();
+            services.AddScoped<ICustomerAccountService, CustomerAccountService>();
+            services.AddScoped<ICustomerMeasurementService, CustomerMeasurementService>();
+
+            services.AddScoped<IAdminRelayService, AdminRelayService>();
+            services.AddScoped<IAdminAccountService, AdminAccountService>();
+            services.AddScoped<IAdminMeasurementService, AdminMeasurementService>();
 
             services.AddJwt(configuration);
             services.AddSwagger();
@@ -98,16 +108,7 @@ namespace SPM.Api.Services.Extensions
                     return workContext;
 
                 if (httpContext.User.Identity is ClaimsIdentity identity && identity.IsAuthenticated)
-                {
-                    var user = new LoggedInUser
-                    {
-                        Id = int.Parse(identity.FindFirst(ClaimsConstants.Id).Value),
-                        Email = identity.FindFirst(ClaimTypes.Email).Value,
-                        UserType = (UserType)int.Parse(identity.FindFirst(ClaimsConstants.UserType).Value)
-                    };
-
-                    workContext.SetUser(user);
-                }
+                    workContext.SetUser(httpContext.ToLoggedInUser());
 
                 return workContext;
             });

@@ -10,6 +10,8 @@ namespace SPM.Api.Data.Extensions
             {
                 var context = serviceScope.ServiceProvider.GetService<SPMDbContext>();
                 context.Database.Migrate();
+
+                DbInitializer.SeedData(serviceProvider);
             }
 
             return serviceProvider;

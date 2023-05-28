@@ -9,11 +9,11 @@ using SPM.Api.Services.InfluxDb;
 using SPM.Api.Core.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
-using SPM.Api.Services.Account.Models;
+using SPM.Api.Services.Customer.Account.Models;
 
-namespace SPM.Api.Services.Account
+namespace SPM.Api.Services.Customer.Account
 {
-    public class AccountService : IAccountService
+    public class CustomerAccountService : ICustomerAccountService
     {
         private readonly IJwtService _jwtService;
         private readonly SPMDbContext _dbContext;
@@ -21,7 +21,7 @@ namespace SPM.Api.Services.Account
         private readonly IInfluxDbService _influxDbService;
         private readonly IEmailService _emailService;
 
-        public AccountService(IJwtService jwtService, SPMDbContext dbContext, IWorkContext workContext, IInfluxDbService influxDbService, IEmailService emailService)
+        public CustomerAccountService(IJwtService jwtService, SPMDbContext dbContext, IWorkContext workContext, IInfluxDbService influxDbService, IEmailService emailService)
         {
             _jwtService = jwtService;
             _dbContext = dbContext;
@@ -101,7 +101,7 @@ namespace SPM.Api.Services.Account
 
             if (user == null)
                 throw new NotFoundException();
-            
+
             var temporaryPassword = Guid.NewGuid().ToString();
 
             user.SetPassword(EncryptionHelper.HashPasword(temporaryPassword));

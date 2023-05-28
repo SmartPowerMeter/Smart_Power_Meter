@@ -1,8 +1,8 @@
-﻿using SPM.Api.Services.Account.Models;
+﻿using SPM.Api.Services.Customer.Account.Models;
 
-namespace SPM.Api.Services.Account
+namespace SPM.Api.Services.Customer.Account
 {
-    public interface IAccountService
+    public interface ICustomerAccountService
     {
         Task RegisterUser(RegisterUserRequest request);
 
