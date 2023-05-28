@@ -28,7 +28,7 @@ namespace SPM.Api.Data
 
         private static List<User> GetAdminUsers()
         {
-            var adminUser = new User("admin", "admin", "smartpowermeter@gmail.com", EncryptionHelper.HashPasword("smart2meter5pass"), UserType.Admin);
+            var adminUser = new User("admin", "admin", "smartpowmeter@gmail.com", EncryptionHelper.HashPasword("smart2meter5pass"), UserType.Admin);
             adminUser.SetBucketAccessToken("token");
 
             var adminUsers = new List<User>
