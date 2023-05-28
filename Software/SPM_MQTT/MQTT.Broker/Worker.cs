@@ -34,6 +34,7 @@ namespace MQTT.Broker
             _mqttServer.ClientConnectedAsync += ClientConnectedAsync;
             _mqttServer.InterceptingPublishAsync += MessageReceivedAsync;
             _mqttServer.ValidatingConnectionAsync += ValidatingConnectionAsync;
+            _mqttServer.ClientDisconnectedAsync += ClientDisconnectedAsync;
 
             await _mqttServer.StartAsync();
             await base.StartAsync(cancellationToken);
@@ -102,6 +103,11 @@ namespace MQTT.Broker
                     await Task.Run(() => _logger.LogError(ex.ToString()));
                 }
             }
+        }
+
+        private async Task ClientDisconnectedAsync(ClientDisconnectedEventArgs arg)
+        {
+            await Task.Run(() => _logger.LogInformation($"{DateTimeOffset.Now} - New connection: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}, DisconnectType = {arg.DisconnectType}"));
         }
     }
 }
