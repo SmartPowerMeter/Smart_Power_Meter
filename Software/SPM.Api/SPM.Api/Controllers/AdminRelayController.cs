@@ -16,14 +16,12 @@ namespace SPM.Api.Controllers
             _relayService = relayService;
         }
 
-        [Authorize]
         [HttpPost("{customerId}")]
         public async Task<bool> SetRelayStatus(string customerId, bool activate)
         {
             return await _relayService.SetRelayStatus(customerId, activate);
         }
 
-        [Authorize]
         [HttpGet("{customerId}")]
         public async Task<bool> GetRelayStatus(string customerId)
         {

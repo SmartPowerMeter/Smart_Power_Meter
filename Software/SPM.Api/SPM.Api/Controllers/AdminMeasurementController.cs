@@ -19,21 +19,18 @@ namespace SPM.Api.Controllers
             _measurementService = measurementService;
         }
 
-        [Authorize]
         [HttpPost("{customerId}")]
         public async Task<IEnumerable<MeasurementModel>> GetMeasurement(string customerId, GetMeasurementRequest request)
         {
             return await _measurementService.GetMeasurement(customerId, request.MeasurementType, request.TimeRange, request.AggregateDuration);
         }
 
-        [Authorize]
         [HttpPost("{customerId}")]
         public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(string customerId, GetRecentMeasurementRequest request)
         {
             return await _measurementService.GetRecentMeasurement(customerId, request.MeasurementType, request.TimeType, request.Time);
         }
 
-        [Authorize]
         [HttpGet("{customerId}")]
         public async Task<GetEnergyConsumptionResponse> GetEnergyConsumption(string customerId, TimeRange timeRange)
         {
