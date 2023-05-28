@@ -71,7 +71,7 @@ namespace MQTT.Broker
 
         private async Task ClientConnectedAsync(ClientConnectedEventArgs arg)
         {
-            await Task.Run(() => _logger.LogInformation($"{DateTimeOffset.Now} - New connection: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}"));
+            await Task.Run(() => _logger.LogInformation($"{DateTimeOffset.Now.AddHours(4)} - New connection: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}"));
         }
 
         private async Task MessageReceivedAsync(InterceptingPublishEventArgs arg)
@@ -107,7 +107,7 @@ namespace MQTT.Broker
 
         private async Task ClientDisconnectedAsync(ClientDisconnectedEventArgs arg)
         {
-            await Task.Run(() => _logger.LogInformation($"{DateTimeOffset.Now} - New connection: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}, DisconnectType = {arg.DisconnectType}"));
+            await Task.Run(() => _logger.LogInformation($"{DateTimeOffset.Now.AddHours(4)} - Client Disconnected: ClientId = {arg.ClientId}, Endpoint = {arg.Endpoint}, DisconnectType = {arg.DisconnectType}"));
         }
     }
 }
