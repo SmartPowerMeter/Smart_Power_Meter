@@ -30,7 +30,6 @@ export class UsersComponent implements OnInit {
     if (!this.isToggleChecked) this.modalText = "Power will turn off.";
     else this.modalText = "Power will turn on.";
 
-    this.isToggleChecked = !this.isToggleChecked;
     //  this._api.SetRelayStatus(!this.isToggleChecked).subscribe((res)=>{
     //    this.isToggleChecked = !this.isToggleChecked;
     //  })
@@ -43,7 +42,7 @@ export class UsersComponent implements OnInit {
           !this.isToggleChecked
         )
         .subscribe((res) => {
-          console.log(res);
+          this.isToggleChecked = !this.isToggleChecked;
         });
     }
   }
