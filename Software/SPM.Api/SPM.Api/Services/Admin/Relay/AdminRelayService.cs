@@ -1,4 +1,5 @@
 ﻿using SPM.Api.Services.MQTT;
+using SPM.Api.Services.MQTT.Models;
 
 namespace SPM.Api.Services.Admin.Relay
 {
@@ -16,7 +17,7 @@ namespace SPM.Api.Services.Admin.Relay
             return await _mqttService.SetRelayStatus(customerId, activate, true);
         }
 
-        public async Task<bool> GetRelayStatus(string customerId)
+        public async Task<GetRelayStatusResponse> GetRelayStatus(string customerId)
         {
             return await _mqttService.GetRelayStatus(customerId);
         }

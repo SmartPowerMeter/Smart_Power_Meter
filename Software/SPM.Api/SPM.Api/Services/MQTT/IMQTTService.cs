@@ -1,9 +1,11 @@
-﻿namespace SPM.Api.Services.MQTT
+﻿using SPM.Api.Services.MQTT.Models;
+
+namespace SPM.Api.Services.MQTT
 {
     public interface IMQTTService
     {
         Task<bool> SetRelayStatus(string customerId, bool activate, bool isAdminCommand);
 
-        Task<bool> GetRelayStatus(string customerId);
+        Task<GetRelayStatusResponse> GetRelayStatus(string customerId);
     }
 }
