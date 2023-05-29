@@ -2,6 +2,7 @@
 #include "pzem_004t_SPM.h"
 #include "SD_SPM.h"
 #include "mqtt_SPM.h"
+#include "LED_SPM.h"
 
 extern bool f_1sec_event;
 char formatedDateTime_c[30];
@@ -11,6 +12,8 @@ extern PZEM004Tv30 pzem;
 extern PubSubClient* mqtt_client;
 extern String topic;
 extern const char* topic_c;
+
+extern volatile LED_status status;
 
 
 uint16_t getESPYear(){
@@ -115,6 +118,7 @@ void everySecond(){
 
     // publish measurement
     if (mqtt_client->connected() && mqtt_client->publish(topic_c, currMeasJson)){
+        status = CONNECTED;
         Serial.printf("%s: %s\n", topic_c, currMeasJson);
     }
 

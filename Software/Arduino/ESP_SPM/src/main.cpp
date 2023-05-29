@@ -9,10 +9,95 @@
 #include "SIM800L_SPM.h"
 #include "WiFiManager_SPM.h"
 #include "mqtt_SPM.h"
+#include "LED_SPM.h"
 
 PZEM004Tv30 pzem = pzemInit();
 
+
+extern volatile LED_status status;
+volatile LED_status status_prev;
+struct RGB led1, led2;
+unsigned long time1 = 1000000, time2 = 1000000;
+extern hw_timer_t * LEDInterrupt;
+extern Adafruit_NeoPixel led;
+extern bool temp_led_flag;
+bool temp_led_flag_prev = 0;
+// extern portMUX_TYPE timerMux;
+TaskHandle_t Task1;
+void Task1code( void * pvParameters ){
+  Serial.print("Task1 running on core ");
+  Serial.println(xPortGetCoreID());
+
+  while(1){
+
+    switch (status){
+      case CONNECTED:
+        led1.RED = 0; led1.GREEN = 250; led1.BLUE = 0;
+        led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;
+        time1 = 100000; time2 = 900000;
+        break;
+      case RECONNECTING:
+        led1.RED = 100; led1.GREEN = 0; led1.BLUE = 0;
+        led2.RED = 0; led2.GREEN = 0; led2.BLUE = 100;
+        time1 = 200000; time2 = 200000;
+        break;
+      case IN_CONFIGURATION_MODE:
+        led1.RED = 0; led1.GREEN = 0; led1.BLUE = 250;
+        led2.RED = 0; led2.GREEN = 250; led2.BLUE = 0;
+        time1 = 700000; time2 = 300000;
+        break;
+      case RESTARTING:
+        led1.RED = 250; led1.GREEN = 0; led1.BLUE = 0;
+        led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;
+        time1 = 100000; time2 = 100000;
+        break;
+      case STARTING:
+        led1.RED = 250; led1.GREEN = 250; led1.BLUE = 250;
+        led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;
+        time1 = 1000000; time2 = 1000000;
+        break;
+      default:
+        led1.RED = 0; led1.GREEN = 0; led1.BLUE = 0;
+        led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;
+        time1 = 1000000; time2 = 1000000;
+        break;
+    }
+
+    if (((temp_led_flag == 1) && (temp_led_flag_prev == 0))){
+      // portENTER_CRITICAL(&timerMux);
+      // timerAlarmDisable(LEDInterrupt);
+      Serial.println("if");
+
+      status_prev = status;
+      temp_led_flag_prev = temp_led_flag;
+        led.clear();
+        led.setPixelColor(0, led.Color(led1.RED, led1.GREEN, led1.BLUE));
+        led.show();
+        timerAlarmWrite(LEDInterrupt, time1, true);
+
+        // timerAlarmEnable(LEDInterrupt);
+        // portEXIT_CRITICAL(&timerMux);
+    }else if (((temp_led_flag == 0) && (temp_led_flag_prev == 1))){
+      // portENTER_CRITICAL(&timerMux);
+      // timerAlarmDisable(LEDInterrupt);
+      Serial.println("else");
+
+      status_prev = status;
+        temp_led_flag_prev = temp_led_flag;
+        led.clear();
+        led.setPixelColor(0, led.Color(led2.RED, led2.GREEN, led2.BLUE));
+        led.show();
+        timerAlarmWrite(LEDInterrupt, time2, true);
+
+        // timerAlarmEnable(LEDInterrupt);
+        // portEXIT_CRITICAL(&timerMux);
+    }
+  }
+}
+
+
 void setup() {
+  status = STARTING;
   Serial.begin(115200);
 
   pinMode(SIM800_EN, OUTPUT);
@@ -21,6 +106,25 @@ void setup() {
   pinMode(POWER_4_1_EN, OUTPUT);
   digitalWrite(SIM800_EN, HIGH);
   digitalWrite(POWER_4_1_EN, HIGH);
+
+
+
+  xTaskCreatePinnedToCore(
+                    Task1code,   /* Task function. */
+                    "Task1",     /* name of task. */
+                    10000,       /* Stack size of task */
+                    NULL,        /* parameter of the task */
+                    0,           /* priority of the task */
+                    &Task1,      /* Task handle to keep track of created task */
+                    0);          /* pin task to core 0 */                  
+  delay(500);
+
+
+
+
+
+  initLED();
+  initLEDInterrupt();
 
   Serial.printf("ESP Unique: %lu\n", getUnique());
 
@@ -31,6 +135,7 @@ void setup() {
 
   initGSMSupport();
 
+  status = IN_CONFIGURATION_MODE;
   initWiFiManager();
   getAllConf();
 

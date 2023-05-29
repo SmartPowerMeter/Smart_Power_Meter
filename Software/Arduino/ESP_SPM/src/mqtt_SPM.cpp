@@ -2,6 +2,7 @@
 #include "Hardware_SPM.h"
 #include "Preferences.h"
 #include "interrupts_SPM.h"
+#include "LED_SPM.h"
 
 Preferences relayState;
 
@@ -34,6 +35,7 @@ bool flag_reconn_first = 0;
 unsigned long reconnect_start_time = 0;
 unsigned long last_reconnect_attmpt_time = 0;
 
+extern volatile LED_status status;
 
 void initMQTT(){
     // if configured to use GSM module
@@ -110,6 +112,7 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length){
 void reconnect(){
     Serial.printf("Reconnecting for: ->%s<-\n", CustomerId_c);
     if (flag_reconn_first == 0){
+        status = RECONNECTING;
         flag_reconn_first = 1;
         reconnect_start_time = millis();
     }
@@ -123,6 +126,7 @@ void reconnect(){
         delay(100);
     }
     if (mqtt_client->connected()){
+        status = CONNECTED;
         String relayState = "relay-" + CustomerId;
         const char* relayState_c = relayState.c_str();
         Serial.printf("subscribe to relayState: ->%s<-\n", relayState_c);
