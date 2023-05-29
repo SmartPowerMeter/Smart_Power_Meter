@@ -52,7 +52,6 @@ namespace SPM.Api.Services.MQTT
                 {
                     if (user.AdminRelayEnabled)
                         user.SetCustomerRelayState(isEnabled);
-
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -76,7 +75,7 @@ namespace SPM.Api.Services.MQTT
 
             await Task.Delay(1500);
 
-            return user.CustomerRelayEnabled;
+            return isAdminCommand ? user.AdminRelayEnabled : user.CustomerRelayEnabled;
         }
 
         public async Task<GetRelayStatusResponse> GetRelayStatus(string customerId)
