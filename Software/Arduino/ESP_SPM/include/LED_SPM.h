@@ -28,6 +28,7 @@ struct RGB
 };
 
 void initLED();
+void ledLoop();
 
 
 #endif

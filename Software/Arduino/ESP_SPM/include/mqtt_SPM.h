@@ -17,5 +17,7 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length);
 void reconnect();
 void MQTTLoop();
 bool getRelayConf();
+uint8_t getReconnNumber();
+void setReconnNumber(uint8_t num);
 
 #endif

@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "SIM800L_SPM.h"
 #include "Preferences.h"
+#include "LED_SPM.h"
 
 WiFiManager wm;
 Preferences initSetupParams;
@@ -30,10 +31,12 @@ const char* GSMConfPIN_c;
 const char* GSMConfGPRSUser_c;
 const char* GSMConfGPRSPass_c;
 
+extern volatile LED_status status;
 
 volatile void initWiFiManager(){
     // WiFi.mode(WIFI_STA);
     // wm.resetSettings();
+    
     const char * menu[] = {"wifi"};
     wm.setMenu(menu, 1);
     wm.setBreakAfterConfig(true);
@@ -41,6 +44,7 @@ volatile void initWiFiManager(){
     wm.setConnectTimeout(10);
     wm.setSaveConnectTimeout(10);
     wm.setConnectRetries(1);
+    wm.setCaptivePortalEnable(true);
     // wm.setSaveConnect(false);
 
     wm.setCustomHeadElement("<h1>Smart Power Meter</h1><h3>Initial Setup</h3>");
@@ -66,7 +70,7 @@ volatile void initWiFiManager(){
     unique_str.toCharArray(unique_chr, sizeof(unique_chr));
 
     // if not configured to use GSM module
-    if (!getGSMConf()){
+    if (!getGSMConf()){        
         bool conn = wm.autoConnect(AP_name_chr, unique_chr);
         if (!conn){
             Serial.println("WiFi Manager Connection Failed");

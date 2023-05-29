@@ -5,6 +5,7 @@
 #include "LED_SPM.h"
 
 Preferences relayState;
+Preferences reconnRebootLimit;
 
 extern TinyGsm modem;
 extern bool GSMConf;
@@ -118,7 +119,16 @@ void reconnect(){
     }
     if (flag_reconn_first && ((millis() - reconnect_start_time) > 30000)){
         Serial.println("Restarting Due to MQTT connection timeout");
-        usrButtonAction();
+        uint8_t reconn_num = getReconnNumber();
+        if (reconn_num > 5){
+            setReconnNumber(0);
+            usrButtonAction();
+        }else{
+            setReconnNumber(reconn_num + 1);
+            ESP.restart();
+        }
+        // usrButtonAction();
+        // ESP.restart();
     }
     if (millis() - last_reconnect_attmpt_time > 5000) {
         last_reconnect_attmpt_time = millis();
@@ -152,4 +162,23 @@ bool getRelayConf(){
 
     relayState.end();
     return state;
+}
+
+uint8_t getReconnNumber(){
+    reconnRebootLimit.begin("reconn");
+    
+    uint8_t num = reconnRebootLimit.getInt("number", 0);
+
+    reconnRebootLimit.end();
+
+    return num;
+}
+
+
+void setReconnNumber(uint8_t num){
+    reconnRebootLimit.begin("reconn");
+    
+    reconnRebootLimit.putInt("number", num);
+
+    reconnRebootLimit.end();
 }

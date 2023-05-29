@@ -99,7 +99,6 @@ void usrButtonLoopCheck(){
     }else if (f_usr_btn && ((millis() - button_push_time) > 3000)){
         usrButtonAction();
     }
-    
 }
 
 
