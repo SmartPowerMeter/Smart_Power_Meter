@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SPM.Api.Services.Admin.Relay;
+using SPM.Api.Services.MQTT.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace SPM.Api.Controllers
@@ -23,7 +24,7 @@ namespace SPM.Api.Controllers
         }
 
         [HttpGet("{customerId}")]
-        public async Task<bool> GetRelayStatus(string customerId)
+        public async Task<GetRelayStatusResponse> GetRelayStatus(string customerId)
         {
             return await _relayService.GetRelayStatus(customerId);
         }

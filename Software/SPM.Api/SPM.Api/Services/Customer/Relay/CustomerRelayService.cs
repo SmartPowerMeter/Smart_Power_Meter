@@ -1,6 +1,7 @@
 ﻿using SPM.Api.Data;
 using SPM.Api.Services.MQTT;
 using SPM.Api.Core.WorkContexts;
+using SPM.Api.Services.MQTT.Models;
 
 namespace SPM.Api.Services.Customer.Relay
 {
@@ -27,7 +28,7 @@ namespace SPM.Api.Services.Customer.Relay
             throw new InvalidOperationException("The relay is turned off globally");
         }
 
-        public async Task<bool> GetRelayStatus()
+        public async Task<GetRelayStatusResponse> GetRelayStatus()
         {
             return await _mqttService.GetRelayStatus(_customerId);
         }

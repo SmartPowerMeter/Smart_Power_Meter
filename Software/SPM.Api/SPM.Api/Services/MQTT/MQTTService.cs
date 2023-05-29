@@ -2,6 +2,7 @@
 using System.Text;
 using SPM.Api.Data;
 using MQTTnet.Client;
+using SPM.Api.Services.MQTT.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace SPM.Api.Services.MQTT
@@ -51,7 +52,6 @@ namespace SPM.Api.Services.MQTT
                 {
                     if (user.AdminRelayEnabled)
                         user.SetCustomerRelayState(isEnabled);
-
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -75,14 +75,18 @@ namespace SPM.Api.Services.MQTT
 
             await Task.Delay(1500);
 
-            return user.CustomerRelayEnabled;
+            return isAdminCommand ? user.AdminRelayEnabled : user.CustomerRelayEnabled;
         }
 
-        public async Task<bool> GetRelayStatus(string customerId)
+        public async Task<GetRelayStatusResponse> GetRelayStatus(string customerId)
         {
             var user = await _dbContext.User.FirstAsync(x => x.CustomerId == customerId);
 
-            return user.CustomerRelayEnabled;
+            return new GetRelayStatusResponse
+            {
+                CustomerRelayEnabled = user.CustomerRelayEnabled,
+                AdminRelayEnabled = user.AdminRelayEnabled
+            };
         }
     }
 }
