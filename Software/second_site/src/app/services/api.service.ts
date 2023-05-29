@@ -140,7 +140,7 @@ export class ApiService {
   SetRelayStatus(Activate: boolean) {
     return this._http
       .post<any>(
-        `https://api.smartpowermeter.ge/Relay/SetRelayStatus?activate${Activate}`,
+        `https://api.smartpowermeter.ge/Relay/SetRelayStatus?activate=${Activate}`,
         {}
       )
       .pipe(
@@ -187,6 +187,33 @@ export class ApiService {
         })
       );
   }
+
+  GetAdminUsers() {
+    return this._http
+      .get(
+        `https://api.smartpowermeter.ge/Admin/Account/GetUsers`
+      )
+      .pipe(
+        map((e) => {
+          return e;
+        })
+      );
+  }
+//https://api.smartpowermeter.ge/Admin/Relay/SetRelayStatus/1?activate=true
+
+SetAdminRelay(customerId: string, activate: boolean) {
+  return this._http
+    .post<any>(
+      `https://api.smartpowermeter.ge/Admin/Relay/SetRelayStatus/${customerId}?activate=${activate}`,
+      {}
+    )
+    .pipe(
+      map((e) => {
+        return e;
+      })
+    );
+}
+
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http
