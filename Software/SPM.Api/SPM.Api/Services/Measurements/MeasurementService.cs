@@ -15,25 +15,25 @@ namespace SPM.Api.Services.Measurements
             _influxDbService = influxDbService;
         }
 
-        public async Task<IEnumerable<MeasurementModel>> GetMeasurement(MeasurementType measurement, TimeRange timeRange, AggregateDuration duration)
+        public async Task<IEnumerable<MeasurementModel>> GetMeasurement(string customerId, MeasurementType measurement, TimeRange timeRange, AggregateDuration duration)
         {
             var currentDate = DateTimeOffset.Now;
-            var data = await _influxDbService.GetMeasurement(measurement.ToString(), currentDate.StartTime(timeRange), currentDate, duration.ToStringDuration());
+            var data = await _influxDbService.GetMeasurement(customerId, measurement.ToString(), currentDate.StartTime(timeRange), currentDate, duration.ToStringDuration());
 
             return data;
         }
 
-        public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(MeasurementType measurement, TimeType timeType, int time)
+        public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(string customerId, MeasurementType measurement, TimeType timeType, int time)
         {
-            var data = await _influxDbService.GetRecentMeasurement(measurement.ToString(), GetTime(timeType, time), GetDuration(timeType, time));
+            var data = await _influxDbService.GetRecentMeasurement(customerId, measurement.ToString(), GetTime(timeType, time), GetDuration(timeType, time));
 
             return data;
         }
 
-        public async Task<GetEnergyConsumptionResponse> GetEnergyConsumption(TimeRange timeRange)
+        public async Task<GetEnergyConsumptionResponse> GetEnergyConsumption(string customerId, TimeRange timeRange)
         {
             var currentDate = DateTimeOffset.Now;
-            var data = await _influxDbService.GetMeasurement("Energy", currentDate.StartTime(timeRange), currentDate, AggregateDuration.Hour.ToStringDuration());
+            var data = await _influxDbService.GetMeasurement(customerId, "Energy", currentDate.StartTime(timeRange), currentDate, AggregateDuration.Hour.ToStringDuration());
 
             var last = data.Where(x => x.Value != 0).Last().Value;
             var first = data.Where(x => x.Value != 0).Min(x => x.Value);

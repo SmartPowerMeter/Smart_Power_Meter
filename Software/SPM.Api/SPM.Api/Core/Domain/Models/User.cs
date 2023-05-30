@@ -22,7 +22,9 @@ namespace SPM.Api.Core.Domain.Models
 
         public string BucketAccessToken { get; private set; }
 
-        public bool RelayEnabled { get; private set; }
+        public bool CustomerRelayEnabled { get; private set; }
+
+        public bool AdminRelayEnabled { get; private set; }
 
         #endregion
 
@@ -46,19 +48,12 @@ namespace SPM.Api.Core.Domain.Models
 
         public string GetBucketName() => $"{CustomerId}_bucket";
 
-        public void SetBucketAccessToken(string token)
-        {
-            BucketAccessToken = token;
-        }
+        public void SetBucketAccessToken(string token) => BucketAccessToken = token;
 
-        public void SetRelayState(bool enabled)
-        {
-            RelayEnabled = enabled;
-        }
+        public void SetCustomerRelayState(bool enabled) => CustomerRelayEnabled = enabled;
 
-        public void SetPassword(string password)
-        {
-            Password = password;
-        }
+        public void SetAdminRelayState(bool enabled) => AdminRelayEnabled = enabled;
+
+        public void SetPassword(string password) => Password = password;
     }
 }

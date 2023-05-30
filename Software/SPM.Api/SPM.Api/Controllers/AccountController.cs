@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using SPM.Api.Services.Account;
-using SPM.Api.Services.Account.Models;
+using SPM.Api.Services.Customer.Account;
 using Microsoft.AspNetCore.Authorization;
+using SPM.Api.Services.Customer.Account.Models;
 
 namespace SPM.Api.Controllers
 {
@@ -9,9 +9,9 @@ namespace SPM.Api.Controllers
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountService _accountService;
+        private readonly ICustomerAccountService _accountService;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(ICustomerAccountService accountService)
         {
             _accountService = accountService;
         }

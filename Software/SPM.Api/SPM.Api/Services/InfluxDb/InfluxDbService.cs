@@ -1,7 +1,6 @@
 ﻿using SPM.Api.Data;
 using InfluxDB.Client;
 using SPM.Api.Core.Extensions;
-using SPM.Api.Core.WorkContexts;
 using InfluxDB.Client.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 using SPM.Api.Services.InfluxDb.Models;
@@ -11,23 +10,22 @@ namespace SPM.Api.Services.InfluxDb
     public class InfluxDbService : IInfluxDbService
     {
         private readonly InfluxDbSettings _settings;
-        private readonly IWorkContext _workContext;
         private readonly SPMDbContext _dbContext;
+        private const string timestampFlux = "import \"timezone\" option location = timezone.location(name: \"Asia/Tbilisi\")";
 
-        public InfluxDbService(IConfiguration configuration, IWorkContext workContext, SPMDbContext dbContext)
+        public InfluxDbService(IConfiguration configuration, SPMDbContext dbContext)
         {
-            _workContext = workContext;
             _dbContext = dbContext;
             _settings = configuration.GetSection("InfluxDb").Get<InfluxDbSettings>();
         }
 
-        public async Task<IEnumerable<MeasurementModel>> GetMeasurement(string measurementName, DateTimeOffset dateFrom, DateTimeOffset dateTo, string duration)
+        public async Task<IEnumerable<MeasurementModel>> GetMeasurement(string customerId, string measurementName, DateTimeOffset dateFrom, DateTimeOffset dateTo, string duration)
         {
-            var user = await _dbContext.User.AsNoTracking().FirstAsync(x => x.Id == _workContext.CurrentUser.Id);
+            var user = await _dbContext.User.AsNoTracking().FirstAsync(x => x.CustomerId == customerId);
 
             var measurementReadings = await QueryAsync(async query =>
             {
-                var flux = $"from(bucket:\"{user.GetBucketName()}\") |> range(start: {dateFrom:s}Z, stop: {dateTo:s}Z) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: 1{duration}, fn: mean)";
+                var flux = $"{timestampFlux} from(bucket:\"{user.GetBucketName()}\") |> range(start: {dateFrom:s}Z, stop: {dateTo:s}Z) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: 1{duration}, fn: mean)";
                 var tables = await query.QueryAsync(flux, _settings.Organization);
                 return tables.SelectMany(table =>
                     table.Records.Select(record =>
@@ -41,13 +39,13 @@ namespace SPM.Api.Services.InfluxDb
             return measurementReadings;
         }
 
-        public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(string measurementName, string time, int duration)
+        public async Task<IEnumerable<MeasurementModel>> GetRecentMeasurement(string customerId, string measurementName, string time, int duration)
         {
-            var user = await _dbContext.User.AsNoTracking().FirstAsync(x => x.Id == _workContext.CurrentUser.Id);
+            var user = await _dbContext.User.AsNoTracking().FirstAsync(x => x.CustomerId == customerId);
 
             var measurementReadings = await QueryAsync(async query =>
             {
-                var flux = $"from(bucket:\"{user.GetBucketName()}\") |> range(start: -{time}) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: {duration}s, fn: mean)";
+                var flux = $"{timestampFlux} from(bucket:\"{user.GetBucketName()}\") |> range(start: -{time}) |> filter(fn: (r) => r[\"_measurement\"] == \"{measurementName}\") |> aggregateWindow(every: {duration}s, fn: mean)";
                 var tables = await query.QueryAsync(flux, _settings.Organization);
                 return tables.SelectMany(table =>
                     table.Records.Select(record =>

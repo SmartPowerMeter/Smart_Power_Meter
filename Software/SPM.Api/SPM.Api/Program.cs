@@ -1,7 +1,9 @@
 using SPM.Api.Data;
+using SPM.Api.Policies;
 using SPM.Api.Data.Extensions;
 using SPM.Api.Services.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,15 @@ builder.Services.AddServices(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors();
+
+builder.Services.AddSingleton<IAuthorizationHandler, AdminUserHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminUserPolicy", policy =>
+    {
+        policy.Requirements.Add(new AdminUserRequirement());
+    });
+});
 
 var app = builder.Build();
 

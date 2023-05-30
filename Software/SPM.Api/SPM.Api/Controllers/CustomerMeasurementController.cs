@@ -1,24 +1,21 @@
-﻿using SPM.Api.Services.MQTT;
-using Microsoft.AspNetCore.Mvc;
-using SPM.Api.Services.Measurements;
+﻿using Microsoft.AspNetCore.Mvc;
+using SPM.Api.Core.Domain.Enums;
 using SPM.Api.Services.InfluxDb.Models;
 using Microsoft.AspNetCore.Authorization;
 using SPM.Api.Services.Measurements.Models;
-using SPM.Api.Core.Domain.Enums;
+using SPM.Api.Services.Customer.Measurement;
 
 namespace SPM.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
-    public class MeasurementController : ControllerBase
+    [Route("Measurement/[action]")]
+    public class CustomerMeasurementController : ControllerBase
     {
-        private readonly IMeasurementService _measurementService;
-        private readonly IMQTTService _mqttService;
+        private readonly ICustomerMeasurementService _measurementService;
 
-        public MeasurementController(IMeasurementService measurementService, IMQTTService mqttService)
+        public CustomerMeasurementController(ICustomerMeasurementService measurementService)
         {
             _measurementService = measurementService;
-            _mqttService = mqttService;
         }
 
         [Authorize]
@@ -40,20 +37,6 @@ namespace SPM.Api.Controllers
         public async Task<GetEnergyConsumptionResponse> GetEnergyConsumption(TimeRange timeRange)
         {
             return await _measurementService.GetEnergyConsumption(timeRange);
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<bool> SetRelayStatus(bool activate)
-        {
-            return await _mqttService.SetRelayStatus(activate);
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<bool> GetRelayStatus()
-        {
-            return await _mqttService.GetRelayStatus();
         }
     }
 }

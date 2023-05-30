@@ -3,13 +3,14 @@
     <tr>
       <th>User Name:</th>
       <th>Email:</th>
-      <th>Power Mode:</th>
+      <th>Provider Power Mode:</th>
+      <th>Customer Power Mode:</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let person of people">
-      <td>{{ person.FullName }}</td>
-      <td>{{ person.Email }}</td>
+    <tr *ngFor="let person of people; let i = index" (click)="rowClicked(i)">
+      <td>{{ person.firstName.concat(' ' + person.lastName) }}</td>
+      <td>{{ person.email }}</td>
       <td>
         <label
           data-toggle="modal"
@@ -20,7 +21,23 @@
           <input
             id="tog1"
             type="checkbox"
-            [checked]="isToggleChecked"
+            [checked]="person.adminRelayEnabled"
+            style="margin-left: 10px"
+          />
+          <span class="slider"></span>
+        </label>
+      </td>
+      <td>
+        <label
+          data-toggle=""
+          data-target="#exampleModal"
+          class="toggle-switch"
+          style="cursor: pointer"
+        >
+          <input
+            id="tog1"
+            type="checkbox"
+            [checked]="person.customerRelayEnabled"
             style="margin-left: 10px"
           />
           <span class="slider"></span>
