@@ -3,6 +3,8 @@
 #include "SIM800L_SPM.h"
 #include "Preferences.h"
 #include "LED_SPM.h"
+#include "time_SPM.h"
+#include "rtc_SPM.h"
 
 WiFiManager wm;
 Preferences initSetupParams;
@@ -32,6 +34,8 @@ const char* GSMConfGPRSUser_c;
 const char* GSMConfGPRSPass_c;
 
 extern volatile LED_status status;
+
+extern uint8_t SD_CARD_WRITE_ENABLE;
 
 volatile void initWiFiManager(){
     // WiFi.mode(WIFI_STA);
@@ -85,6 +89,20 @@ volatile void initWiFiManager(){
 
         }else{
             Serial.println("WiFi Manager Connection Success");
+            struct tm currtm;
+            time_status ret = getCurrTimeUsingWiFi(&currtm);
+
+            if (ret == TIME_OK){
+                Serial.println("Now synchronizing time");
+                rtcSetCurrDateTime(currtm.tm_year+1900,
+                                   currtm.tm_mon+1,
+                                   currtm.tm_mday,
+                                   currtm.tm_hour,
+                                   currtm.tm_min,
+                                   currtm.tm_sec);
+            }else{
+                timeHandleError(ret);
+            }
         }
     }
 
@@ -223,6 +241,8 @@ void getAllConf(){
     GSMConfPIN_c = GSMConfPIN.c_str();
     GSMConfGPRSUser_c = GSMConfGPRSUser.c_str();
     GSMConfGPRSPass_c = GSMConfGPRSPass.c_str();
+
+    if (SDConf) SD_CARD_WRITE_ENABLE = 1;
 }
 
 void setGSMConf(bool val){

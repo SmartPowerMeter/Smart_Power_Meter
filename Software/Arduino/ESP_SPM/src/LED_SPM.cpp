@@ -49,6 +49,11 @@ void ledLoop(){
         led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;
         time1 = 1000000; time2 = 1000000;
         break;
+      case STARTING_OVER_GSM:
+        led1.RED = 160; led1.GREEN = 32; led1.BLUE = 240;
+        led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;
+        time1 = 1000000; time2 = 1000000;
+        break;
       default:
         led1.RED = 0; led1.GREEN = 0; led1.BLUE = 0;
         led2.RED = 0; led2.GREEN = 0; led2.BLUE = 0;

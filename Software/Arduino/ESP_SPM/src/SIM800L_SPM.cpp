@@ -2,6 +2,8 @@
 #include "Hardware_SPM.h"
 #include "Preferences.h"
 #include "interrupts_SPM.h"
+#include "rtc_SPM.h"
+#include "LED_SPM.h"
 
 
 #ifdef DUMP_AT_COMMANDS
@@ -27,6 +29,8 @@ extern const char* GSMConfAPN_c;
 extern const char* GSMConfPIN_c;
 extern const char* GSMConfGPRSUser_c;
 extern const char* GSMConfGPRSPass_c;
+
+extern LED_status status;
 
 sim800l_status checkSIM800LPrecense(){
     pinMode(SIM800_EN, OUTPUT);
@@ -110,6 +114,7 @@ sim800l_status initSequenceSIM800L(){
     digitalWrite(SIM800_EN, HIGH);    // enable SIM800 module
     digitalWrite(POWER_4_1_EN, LOW);  // provide power to it
 
+    status = STARTING_OVER_GSM;
     TINY_GSM_DEBUG.println("Starting Serial communication");
     SerialAT.begin(GSM_BAUD, SERIAL_8N1, SIM800_TX, SIM800_RX);
     delay(8000);
@@ -143,23 +148,25 @@ sim800l_status initSequenceSIM800L(){
         TINY_GSM_DEBUG.println("GPRS context opened");
     }
 
-    int   year3    = 0;
-    int   month3   = 0;
-    int   day3     = 0;
-    int   hour3    = 0;
-    int   min3     = 0;
-    int   sec3     = 0;
+    int   year    = 0;
+    int   month   = 0;
+    int   day     = 0;
+    int   hour    = 0;
+    int   min     = 0;
+    int   sec     = 0;
     float timezone = 0;
 
-    if (modem.getNetworkTime(&year3, &month3, &day3, &hour3, &min3, &sec3, &timezone)) {
-        TINY_GSM_DEBUG.print("--------------------------------------------------------------->     GSM time: ");
-        TINY_GSM_DEBUG.print("Year: ");     TINY_GSM_DEBUG.println(year3);
-        TINY_GSM_DEBUG.print("Month: ");    TINY_GSM_DEBUG.println(month3);
-        TINY_GSM_DEBUG.print("Day: ");      TINY_GSM_DEBUG.println(day3);
-        TINY_GSM_DEBUG.print("Hour: ");     TINY_GSM_DEBUG.println(hour3);
-        TINY_GSM_DEBUG.print("Min: ");      TINY_GSM_DEBUG.println(min3);
-        TINY_GSM_DEBUG.print("Sec: ");      TINY_GSM_DEBUG.println(sec3);
-        TINY_GSM_DEBUG.print("Timezone: "); TINY_GSM_DEBUG.println(timezone);
+    if (modem.getNetworkTime(&year, &month, &day, &hour, &min, &sec, &timezone)) {
+        TINY_GSM_DEBUG.print("---------------------->     GSM time: \n");
+        TINY_GSM_DEBUG.print("                                Year: ");     TINY_GSM_DEBUG.println(year);
+        TINY_GSM_DEBUG.print("                               Month: ");    TINY_GSM_DEBUG.println(month);
+        TINY_GSM_DEBUG.print("                                 Day: ");      TINY_GSM_DEBUG.println(day);
+        TINY_GSM_DEBUG.print("                                Hour: ");     TINY_GSM_DEBUG.println(hour);
+        TINY_GSM_DEBUG.print("                                 Min: ");      TINY_GSM_DEBUG.println(min);
+        TINY_GSM_DEBUG.print("                                 Sec: ");      TINY_GSM_DEBUG.println(sec);
+        TINY_GSM_DEBUG.print("                            Timezone: "); TINY_GSM_DEBUG.println(timezone);
+
+        rtcSetCurrDateTime(year, month, day, hour, min, sec);
     }
 
     return SIM800L_OK;

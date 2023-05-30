@@ -182,3 +182,17 @@ void setReconnNumber(uint8_t num){
 
     reconnRebootLimit.end();
 }
+
+
+// read from preferences and set to previously saved value
+void setRelayStatus(){
+    relayState.begin("relayState");
+
+    if (relayState.getBool("power", false)){
+        digitalWrite(RELAY, LOW);
+    }else{
+        digitalWrite(RELAY, HIGH);
+    }
+
+    relayState.end();
+}

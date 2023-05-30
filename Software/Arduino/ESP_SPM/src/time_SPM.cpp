@@ -136,6 +136,40 @@ void timeHandleError(time_status status){
         Serial.println("WiFi connection timeout for updating ESP time");
     }else if (status == TIME_GETLOCALTIME_TIMEOUT_ERROR){
         Serial.println("Timeout getting time from NTP server");
+    }else if (status == TIME_WIFI_NOT_CONNECTED_TO_UPDATE_TIME){
+        Serial.println("WiFi is not connected for updating time");
     }
     
+}
+
+
+time_status getCurrTimeUsingWiFi(struct tm *tmstruct){
+    if (WiFi.status() != WL_CONNECTED){
+        Serial.println("WiFi is not connected for updating time");
+        return TIME_WIFI_NOT_CONNECTED_TO_UPDATE_TIME;
+    }
+
+    configTime(3600*4, 0, "time.nist.gov", "pool.ntp.org", "time.google.com");
+    if (!getLocalTime(tmstruct, 10000)) return TIME_GETLOCALTIME_TIMEOUT_ERROR;
+
+    Serial.printf("\nTime from WiFi : %d-%02d-%02d %02d:%02d:%02d\n",
+                    tmstruct->tm_year+1900,
+                    tmstruct->tm_mon+1, 
+                    tmstruct->tm_mday,
+                    tmstruct->tm_hour, 
+                    tmstruct->tm_min, 
+                    tmstruct->tm_sec);
+    return TIME_OK;
+}
+
+
+time_status setESPTime(struct tm datetime){
+
+    time_t tt = mktime(&datetime);
+    struct timeval tv = {tt, 0};
+    settimeofday(&tv, nullptr);
+    Serial.print("ESP Time Set to: ");
+    Serial.println(ctime(&tt));
+
+    return TIME_OK;
 }
