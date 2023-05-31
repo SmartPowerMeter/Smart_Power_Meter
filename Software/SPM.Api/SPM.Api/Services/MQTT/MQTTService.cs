@@ -42,12 +42,7 @@ namespace SPM.Api.Services.MQTT
                 bool isEnabled = payload == "0";
 
                 if (isAdminCommand)
-                {
                     user.SetAdminRelayState(isEnabled);
-
-                    if (!isEnabled)
-                        user.SetCustomerRelayState(isEnabled);
-                }
                 else
                 {
                     if (user.AdminRelayEnabled)
