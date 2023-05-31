@@ -1,10 +1,19 @@
 #include "time_SPM.h"
 #include "pzem_004t_SPM.h"
 #include "SD_SPM.h"
+#include "mqtt_SPM.h"
+#include "LED_SPM.h"
 
 extern bool f_1sec_event;
+char formatedDateTime_c[30];
 
+extern char currMeasJson[200];
 extern PZEM004Tv30 pzem;
+extern PubSubClient* mqtt_client;
+extern String topic;
+extern const char* topic_c;
+
+extern volatile LED_status status;
 
 
 uint16_t getESPYear(){
@@ -49,9 +58,25 @@ uint8_t getESPSec(){
     return timeinfo.tm_sec;
 }
 
+char* getMQTTFormatedCurrTime(){
+    time_t now = time(nullptr);
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);
+
+    sprintf(formatedDateTime_c, "%04d-%02d-%02dT%02d:%02d:%02d", timeinfo.tm_year + 1900,
+                                                                 timeinfo.tm_mon + 1,
+                                                                 timeinfo.tm_mday,
+                                                                 timeinfo.tm_hour,
+                                                                 timeinfo.tm_min,
+                                                                 timeinfo.tm_sec);
+
+    return formatedDateTime_c;
+}
+
 time_status setESPTimeUsingWiFi(char* ssid, char *pass){
     if (WiFi.isConnected() != WL_CONNECTED){
-        WiFi.begin(ssid, pass);
+        Serial.println("WiFi Connection for updating Time in progress");
+        // WiFi.begin(ssid, pass);
         uint8_t cnt = 0;
         while (WiFi.status() != WL_CONNECTED) {
             delay(10);
@@ -85,7 +110,17 @@ void everySecond(){
     if (pzem_ret != PZEM_OK){
         pzemHandleError(pzem_ret);
     }
+    // start = micros();
+    measToJson(pzem);
+    // end = micros();
+    // Serial.printf("MeasToJson() took: %lu microseconds\n", end-start);
     // Serial.printf("Reading measurements took: %lu microseconds\n", end-start);
+
+    // publish measurement
+    if (mqtt_client->connected() && mqtt_client->publish(topic_c, currMeasJson)){
+        status = CONNECTED;
+        Serial.printf("%s: %s\n", topic_c, currMeasJson);
+    }
 
     start = micros();
     sd_status sd_ret = SDRoutineEverySec();
@@ -93,7 +128,7 @@ void everySecond(){
     if (sd_ret != SD_OK){
         handleErrorSD(sd_ret);
     }
-    Serial.printf("SDRoutineEverySec() took: %lu microseconds\n", end-start);
+    // Serial.printf("SDRoutineEverySec() took: %lu microseconds\n", end-start);
 }
 
 void timeHandleError(time_status status){
@@ -101,6 +136,40 @@ void timeHandleError(time_status status){
         Serial.println("WiFi connection timeout for updating ESP time");
     }else if (status == TIME_GETLOCALTIME_TIMEOUT_ERROR){
         Serial.println("Timeout getting time from NTP server");
+    }else if (status == TIME_WIFI_NOT_CONNECTED_TO_UPDATE_TIME){
+        Serial.println("WiFi is not connected for updating time");
     }
     
+}
+
+
+time_status getCurrTimeUsingWiFi(struct tm *tmstruct){
+    if (WiFi.status() != WL_CONNECTED){
+        Serial.println("WiFi is not connected for updating time");
+        return TIME_WIFI_NOT_CONNECTED_TO_UPDATE_TIME;
+    }
+
+    configTime(3600*4, 0, "time.nist.gov", "pool.ntp.org", "time.google.com");
+    if (!getLocalTime(tmstruct, 10000)) return TIME_GETLOCALTIME_TIMEOUT_ERROR;
+
+    Serial.printf("\nTime from WiFi : %d-%02d-%02d %02d:%02d:%02d\n",
+                    tmstruct->tm_year+1900,
+                    tmstruct->tm_mon+1, 
+                    tmstruct->tm_mday,
+                    tmstruct->tm_hour, 
+                    tmstruct->tm_min, 
+                    tmstruct->tm_sec);
+    return TIME_OK;
+}
+
+
+time_status setESPTime(struct tm datetime){
+
+    time_t tt = mktime(&datetime);
+    struct timeval tv = {tt, 0};
+    settimeofday(&tv, nullptr);
+    Serial.print("ESP Time Set to: ");
+    Serial.println(ctime(&tt));
+
+    return TIME_OK;
 }

@@ -8,7 +8,8 @@ import { ApiService } from "src/app/services/api.service";
 })
 export class UsersComponent implements OnInit {
   //isToggleChecked: boolean = true;
-  modalText: string ;
+  modalText: string[] = new Array();
+  text: string;
   clickedRowIndex: number;
 
   public people: any;
@@ -20,9 +21,9 @@ export class UsersComponent implements OnInit {
     this._api.GetAdminUsers().subscribe((res) => {
       this.people = res;
       for (let i = 0; i < this.people.length; i++) {
-        if(this.people[i].customerRelayEnabled)
-          this.modalText = "Power will turn off.";
-        else this.modalText = "Power will turn on.";
+        if(!this.people[i].adminRelayEnabled)
+          this.modalText[i] = "Power will turn off.";
+        else this.modalText[i] = "Power will turn on.";
       }
     });
 
@@ -30,6 +31,7 @@ export class UsersComponent implements OnInit {
 
   rowClicked(index: number) {
     this.clickedRowIndex = index;
+    this.text = this.modalText[index];
   }
 
   clicked() {
@@ -39,14 +41,14 @@ export class UsersComponent implements OnInit {
     // if (this.clickedRowIndex !== undefined)
     //   console.log(this.people[this.clickedRowIndex].customerId)
     if (this.clickedRowIndex !== undefined) {
-      if (this.people[this.clickedRowIndex].customerRelayEnabled == false)
-        this.modalText = "Power will turn off.";
-      else this.modalText = "Power will turn on.";
+      if (!this.people[this.clickedRowIndex].adminRelayEnabled)
+        this.modalText[this.clickedRowIndex] = "Power will turn off.";
+      else this.modalText[this.clickedRowIndex] = "Power will turn on.";
 
       this._api
         .SetAdminRelay(
           this.people[this.clickedRowIndex].customerId,
-          !this.people[this.clickedRowIndex].customerRelayEnabled
+          !this.people[this.clickedRowIndex].adminRelayEnabled
         )
         .subscribe((res) => {
           this._api.GetAdminUsers().subscribe((res) => {

@@ -214,6 +214,8 @@ SetAdminRelay(customerId: string, activate: boolean) {
     );
 }
 
+
+
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http

@@ -29,7 +29,7 @@ extern PZEM004Tv30 pzem;
 extern bool f_SD_fall_edge;
 extern unsigned long SD_insert_start;
 
-uint8_t SD_CARD_WRITE_ENABLE = 1;
+uint8_t SD_CARD_WRITE_ENABLE = 0;
 
 // struct SD_event_flags SD_flags = {0};
 struct SD_1min_mean meanVals_1min = {0};
@@ -57,12 +57,18 @@ sd_status initSDOnInterrupt(){
         // delay(500); // debounce
         if (digitalRead(SD_PRECENCE) == 1) return SD_ABSENT;
 
-        SD.end();
-        SD = SDFS(FSImplPtr(new VFSImpl()));
-        sd_status ret = initCard(SD);
-        if (ret != SD_OK) {
-            handleErrorSD(ret);
-        };
+        for (uint8_t i = 0; i < 5; i++){
+            SD.end();
+            SD = SDFS(FSImplPtr(new VFSImpl()));
+            delay(100);
+            sd_status ret = initCard(SD);
+            if (ret != SD_OK) {
+                handleErrorSD(ret);
+            }else{
+                break;
+            }
+        }
+
         f_SD_fall_edge = 0;
     }
     return SD_OK;
@@ -557,6 +563,7 @@ sd_status SDRoutineEverySec(){
         ret = appendFile(SD, full_path, append_str);
         if(ret != SD_OK) return ret;
         // Serial.printf("Appended to s.txt\n%s\n", append_str);
+        Serial.println("Appended to s.txt");
         memset(append_str, 0, sizeof(append_str));
 
 
@@ -571,7 +578,7 @@ sd_status SDRoutineEverySec(){
         ret = appendFile(SD, full_path, data);
         if(ret != SD_OK) return ret;
         memset(&meanVals_1min, 0, sizeof(meanVals_1min));
-        // Serial.printf("Appended to m.txt\n%s\n", data);
+        Serial.printf("Appended to m.txt\n%s\n", data);
 
 
         // 5 min
@@ -613,7 +620,7 @@ sd_status SDRoutineEverySec(){
             ret = appendFile(SD, full_path, data);
             if(ret != SD_OK) return ret;
             // Serial.printf("5m appended data: %s\n", data);
-            // Serial.printf("Appended to 5m.txt\n%s\n", data);
+            Serial.printf("Appended to 5m.txt\n%s\n", data);
             // Serial.printf("5.tm_min = %d\n", tm_now.tm_min);
             // 15 min
             if ((tm_now.tm_min+1) % 15 == 0){
@@ -640,7 +647,7 @@ sd_status SDRoutineEverySec(){
                 }
                 ret = appendFile(SD, full_path, data);
                 if(ret != SD_OK) return ret;
-                // Serial.printf("Appended to 15m.txt\n%s\n", data);
+                Serial.printf("Appended to 15m.txt\n%s\n", data);
                 // Serial.printf("tm_min = %d\n", tm_now.tm_min);
                 // 1 hour
                 if (tm_now.tm_min == 59){
@@ -667,7 +674,7 @@ sd_status SDRoutineEverySec(){
                     }
                     ret = appendFile(SD, full_path, data);
                     if(ret != SD_OK) return ret;
-                    // Serial.printf("Appended to h.txt\n%s\n", data);
+                    Serial.printf("Appended to h.txt\n%s\n", data);
                     // Serial.printf("tm_min = %d\n", tm_now.tm_min);
                 }
             }
@@ -890,6 +897,7 @@ sd_status getYearMonthDayFromPath(char path[], struct tm *ymd){
 // }
 
 void handleErrorSD(sd_status status){
+    if (status == SD_WRITE_NOT_ALLOWED) return;
     Serial.print("!!!!!!!!! Error: ");
     if(status == SD_ABSENT){
         Serial.println("SD Card is not inserted");
