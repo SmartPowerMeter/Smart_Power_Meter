@@ -86,11 +86,7 @@ namespace MQTT.Broker
 
                     var user = await dbService.GetUser(arg.ClientId);
 
-                    Console.WriteLine(payload);
-
                     var data = JsonSerializer.Deserialize<MeasurementData>(payload);
-
-                    Console.WriteLine(data.Energy);
 
                     var influxDbService = scope.ServiceProvider.GetRequiredService<InfluxDbService>();
 
