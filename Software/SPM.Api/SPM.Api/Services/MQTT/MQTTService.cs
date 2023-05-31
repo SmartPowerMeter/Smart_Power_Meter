@@ -71,7 +71,10 @@ namespace SPM.Api.Services.MQTT
                 .WithPayload($"{(activate ? 1 : 0)}")
                 .Build();
 
-            await mqttClient.PublishAsync(message);
+            if (!(isAdminCommand && activate))
+                await mqttClient.PublishAsync(message);
+            else
+                user.SetAdminRelayState(activate);
 
             await Task.Delay(1500);
 
