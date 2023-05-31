@@ -15,7 +15,6 @@ namespace MQTT.Broker
         private readonly ILogger<Worker> _logger;
         private readonly IServiceProvider _serviceProvider;
         private MqttServer _mqttServer;
-        private UserData _user;
 
         public Worker(IServiceProvider serviceProvider, ILogger<Worker> logger)
         {
@@ -60,9 +59,9 @@ namespace MQTT.Broker
                 using var scope = _serviceProvider.CreateScope();
                 var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
 
-                _user = await dbService.GetUser(arg.ClientId);
+                var user = await dbService.GetUser(arg.ClientId);
 
-                if (_user == null)
+                if (user == null)
                     arg.ReasonCode = MqttConnectReasonCode.BadUserNameOrPassword;
             }
 
@@ -85,18 +84,22 @@ namespace MQTT.Broker
                     using var scope = _serviceProvider.CreateScope();
                     var dbService = scope.ServiceProvider.GetRequiredService<IDbService>();
 
-                    _user = await dbService.GetUser(arg.ClientId);
+                    var user = await dbService.GetUser(arg.ClientId);
+
+                    Console.WriteLine(payload);
 
                     var data = JsonSerializer.Deserialize<MeasurementData>(payload);
 
+                    Console.WriteLine(data.Energy);
+
                     var influxDbService = scope.ServiceProvider.GetRequiredService<InfluxDbService>();
 
-                    influxDbService.WritePoint(nameof(data.Voltage), data.Voltage, data.TimeStamp, _user);
-                    influxDbService.WritePoint(nameof(data.Current), data.Current, data.TimeStamp, _user);
-                    influxDbService.WritePoint(nameof(data.Power), data.Power, data.TimeStamp, _user);
-                    influxDbService.WritePoint(nameof(data.Energy), data.Energy, data.TimeStamp, _user);
-                    influxDbService.WritePoint(nameof(data.Frequency), data.Frequency, data.TimeStamp, _user);
-                    influxDbService.WritePoint(nameof(data.PowerFactor), data.PowerFactor, data.TimeStamp, _user);
+                    influxDbService.WritePoint(nameof(data.Voltage), data.Voltage, data.TimeStamp, user);
+                    influxDbService.WritePoint(nameof(data.Current), data.Current, data.TimeStamp, user);
+                    influxDbService.WritePoint(nameof(data.Power), data.Power, data.TimeStamp, user);
+                    influxDbService.WritePoint(nameof(data.Energy), data.Energy, data.TimeStamp, user);
+                    influxDbService.WritePoint(nameof(data.Frequency), data.Frequency, data.TimeStamp, user);
+                    influxDbService.WritePoint(nameof(data.PowerFactor), data.PowerFactor, data.TimeStamp, user);
                 }
                 catch (Exception ex)
                 {
