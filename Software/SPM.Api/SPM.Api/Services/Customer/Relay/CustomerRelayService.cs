@@ -25,7 +25,7 @@ namespace SPM.Api.Services.Customer.Relay
             if (user.AdminRelayEnabled)
                 return await _mqttService.SetRelayStatus(_customerId, activate, false);
 
-            throw new InvalidOperationException("The relay is turned off globally");
+            throw new InvalidOperationException("The power is turned off globally");
         }
 
         public async Task<GetRelayStatusResponse> GetRelayStatus()

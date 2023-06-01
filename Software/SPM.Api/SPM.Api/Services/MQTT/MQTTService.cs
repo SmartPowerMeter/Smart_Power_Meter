@@ -28,7 +28,7 @@ namespace SPM.Api.Services.MQTT
                 .WithCredentials("user", "password")
                 .Build();
 
-            var mqttClient = new MqttFactory().CreateMqttClient();
+            using var mqttClient = new MqttFactory().CreateMqttClient();
 
             mqttClient.ConnectedAsync += async e =>
             {

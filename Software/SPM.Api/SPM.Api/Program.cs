@@ -5,6 +5,7 @@ using SPM.Api.Data.Extensions;
 using SPM.Api.Services.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using SPM.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,8 @@ Log.Logger = new LoggerConfiguration()
 builder.Services.AddLogging(x => x.AddSerilog(Log.Logger));
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

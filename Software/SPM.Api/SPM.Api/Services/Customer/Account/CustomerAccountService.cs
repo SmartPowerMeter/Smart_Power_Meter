@@ -35,7 +35,7 @@ namespace SPM.Api.Services.Customer.Account
             var user = await _dbContext.User.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             if (user != null)
-                throw new ArgumentException();
+                throw new ArgumentException("Customer with entered email already exists");
 
             var hashedPassword = EncryptionHelper.HashPasword(request.Password);
 
@@ -59,10 +59,10 @@ namespace SPM.Api.Services.Customer.Account
             var user = await _dbContext.User.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             if (user == null)
-                throw new NotFoundException();
+                throw new NotFoundException("Customer with entered email does not exist");
 
             if (user.Password != EncryptionHelper.HashPasword(request.Password))
-                throw new AuthenticationException();
+                throw new AuthenticationException("Password is incorrect");
 
             var response = new LoginUserResponse
             {
@@ -100,7 +100,7 @@ namespace SPM.Api.Services.Customer.Account
             var user = await _dbContext.User.FirstOrDefaultAsync(x => x.Email == email);
 
             if (user == null)
-                throw new NotFoundException();
+                throw new NotFoundException("Customer with entered email does not exist");
 
             var temporaryPassword = Guid.NewGuid().ToString();
 
