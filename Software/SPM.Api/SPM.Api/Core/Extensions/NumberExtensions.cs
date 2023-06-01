@@ -4,7 +4,7 @@
     {
         public static double ToDouble(this string str)
         {
-            return double.TryParse(str, out double number) ? number : 0d;
+            return Math.Round(double.TryParse(str, out double number) ? number : 0d, 2);
         }
     }
 }
