@@ -4,6 +4,8 @@
 #include "interrupts_SPM.h"
 #include "rtc_SPM.h"
 #include "LED_SPM.h"
+#include "mqtt_SPM.h"
+#include "utils.h"
 
 
 #ifdef DUMP_AT_COMMANDS
@@ -18,6 +20,8 @@
 Preferences pref_SIM800;
 
 extern bool GSMConf;
+extern bool AlertConf;
+extern String GSMConfAlertNum;
 extern String CustomerId;
 extern String GSMConfAPN;
 extern String GSMConfPIN;
@@ -107,6 +111,52 @@ sim800l_status initGSMSupport(){
 }
 
 
+sim800l_status initGSMWithoutGPRS(){
+    TINY_GSM_DEBUG.println("Initializing GSM for SMS only");
+    TINY_GSM_DEBUG.println("Configuring SIM Enable and power pins");
+    pinMode(SIM800_EN, OUTPUT);
+    pinMode(POWER_4_1_EN, OUTPUT);
+    digitalWrite(SIM800_EN, HIGH);    // enable SIM800 module
+    digitalWrite(POWER_4_1_EN, LOW);  // provide power to it
+
+    TINY_GSM_DEBUG.println("Starting Serial communication");
+    SerialAT.begin(GSM_BAUD, SERIAL_8N1, SIM800_TX, SIM800_RX);
+    delay(8000);
+
+    TINY_GSM_DEBUG.println("Initializing modem");
+    modem.restart();
+
+
+    String modemInfo = modem.getModemInfo();
+    TINY_GSM_DEBUG.print("Modem Info: ");
+    TINY_GSM_DEBUG.println(modemInfo);
+
+    uint8_t sim_status = modem.getSimStatus();
+    if (!sim_status){
+        return SIM800L_SIM_CARD_NOT_INSERTED;
+    }
+
+    TINY_GSM_DEBUG.printf("SIM Status: %d\n", sim_status);
+    if ((!GSMConfPIN.isEmpty()) && (sim_status != 3)){
+        TINY_GSM_DEBUG.println("Unlocking SIM Card");
+        if (!modem.simUnlock(GSMConfPIN_c)){
+            return SIM800L_SIM_UNLOCK_ERROR;
+        }
+    }
+
+    // delay(20000);
+    modem.waitForNetwork();
+    modem.setGsmBusy();
+
+    RegStatus modem_status = modem.getRegistrationStatus();
+    Serial.printf("----------------> Modem Registration Status: %d\n", modem_status);
+    if (!((modem_status == REG_OK_HOME) || (modem_status == REG_OK_ROAMING))){
+        return SIM800L_NOT_REGISTERED_ERROR;
+    }
+
+    return SIM800L_OK;
+}
+
 sim800l_status initSequenceSIM800L(){
     TINY_GSM_DEBUG.println("Configuring SIM Enable and power pins");
     pinMode(SIM800_EN, OUTPUT);
@@ -127,6 +177,10 @@ sim800l_status initSequenceSIM800L(){
     TINY_GSM_DEBUG.println(modemInfo);
 
     uint8_t sim_status = modem.getSimStatus();
+    if (!sim_status){
+        return SIM800L_SIM_CARD_NOT_INSERTED;
+    }
+
     TINY_GSM_DEBUG.printf("SIM Status: %d\n", sim_status);
     if ((!GSMConfPIN.isEmpty()) && (sim_status != 3)){
         TINY_GSM_DEBUG.println("Unlocking SIM Card");
@@ -134,6 +188,8 @@ sim800l_status initSequenceSIM800L(){
             return SIM800L_SIM_UNLOCK_ERROR;
         }
     }
+
+    modem.setGsmBusy();
 
     TINY_GSM_DEBUG.print("Connecting to APN: ");
     TINY_GSM_DEBUG.println(GSMConfAPN_c);
@@ -173,6 +229,21 @@ sim800l_status initSequenceSIM800L(){
 }
 
 
+bool sendSMS(const String number, const String text){
+    return modem.sendSMS(number, text);
+}
+
+
+void testMessage(){
+    if (getGSMSupport() && AlertConf){
+        unsigned long unique = getUnique();
+        char message[200];
+        sprintf(message, "This is test message from SPM_%lu for validation", unique);
+        sendSMS(GSMConfAlertNum, message);
+    }
+}
+
+
 void handleSIM800LError(sim800l_status status){
     if (status == SIM800L_SIM_UNLOCK_ERROR){
         TINY_GSM_DEBUG.println("SIM800L SIM Unlock Error");
@@ -180,8 +251,16 @@ void handleSIM800LError(sim800l_status status){
     }else if (status == SIM800L_GPRS_CONNECTION_ERROR)
     {
         TINY_GSM_DEBUG.println("GSM Failed to open GPRS context");
-        usrButtonAction();
+        // usrButtonAction();
+        softRestart();
+    }else if (status == SIM800L_SIM_CARD_NOT_INSERTED)
+    {
+        TINY_GSM_DEBUG.println("SIM Card in not inserted");
+        softRestart();
+    }else if (status == SIM800L_NOT_REGISTERED_ERROR)
+    {
+        TINY_GSM_DEBUG.println("GSM is not registered to network");
+        softRestart();
     }
     
-
 }

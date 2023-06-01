@@ -9,6 +9,7 @@ Preferences reconnRebootLimit;
 
 extern TinyGsm modem;
 extern bool GSMConf;
+extern bool AlertConf;
 extern String CustomerId;
 extern String GSMConfAPN;
 extern String GSMConfPIN;
@@ -41,8 +42,13 @@ extern volatile LED_status status;
 void initMQTT(){
     // if configured to use GSM module
     if (GSMConf){
-        WiFi.disconnect(true, true);
         Serial.println("--------> Configuring mqtt_client for GSM");
+        WiFi.disconnect(true, true);
+        WiFi_client.stop();
+        overWiFi.~PubSubClient();
+        GSM_client.stop();
+        GSM_client.init(&modem);
+        overGSM.setClient(GSM_client);
         mqtt_client = &overGSM;
         sim800l_status ret = initSequenceSIM800L();
         if (ret != SIM800L_OK){
@@ -51,6 +57,13 @@ void initMQTT(){
     }else{
         Serial.println("--------> Configuring mqtt_client for WiFi");
         mqtt_client = &overWiFi;
+
+        if (AlertConf){
+            sim800l_status ret = initGSMWithoutGPRS();
+            if (ret != SIM800L_OK){
+                handleSIM800LError(ret);
+            }
+        }
     }
     Serial.println("--------> Setting Server Parameters");
     Serial.printf("Broker: ->%s<-\n", MQTT_BROKER);
@@ -66,7 +79,7 @@ void initMQTT(){
     topic_c = topic.c_str();
     Serial.printf("Topic: ->%s<-\n", topic_c);
 
-    delay(2000);
+    // delay(2000);
 
     if (mqtt_client->connect(CustomerId_c, MQTT_USER, MQTT_PASS)){
         Serial.println("----------------------> MQTT Success Connect");
@@ -119,14 +132,7 @@ void reconnect(){
     }
     if (flag_reconn_first && ((millis() - reconnect_start_time) > 30000)){
         Serial.println("Restarting Due to MQTT connection timeout");
-        uint8_t reconn_num = getReconnNumber();
-        if (reconn_num > 5){
-            setReconnNumber(0);
-            usrButtonAction();
-        }else{
-            setReconnNumber(reconn_num + 1);
-            ESP.restart();
-        }
+        softRestart();
         // usrButtonAction();
         // ESP.restart();
     }
@@ -195,4 +201,16 @@ void setRelayStatus(){
     }
 
     relayState.end();
+}
+
+
+void softRestart(){
+    uint8_t reconn_num = getReconnNumber();
+    if (reconn_num > 5){
+        setReconnNumber(0);
+        usrButtonAction();
+    }else{
+        setReconnNumber(reconn_num + 1);
+        ESP.restart();
+    }
 }

@@ -9,10 +9,11 @@
 WiFiManager wm;
 Preferences initSetupParams;
 
-char html[] = "<html><body><h2>GSM Settings</h2><p>Following parameters will be necessary to open GPRS context</p></body></html>";
+char html[] = "<html><body><h2>GPRS Settings</h2><p>Following parameters will be necessary to open GPRS context</p></body></html>";
 WiFiManagerParameter enteredCustomerId("CustomerId", "Enter Provided CustomerId", "", 50);
 WiFiManagerParameter enteredSDConf("SDConf", "Do you want to save data on SD Card? (Yes/No)", "No", 3);
-WiFiManagerParameter enteredGSMConf("GSMConf", "Do you want to use GSM instead of WiFi? (Yes/No)", "No", 3, html, WFM_LABEL_BEFORE);
+WiFiManagerParameter enteredGSMConfAlert("GSMConfAlert", "Enter your phone number in case you want to receive alert messages(It will charge SIM card owner). Test message will be sent to this number for validation", "No", 15);
+WiFiManagerParameter enteredGSMConf("GSMConf", "Do you want to use GSM instead of WiFi? (Yes/No) (It will charge SIM card owner)", "No", 3, html, WFM_LABEL_BEFORE);
 WiFiManagerParameter enteredGSMConfAPN("GSMConfAPN", "Provide APN for GPRS context", "", 30);
 WiFiManagerParameter enteredGSMConfPIN("GSMConfPIN", "Provide SIM Card PIN if SIM is locked", "", 6);
 WiFiManagerParameter enteredGSMConfGPRSUser("GSMConfGPRSUser", "Provide GPRS User if present", "", 30);
@@ -21,6 +22,8 @@ WiFiManagerParameter enteredGSMConfGPRSPass("GSMConfGPRSPass", "Provide GPRS Pas
 
 bool SDConf = 0;
 bool GSMConf = 0;
+bool AlertConf = 0;
+String GSMConfAlertNum;
 String CustomerId;
 String GSMConfAPN;
 String GSMConfPIN;
@@ -49,6 +52,7 @@ volatile void initWiFiManager(){
     wm.setSaveConnectTimeout(10);
     wm.setConnectRetries(1);
     wm.setCaptivePortalEnable(true);
+    wm.setCustomMenuHTML("<h1>Smart Meter</h1><h3>menu html</h3>");
     // wm.setSaveConnect(false);
 
     wm.setCustomHeadElement("<h1>Smart Power Meter</h1><h3>Initial Setup</h3>");
@@ -57,6 +61,7 @@ volatile void initWiFiManager(){
     wm.addParameter(&enteredSDConf);
 
     if (getGSMSupport()){
+        wm.addParameter(&enteredGSMConfAlert);
         wm.addParameter(&enteredGSMConf);
         wm.addParameter(&enteredGSMConfAPN);
         wm.addParameter(&enteredGSMConfPIN);
@@ -114,6 +119,7 @@ void saveParamCallback(){
 
     String customerId = String(enteredCustomerId.getValue());
     String SDConf = String(enteredSDConf.getValue());
+    String GSMConfAlert = String(enteredGSMConfAlert.getValue());
     String GSMConf = String(enteredGSMConf.getValue());
     String GSMConfAPN = String(enteredGSMConfAPN.getValue());
     String GSMConfPIN = String(enteredGSMConfPIN.getValue());
@@ -122,6 +128,7 @@ void saveParamCallback(){
 
     Serial.printf("CustomerId:      %s\n", customerId);
     Serial.printf("SDConf:          %s\n", SDConf);
+    Serial.printf("GSMConfAlert:    %s\n", GSMConfAlert);
     Serial.printf("GSMConf:         %s\n", GSMConf);
     Serial.printf("GSMConfAPN:      %s\n", GSMConfAPN);
     Serial.printf("GSMConfPIN:      %s\n", GSMConfPIN);
@@ -132,6 +139,7 @@ void saveParamCallback(){
 
     SDConf.toLowerCase();
     GSMConf.toLowerCase();
+    GSMConfAlert.toLowerCase();
 
     bool sd_conf = false;
     if ((SDConf == String("yes")) || (SDConf == "y")){
@@ -141,6 +149,13 @@ void saveParamCallback(){
     bool gsm_conf = false;
     if ((GSMConf == String("yes")) || (GSMConf == "y")){
         gsm_conf = true;
+    }
+
+    if (!GSMConfAlert.isEmpty() && (GSMConfAlert != "no") && (GSMConfAlert != "n")){
+        initSetupParams.putString("GSMAlertNum", GSMConfAlert);
+        initSetupParams.putBool("GSMAlertConf", true);
+    }else{
+        initSetupParams.putBool("GSMAlertConf", false);
     }
 
     initSetupParams.putString("CustomerId", customerId);
@@ -219,6 +234,8 @@ void getAllConf(){
 
     SDConf          = initSetupParams.getBool("SDConf");
     GSMConf         = initSetupParams.getBool("GSMConf");
+    AlertConf       = initSetupParams.getBool("GSMAlertConf");
+    GSMConfAlertNum = initSetupParams.getString("GSMAlertNum");
     CustomerId      = initSetupParams.getString("CustomerId");
     GSMConfAPN      = initSetupParams.getString("GSMConfAPN");
     GSMConfPIN      = initSetupParams.getString("GSMConfPIN");
@@ -229,6 +246,8 @@ void getAllConf(){
     Serial.printf("CustomerId:      %s\n", CustomerId);
     Serial.printf("SDConf:          %d\n", SDConf);
     Serial.printf("GSMConf:         %d\n", GSMConf);
+    Serial.printf("GSMConfAlert:    %d\n", AlertConf);
+    Serial.printf("GSMConfAlertNum: %s\n", GSMConfAlertNum);
     Serial.printf("GSMConfAPN:      %s\n", GSMConfAPN);
     Serial.printf("GSMConfPIN:      %s\n", GSMConfPIN);
     Serial.printf("GSMConfGPRSUser: %s\n", GSMConfGPRSUser);
