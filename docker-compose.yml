@@ -146,6 +146,8 @@ services:
     image: mongo:5.0.13
     volumes:
       - mongo_data:/data/db
+    networks:
+      - main_network
   elasticsearch:
     user: root
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
@@ -161,6 +163,8 @@ services:
         soft: -1
         hard: -1
     mem_limit: 1g
+    networks:
+      - main_network
   graylog:
     user: root
     image: graylog/graylog:5.0
@@ -184,6 +188,8 @@ services:
       - 1514:1514/udp
       - 12201:12201
       - 12201:12201/udp
+    networks:
+      - main_network
 
 
 volumes:
