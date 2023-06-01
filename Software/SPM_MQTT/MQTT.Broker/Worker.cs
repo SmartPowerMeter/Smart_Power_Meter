@@ -6,7 +6,6 @@ using System.Text.Json;
 using MQTT.Broker.Models;
 using MQTT.Broker.Services.SqlDb;
 using MQTT.Broker.Services.InfluxDb;
-using MQTT.Broker.Services.SqlDb.Models;
 
 namespace MQTT.Broker
 {
