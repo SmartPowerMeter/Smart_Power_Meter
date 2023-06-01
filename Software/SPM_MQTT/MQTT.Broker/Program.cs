@@ -7,7 +7,7 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(new ConfigurationBuilder()
         .AddJsonFile("appsettings.json")
         .Build())
-    .Enrich.WithProperty("TimeZone", TimeZoneInfo.FromSerializedString("Asia/Tbilisi"))
+    .Enrich.FromLogContext()
     .CreateLogger();
 
 var host = Host.CreateDefaultBuilder(args)
