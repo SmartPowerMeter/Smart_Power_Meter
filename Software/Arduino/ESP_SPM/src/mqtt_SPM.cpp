@@ -42,7 +42,12 @@ void initMQTT(){
     // if configured to use GSM module
     if (GSMConf){
         WiFi.disconnect(true, true);
+        WiFi_client.stop();
+        overWiFi.~PubSubClient();
         Serial.println("--------> Configuring mqtt_client for GSM");
+        GSM_client.stop();
+        GSM_client.init(&modem);
+        overGSM.setClient(GSM_client);
         mqtt_client = &overGSM;
         sim800l_status ret = initSequenceSIM800L();
         if (ret != SIM800L_OK){
@@ -119,14 +124,7 @@ void reconnect(){
     }
     if (flag_reconn_first && ((millis() - reconnect_start_time) > 30000)){
         Serial.println("Restarting Due to MQTT connection timeout");
-        uint8_t reconn_num = getReconnNumber();
-        if (reconn_num > 5){
-            setReconnNumber(0);
-            usrButtonAction();
-        }else{
-            setReconnNumber(reconn_num + 1);
-            ESP.restart();
-        }
+        softRestart();
         // usrButtonAction();
         // ESP.restart();
     }
@@ -195,4 +193,16 @@ void setRelayStatus(){
     }
 
     relayState.end();
+}
+
+
+void softRestart(){
+    uint8_t reconn_num = getReconnNumber();
+    if (reconn_num > 5){
+        setReconnNumber(0);
+        usrButtonAction();
+    }else{
+        setReconnNumber(reconn_num + 1);
+        ESP.restart();
+    }
 }

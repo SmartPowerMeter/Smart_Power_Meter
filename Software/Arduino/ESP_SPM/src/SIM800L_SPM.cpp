@@ -4,6 +4,7 @@
 #include "interrupts_SPM.h"
 #include "rtc_SPM.h"
 #include "LED_SPM.h"
+#include "mqtt_SPM.h"
 
 
 #ifdef DUMP_AT_COMMANDS
@@ -127,6 +128,10 @@ sim800l_status initSequenceSIM800L(){
     TINY_GSM_DEBUG.println(modemInfo);
 
     uint8_t sim_status = modem.getSimStatus();
+    if (!sim_status){
+        return SIM800L_SIM_CARD_NOT_INSERTED;
+    }
+
     TINY_GSM_DEBUG.printf("SIM Status: %d\n", sim_status);
     if ((!GSMConfPIN.isEmpty()) && (sim_status != 3)){
         TINY_GSM_DEBUG.println("Unlocking SIM Card");
@@ -180,8 +185,14 @@ void handleSIM800LError(sim800l_status status){
     }else if (status == SIM800L_GPRS_CONNECTION_ERROR)
     {
         TINY_GSM_DEBUG.println("GSM Failed to open GPRS context");
-        usrButtonAction();
+        // usrButtonAction();
+        softRestart();
+    }else if (status == SIM800L_SIM_CARD_NOT_INSERTED)
+    {
+        TINY_GSM_DEBUG.println("SIM Card in not inserted");
+        softRestart();
     }
+    
     
 
 }

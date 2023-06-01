@@ -20,5 +20,6 @@ bool getRelayConf();
 uint8_t getReconnNumber();
 void setReconnNumber(uint8_t num);
 void setRelayStatus();
+void softRestart();
 
 #endif
