@@ -66,100 +66,210 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._api.GetRelayStatus().subscribe((res) => {
-      if (res.adminRelayEnabled == true) { 
-      this.isToggleChecked = res.customerRelayEnabled;
-      if (this.isToggleChecked) this.modalText = "Power will turn off.";
-      else this.modalText = "Power will turn on.";
-      }
-      else {
-        this.modalText = "Your Power is Turned Off By Company.";
-      }
-    });
-
-    this._api.RecentMeasurementPost(1, 1, 30).subscribe((res) => {
-      this.lineChartCon1 = res.map((item: any) => item.value);
-      this.lineChartLabels1 = res.map((item: any) => {
-        const date = new Date(item.time);
-        date.setHours(date.getHours() + 4);
-        return date.toISOString().slice(11, 19);
+    if (
+      this._api.email != "smartpowmeter@gmail.com" &&
+      this._api.adminSearchedCustomer == null
+    ) {
+      this._api.GetRelayStatus().subscribe((res) => {
+        if (res.adminRelayEnabled == true) {
+          this.isToggleChecked = res.customerRelayEnabled;
+          if (this.isToggleChecked) this.modalText = "Power will turn off.";
+          else this.modalText = "Power will turn on.";
+        } else {
+          this.modalText = "Your Power is Turned Off By Company.";
+        }
       });
-      this.createLineCharts();
-    });
 
-    this._api.RecentMeasurementPost(2, 1, 30).subscribe((res) => {
-      this.lineChartCon2 = res.map((item: any) => item.value);
-      this.lineChartLabels2 = res.map((item: any) => {
-        const date = new Date(item.time);
-        date.setHours(date.getHours() + 4);
-        return date.toISOString().slice(11, 19);
+      this._api.RecentMeasurementPost(1, 1, 30).subscribe((res) => {
+        this.lineChartCon1 = res.map((item: any) => item.value);
+        this.lineChartLabels1 = res.map((item: any) => {
+          const date = new Date(item.time);
+          date.setHours(date.getHours() + 4);
+          return date.toISOString().slice(11, 19);
+        });
+        this.createLineCharts();
       });
-      this.lineChart2.data.datasets[0].data = this.lineChartCon2;
-      this.lineChart2.data.labels = this.lineChartLabels2;
-      this.lineChart2.update();
-    });
 
-    this._api.RecentMeasurementPost(3, 1, 30).subscribe((res) => {
-      this.lineChartCon3 = res.map((item: any) => item.value);
-      this.lineChartLabels3 = res.map((item: any) => {
-        const date = new Date(item.time);
-        date.setHours(date.getHours() + 4);
-        return date.toISOString().slice(11, 19);
+      this._api.RecentMeasurementPost(2, 1, 30).subscribe((res) => {
+        this.lineChartCon2 = res.map((item: any) => item.value);
+        this.lineChartLabels2 = res.map((item: any) => {
+          const date = new Date(item.time);
+          date.setHours(date.getHours() + 4);
+          return date.toISOString().slice(11, 19);
+        });
+        this.lineChart2.data.datasets[0].data = this.lineChartCon2;
+        this.lineChart2.data.labels = this.lineChartLabels2;
+        this.lineChart2.update();
       });
-      this.lineChart3.data.datasets[0].data = this.lineChartCon3;
-      this.lineChart3.data.labels = this.lineChartLabels3;
-      this.lineChart3.update();
-    });
 
-    this._api.RecentMeasurementPost(6, 1, 30).subscribe((res) => {
-      this.lineChartCon4 = res.map((item: any) => item.value);
-      this.lineChartLabels4 = res.map((item: any) => {
-        const date = new Date(item.time);
-        date.setHours(date.getHours() + 4);
-        return date.toISOString().slice(11, 19);
+      this._api.RecentMeasurementPost(3, 1, 30).subscribe((res) => {
+        this.lineChartCon3 = res.map((item: any) => item.value);
+        this.lineChartLabels3 = res.map((item: any) => {
+          const date = new Date(item.time);
+          date.setHours(date.getHours() + 4);
+          return date.toISOString().slice(11, 19);
+        });
+        this.lineChart3.data.datasets[0].data = this.lineChartCon3;
+        this.lineChart3.data.labels = this.lineChartLabels3;
+        this.lineChart3.update();
       });
-      this.lineChart4.data.datasets[0].data = this.lineChartCon4;
-      this.lineChart4.data.labels = this.lineChartLabels4;
-      this.lineChart4.update();
-    });
 
-    this._api.RecentMeasurementPost(5, 1, 30).subscribe((res) => {
-      this.lineChartCon5 = res.map((item: any) => item.value);
-      this.lineChartLabels5 = res.map((item: any) => {
-        const date = new Date(item.time);
-        date.setHours(date.getHours() + 4);
-        return date.toISOString().slice(11, 19);
+      this._api.RecentMeasurementPost(6, 1, 30).subscribe((res) => {
+        this.lineChartCon4 = res.map((item: any) => item.value);
+        this.lineChartLabels4 = res.map((item: any) => {
+          const date = new Date(item.time);
+          date.setHours(date.getHours() + 4);
+          return date.toISOString().slice(11, 19);
+        });
+        this.lineChart4.data.datasets[0].data = this.lineChartCon4;
+        this.lineChart4.data.labels = this.lineChartLabels4;
+        this.lineChart4.update();
       });
-      this.lineChart5.data.datasets[0].data = this.lineChartCon5;
-      this.lineChart5.data.labels = this.lineChartLabels5;
-      this.lineChart5.update();
-    });
 
-    this._api.RecentMeasurementPost(4, 1, 30).subscribe((res) => {
-      this.lineChartCon6 = res.map((item: any) => item.value);
-      this.lineChartLabels6 = res.map((item: any) => {
-        const date = new Date(item.time);
-        date.setHours(date.getHours() + 4);
-        return date.toISOString().slice(11, 19);
+      this._api.RecentMeasurementPost(5, 1, 30).subscribe((res) => {
+        this.lineChartCon5 = res.map((item: any) => item.value);
+        this.lineChartLabels5 = res.map((item: any) => {
+          const date = new Date(item.time);
+          date.setHours(date.getHours() + 4);
+          return date.toISOString().slice(11, 19);
+        });
+        this.lineChart5.data.datasets[0].data = this.lineChartCon5;
+        this.lineChart5.data.labels = this.lineChartLabels5;
+        this.lineChart5.update();
       });
-      this.lineChart6.data.datasets[0].data = this.lineChartCon6;
-      this.lineChart6.data.labels = this.lineChartLabels6;
-      this.lineChart6.update();
-    });
 
-    this.intervalId = setInterval(() => {
-      const params = this.serviceParams[this.selectedOption];
-      this.send(
-        this.serviceParams[this.selectedOption].timeType,
-        this.serviceParams[this.selectedOption].time
-      );
-    }, 1000);
+      this._api.RecentMeasurementPost(4, 1, 30).subscribe((res) => {
+        this.lineChartCon6 = res.map((item: any) => item.value);
+        this.lineChartLabels6 = res.map((item: any) => {
+          const date = new Date(item.time);
+          date.setHours(date.getHours() + 4);
+          return date.toISOString().slice(11, 19);
+        });
+        this.lineChart6.data.datasets[0].data = this.lineChartCon6;
+        this.lineChart6.data.labels = this.lineChartLabels6;
+        this.lineChart6.update();
+      });
 
-    this._api.GetEnergyConsumption(1).subscribe((res) => {
-      const obj: any = res;
-      this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
-      this.user.totalCost = obj.totalCost;
-    });
+      this.intervalId = setInterval(() => {
+        const params = this.serviceParams[this.selectedOption];
+        this.send(
+          this.serviceParams[this.selectedOption].timeType,
+          this.serviceParams[this.selectedOption].time
+        );
+      }, 1000);
+
+      this._api.GetEnergyConsumption(1).subscribe((res) => {
+        const obj: any = res;
+        this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
+        this.user.totalCost = obj.totalCost;
+      });
+    } else {
+      this._api.GetRelayStatus().subscribe((res) => {
+        if (res.adminRelayEnabled == true) {
+          this.isToggleChecked = res.customerRelayEnabled;
+          if (this.isToggleChecked) this.modalText = "Power will turn off.";
+          else this.modalText = "Power will turn on.";
+        } else {
+          this.modalText = "Your Power is Turned Off By Company.";
+        }
+      });
+
+      this._api
+        .AdminRecentMeasurementPost(1, 1, 30, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.lineChartCon1 = res.map((item: any) => item.value);
+          this.lineChartLabels1 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.createLineCharts();
+        });
+
+      this._api
+        .AdminRecentMeasurementPost(2, 1, 30, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.lineChartCon2 = res.map((item: any) => item.value);
+          this.lineChartLabels2 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart2.data.datasets[0].data = this.lineChartCon2;
+          this.lineChart2.data.labels = this.lineChartLabels2;
+          this.lineChart2.update();
+        });
+
+      this._api
+        .AdminRecentMeasurementPost(3, 1, 30, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.lineChartCon3 = res.map((item: any) => item.value);
+          this.lineChartLabels3 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart3.data.datasets[0].data = this.lineChartCon3;
+          this.lineChart3.data.labels = this.lineChartLabels3;
+          this.lineChart3.update();
+        });
+
+      this._api
+        .AdminRecentMeasurementPost(6, 1, 30, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.lineChartCon4 = res.map((item: any) => item.value);
+          this.lineChartLabels4 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart4.data.datasets[0].data = this.lineChartCon4;
+          this.lineChart4.data.labels = this.lineChartLabels4;
+          this.lineChart4.update();
+        });
+
+      this._api
+        .AdminRecentMeasurementPost(5, 1, 30, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.lineChartCon5 = res.map((item: any) => item.value);
+          this.lineChartLabels5 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart5.data.datasets[0].data = this.lineChartCon5;
+          this.lineChart5.data.labels = this.lineChartLabels5;
+          this.lineChart5.update();
+        });
+
+      this._api
+        .AdminRecentMeasurementPost(4, 1, 30, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.lineChartCon6 = res.map((item: any) => item.value);
+          this.lineChartLabels6 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart6.data.datasets[0].data = this.lineChartCon6;
+          this.lineChart6.data.labels = this.lineChartLabels6;
+          this.lineChart6.update();
+        });
+
+      this.intervalId = setInterval(() => {
+        const params = this.serviceParams[this.selectedOption];
+        this.send(
+          this.serviceParams[this.selectedOption].timeType,
+          this.serviceParams[this.selectedOption].time
+        );
+      }, 1000);
+
+      // this._api.GetEnergyConsumption(1).subscribe((res) => {
+      //   const obj: any = res;
+      //   this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
+      //   this.user.totalCost = obj.totalCost;
+      // });
+    }
   }
 
   clicked() {
@@ -171,8 +281,7 @@ export class DashboardComponent implements OnInit {
         this._api.SetRelayStatus(!this.isToggleChecked).subscribe((res) => {
           this.isToggleChecked = !this.isToggleChecked;
         });
-      }
-      else{
+      } else {
         this.modalText = "Your Power is Turned Off By Company.";
       }
     });
@@ -239,89 +348,178 @@ export class DashboardComponent implements OnInit {
   }
 
   send(timeType: number, time: number) {
-    this.subscr1 = this._api
-      .RecentMeasurementPost(1, timeType, time)
-      .subscribe((res) => {
-        this.lineChartCon1 = res.map((item: any) => item.value);
-        this.lineChartLabels1 = res.map((item: any) => {
-          const date = new Date(item.time);
-          date.setHours(date.getHours() + 4);
-          return date.toISOString().slice(11, 19);
+    if (
+      this._api.email != "smartpowmeter@gmail.com" &&
+      this._api.adminSearchedCustomer == null
+    ) {
+      this.subscr1 = this._api
+        .RecentMeasurementPost(1, timeType, time)
+        .subscribe((res) => {
+          this.lineChartCon1 = res.map((item: any) => item.value);
+          this.lineChartLabels1 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart1.data.datasets[0].data = this.lineChartCon1;
+          this.lineChart1.data.labels = this.lineChartLabels1;
+          this.lineChart1.update();
         });
-        this.lineChart1.data.datasets[0].data = this.lineChartCon1;
-        this.lineChart1.data.labels = this.lineChartLabels1;
-        this.lineChart1.update();
-      });
 
-    this.subscr2 = this._api
-      .RecentMeasurementPost(2, timeType, time)
-      .subscribe((res) => {
-        this.lineChartCon2 = res.map((item: any) => item.value);
-        this.lineChartLabels2 = res.map((item: any) => {
-          const date = new Date(item.time);
-          date.setHours(date.getHours() + 4);
-          return date.toISOString().slice(11, 19);
+      this.subscr2 = this._api
+        .RecentMeasurementPost(2, timeType, time)
+        .subscribe((res) => {
+          this.lineChartCon2 = res.map((item: any) => item.value);
+          this.lineChartLabels2 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart2.data.datasets[0].data = this.lineChartCon2;
+          this.lineChart2.data.labels = this.lineChartLabels2;
+          this.lineChart2.update();
         });
-        this.lineChart2.data.datasets[0].data = this.lineChartCon2;
-        this.lineChart2.data.labels = this.lineChartLabels2;
-        this.lineChart2.update();
-      });
 
-    this.subscr3 = this._api
-      .RecentMeasurementPost(3, timeType, time)
-      .subscribe((res) => {
-        this.lineChartCon3 = res.map((item: any) => item.value);
-        this.lineChartLabels3 = res.map((item: any) => {
-          const date = new Date(item.time);
-          date.setHours(date.getHours() + 4);
-          return date.toISOString().slice(11, 19);
+      this.subscr3 = this._api
+        .RecentMeasurementPost(3, timeType, time)
+        .subscribe((res) => {
+          this.lineChartCon3 = res.map((item: any) => item.value);
+          this.lineChartLabels3 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart3.data.datasets[0].data = this.lineChartCon3;
+          this.lineChart3.data.labels = this.lineChartLabels3;
+          this.lineChart3.update();
         });
-        this.lineChart3.data.datasets[0].data = this.lineChartCon3;
-        this.lineChart3.data.labels = this.lineChartLabels3;
-        this.lineChart3.update();
-      });
 
-    this.subscr4 = this._api
-      .RecentMeasurementPost(6, timeType, time)
-      .subscribe((res) => {
-        this.lineChartCon4 = res.map((item: any) => item.value);
-        this.lineChartLabels4 = res.map((item: any) => {
-          const date = new Date(item.time);
-          date.setHours(date.getHours() + 4);
-          return date.toISOString().slice(11, 19);
+      this.subscr4 = this._api
+        .RecentMeasurementPost(6, timeType, time)
+        .subscribe((res) => {
+          this.lineChartCon4 = res.map((item: any) => item.value);
+          this.lineChartLabels4 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart4.data.datasets[0].data = this.lineChartCon4;
+          this.lineChart4.data.labels = this.lineChartLabels4;
+          this.lineChart4.update();
         });
-        this.lineChart4.data.datasets[0].data = this.lineChartCon4;
-        this.lineChart4.data.labels = this.lineChartLabels4;
-        this.lineChart4.update();
-      });
 
-    this.subscr5 = this._api
-      .RecentMeasurementPost(5, timeType, time)
-      .subscribe((res) => {
-        this.lineChartCon5 = res.map((item: any) => item.value);
-        this.lineChartLabels5 = res.map((item: any) => {
-          const date = new Date(item.time);
-          date.setHours(date.getHours() + 4);
-          return date.toISOString().slice(11, 19);
+      this.subscr5 = this._api
+        .RecentMeasurementPost(5, timeType, time)
+        .subscribe((res) => {
+          this.lineChartCon5 = res.map((item: any) => item.value);
+          this.lineChartLabels5 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart5.data.datasets[0].data = this.lineChartCon5;
+          this.lineChart5.data.labels = this.lineChartLabels5;
+          this.lineChart5.update();
         });
-        this.lineChart5.data.datasets[0].data = this.lineChartCon5;
-        this.lineChart5.data.labels = this.lineChartLabels5;
-        this.lineChart5.update();
-      });
 
-    this.subscr6 = this._api
-      .RecentMeasurementPost(4, timeType, time)
-      .subscribe((res) => {
-        this.lineChartCon6 = res.map((item: any) => item.value);
-        this.lineChartLabels6 = res.map((item: any) => {
-          const date = new Date(item.time);
-          date.setHours(date.getHours() + 4);
-          return date.toISOString().slice(11, 19);
+      this.subscr6 = this._api
+        .RecentMeasurementPost(4, timeType, time)
+        .subscribe((res) => {
+          this.lineChartCon6 = res.map((item: any) => item.value);
+          this.lineChartLabels6 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart6.data.datasets[0].data = this.lineChartCon6;
+          this.lineChart6.data.labels = this.lineChartLabels6;
+          this.lineChart6.update();
         });
-        this.lineChart6.data.datasets[0].data = this.lineChartCon6;
-        this.lineChart6.data.labels = this.lineChartLabels6;
-        this.lineChart6.update();
-      });
+    } else{
+      this.subscr1 = this._api
+        .AdminRecentMeasurementPost(1, timeType, time, this._api.adminSearchedCustomer) 
+        .subscribe((res) => {
+          this.lineChartCon1 = res.map((item: any) => item.value);
+          this.lineChartLabels1 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart1.data.datasets[0].data = this.lineChartCon1;
+          this.lineChart1.data.labels = this.lineChartLabels1;
+          this.lineChart1.update();
+        });
+
+      this.subscr2 = this._api
+        .AdminRecentMeasurementPost(2, timeType, time, this._api.adminSearchedCustomer) 
+        .subscribe((res) => {
+          this.lineChartCon2 = res.map((item: any) => item.value);
+          this.lineChartLabels2 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart2.data.datasets[0].data = this.lineChartCon2;
+          this.lineChart2.data.labels = this.lineChartLabels2;
+          this.lineChart2.update();
+        });
+
+      this.subscr3 = this._api
+        .AdminRecentMeasurementPost(3, timeType, time, this._api.adminSearchedCustomer) 
+        .subscribe((res) => {
+          this.lineChartCon3 = res.map((item: any) => item.value);
+          this.lineChartLabels3 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart3.data.datasets[0].data = this.lineChartCon3;
+          this.lineChart3.data.labels = this.lineChartLabels3;
+          this.lineChart3.update();
+        });
+
+      this.subscr4 = this._api
+        .AdminRecentMeasurementPost(6, timeType, time, this._api.adminSearchedCustomer) 
+        .subscribe((res) => {
+          this.lineChartCon4 = res.map((item: any) => item.value);
+          this.lineChartLabels4 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart4.data.datasets[0].data = this.lineChartCon4;
+          this.lineChart4.data.labels = this.lineChartLabels4;
+          this.lineChart4.update();
+        });
+
+      this.subscr5 = this._api
+        .AdminRecentMeasurementPost(5, timeType, time, this._api.adminSearchedCustomer) 
+        .subscribe((res) => {
+          this.lineChartCon5 = res.map((item: any) => item.value);
+          this.lineChartLabels5 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart5.data.datasets[0].data = this.lineChartCon5;
+          this.lineChart5.data.labels = this.lineChartLabels5;
+          this.lineChart5.update();
+        });
+
+      this.subscr6 = this._api
+        .AdminRecentMeasurementPost(4, timeType, time, this._api.adminSearchedCustomer) 
+        .subscribe((res) => {
+          this.lineChartCon6 = res.map((item: any) => item.value);
+          this.lineChartLabels6 = res.map((item: any) => {
+            const date = new Date(item.time);
+            date.setHours(date.getHours() + 4);
+            return date.toISOString().slice(11, 19);
+          });
+          this.lineChart6.data.datasets[0].data = this.lineChartCon6;
+          this.lineChart6.data.labels = this.lineChartLabels6;
+          this.lineChart6.update();
+        });
+    }
   }
 
   ngOnDestroy(): void {

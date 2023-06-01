@@ -83,6 +83,8 @@ export class SignInComponent implements OnInit, OnDestroy {
         (res) => {
           // if (res[0] !== null || res[0] !== undefined) {
             localStorage.setItem("auth_token", res.accessToken);
+            this._api.email = this.form.get("email")?.value;
+            console.log(this._api.email)
             // localStorage.setItem("userId", res[0]["id"]);
             //this.userService.setActiveUser(res.user);
 
