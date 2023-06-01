@@ -239,6 +239,17 @@ SetAdminRelay(customerId: string, activate: boolean) {
     );
 }
 
+AdminGetEnergyConsumption(timeRange: number, customerId: string) {
+  return this._http
+    .get(
+      `https://api.smartpowermeter.ge/Admin/Measurement/GetEnergyConsumption/${customerId}?timeRange=${timeRange}`
+    )
+    .pipe(
+      map((e) => {
+        return e;
+      })
+    );
+}
 
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {

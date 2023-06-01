@@ -264,11 +264,11 @@ export class DashboardComponent implements OnInit {
         );
       }, 1000);
 
-      // this._api.GetEnergyConsumption(1).subscribe((res) => {
-      //   const obj: any = res;
-      //   this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
-      //   this.user.totalCost = obj.totalCost;
-      // });
+      this._api.AdminGetEnergyConsumption(1, this._api.adminSearchedCustomer).subscribe((res) => {
+        const obj: any = res;
+        this.user.totalConsumedEnergy = obj.totalConsumedEnergy;
+        this.user.totalCost = obj.totalCost;
+      });
     }
   }
 

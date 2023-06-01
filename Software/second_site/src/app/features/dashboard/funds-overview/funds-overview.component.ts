@@ -52,7 +52,6 @@ export class FundsOverviewComponent implements OnInit {
     });
 
     this.GetEnergy(3);
-    
   }
 
   onIntervalChange(interval: string) {
@@ -74,28 +73,30 @@ export class FundsOverviewComponent implements OnInit {
   }
 
   getLeftChartDataAndRender() {
-    this.leftChartService.getLeftChartData(this.interval).subscribe((data: any) => {
-      if (!data) {
-        this.noData = true;
-        return;
-      }
+    this.leftChartService
+      .getLeftChartData(this.interval)
+      .subscribe((data: any) => {
+        if (!data) {
+          this.noData = true;
+          return;
+        }
 
-      this.total.income = 0;
-      this.total.expenses = 0;
-      this.activeIncomeSeries = data.income;
-      this.activeExpensesSeries = data.expenses;
+        this.total.income = 0;
+        this.total.expenses = 0;
+        this.activeIncomeSeries = data.income;
+        this.activeExpensesSeries = data.expenses;
 
-      data.income.map((incomeData: number) => {
-        this.total.income += incomeData;
+        data.income.map((incomeData: number) => {
+          this.total.income += incomeData;
+        });
+
+        data.expenses.map((expensesData: number) => {
+          this.total.expenses += expensesData;
+        });
+
+        this.canRenderLeftChart = true;
+        this.renderLeftChart();
       });
-
-      data.expenses.map((expensesData: number) => {
-        this.total.expenses += expensesData;
-      });
-
-      this.canRenderLeftChart = true;
-      this.renderLeftChart();
-    });
   }
 
   getRightChartDataAndRender() {
@@ -112,7 +113,9 @@ export class FundsOverviewComponent implements OnInit {
   }
 
   renderRightChart() {
-    this.rightChartOptions = this.rightChartService.rightChartOptions(this.activeAvgIncomeSeries);
+    this.rightChartOptions = this.rightChartService.rightChartOptions(
+      this.activeAvgIncomeSeries
+    );
   }
 
   renderLeftChart() {
@@ -123,10 +126,18 @@ export class FundsOverviewComponent implements OnInit {
     );
   }
 
-  GetEnergy(timeRange: number){
-    this._api.GetEnergyConsumption(timeRange).subscribe((res)=>{
-      this.user = res;
-    })
+  GetEnergy(timeRange: number) {
+    if (
+      this._api.email != "smartpowmeter@gmail.com" &&
+      this._api.adminSearchedCustomer == null
+    ) {
+      this._api.GetEnergyConsumption(timeRange).subscribe((res) => {
+        this.user = res;
+      });
+    } else {
+      this._api.AdminGetEnergyConsumption(timeRange, this._api.adminSearchedCustomer).subscribe((res) => {
+        this.user = res;
+      });
+    }
   }
-
 }
