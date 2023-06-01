@@ -19,7 +19,8 @@ typedef enum{
   SIM800L_CHECK_AND_SAVE_ERROR,
   SIM800L_SIM_UNLOCK_ERROR,
   SIM800L_GPRS_CONNECTION_ERROR,
-  SIM800L_SIM_CARD_NOT_INSERTED
+  SIM800L_SIM_CARD_NOT_INSERTED,
+  SIM800L_NOT_REGISTERED_ERROR
 } sim800l_status;
 
 
@@ -27,7 +28,10 @@ sim800l_status checkSIM800LPrecense();
 sim800l_status checkAndSaveGSMSupport();
 volatile bool getGSMSupport();
 sim800l_status initGSMSupport();
+sim800l_status initGSMWithoutGPRS();
 sim800l_status initSequenceSIM800L();
+bool sendSMS(const String number, const String text);
+void testMessage();
 
 void handleSIM800LError(sim800l_status status);
 

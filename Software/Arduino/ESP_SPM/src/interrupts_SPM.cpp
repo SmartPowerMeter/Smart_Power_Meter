@@ -31,6 +31,7 @@ void IRAM_ATTR every1Sec() {
     }
 
     if (f_1sec_event == 0) f_1sec_event = 1;
+
 }
 
 
@@ -60,7 +61,7 @@ void initLEDInterrupt(){
 }
 
 
-void onSDInsert(){
+void IRAM_ATTR onSDInsert(){
     if(f_SD_fall_edge == 0) {
         f_SD_fall_edge = 1;
         SD_insert_start = millis();
@@ -84,7 +85,7 @@ void initUserButtonInterrupt(){
 }
 
 
-void onFallingUserButton(){
+void IRAM_ATTR onFallingUserButton(){
     if (f_usr_btn == 0){
         f_usr_btn = 1;
         button_push_time = millis();

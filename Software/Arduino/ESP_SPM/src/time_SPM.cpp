@@ -110,6 +110,7 @@ void everySecond(){
     if (pzem_ret != PZEM_OK){
         pzemHandleError(pzem_ret);
     }
+    safetyAlert(pzem);
     // start = micros();
     measToJson(pzem);
     // end = micros();
