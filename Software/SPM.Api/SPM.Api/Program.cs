@@ -1,3 +1,4 @@
+using Serilog;
 using SPM.Api.Data;
 using SPM.Api.Policies;
 using SPM.Api.Data.Extensions;
@@ -43,5 +44,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .Build())
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+Log.Logger.Information("SPM_Api started");
 
 app.Run();
