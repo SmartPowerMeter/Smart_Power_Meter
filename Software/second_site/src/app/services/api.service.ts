@@ -17,6 +17,9 @@ interface UsersDataType {
   providedIn: "root",
 })
 export class ApiService {
+  public email: string;
+  public adminSearchedCustomer: string;
+
   constructor(private _http: HttpClient, private router: Router) {}
 
   /* რეგისტრაციის  რექვესთებისათვის გამოვიყენეთ მეთოდი POST შემდეგ მომხმარებლის პირად ინფორმაციაში რომ ჩაგვეწერა ტოკენი გამოვიყენეთ მეთოდი PUT ამის შედეგად უსერშო მივიღეთ ობიექტი სადაც გვაქვს ყველა საჭირო ინფორმაცია იუზერისთვის */
@@ -201,6 +204,28 @@ export class ApiService {
   }
 //https://api.smartpowermeter.ge/Admin/Relay/SetRelayStatus/1?activate=true
 
+AdminRecentMeasurementPost(
+  measurementType: number,
+  timeType: number,
+  time: number,
+  customerId: string
+) {
+  return this._http
+    .post<any>(
+      `https://api.smartpowermeter.ge/Admin/Measurement/GetRecentMeasurement/${customerId}`,
+      {
+        measurementType: measurementType,
+        timeType: timeType,
+        time: time,
+      }
+    )
+    .pipe(
+      map((e) => {
+        return e;
+      })
+    );
+}
+
 SetAdminRelay(customerId: string, activate: boolean) {
   return this._http
     .post<any>(
@@ -214,7 +239,17 @@ SetAdminRelay(customerId: string, activate: boolean) {
     );
 }
 
-
+AdminGetEnergyConsumption(timeRange: number, customerId: string) {
+  return this._http
+    .get(
+      `https://api.smartpowermeter.ge/Admin/Measurement/GetEnergyConsumption/${customerId}?timeRange=${timeRange}`
+    )
+    .pipe(
+      map((e) => {
+        return e;
+      })
+    );
+}
 
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {

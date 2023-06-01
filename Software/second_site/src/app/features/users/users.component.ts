@@ -58,4 +58,10 @@ export class UsersComponent implements OnInit {
         });
     }
   }
+
+  showData(){
+    var element = document.getElementById("inp1") as HTMLInputElement;
+    this._api.adminSearchedCustomer = element.value;
+  }
+
 }
