@@ -11,7 +11,7 @@
         <div style="display: flex; justify-content: flex-start">
           <div>
             Customer Id:
-            <span style="font-weight: bold">{{ this._api.adminSearchedCustomer }} </span>
+            <span style="font-weight: bold">{{ this.customerId }} </span>
           </div>
           <!-- <div style="margin-left: 10px; color: green;">
             Consumed Energy:
@@ -25,21 +25,22 @@
         <div
           style="display: flex; justify-content: space-between; width: 165px"
         >
-          <!-- <div style="display: inline-block">Power Mode:</div>
+          <div style="display: inline-block" *ngIf="this._api.email != 'smartpowmeter@gmail.com'">Power Mode:</div>
           <label
+          *ngIf="this._api.email != 'smartpowmeter@gmail.com'"
             data-toggle="modal"
             data-target="#exampleModal"
             class="toggle-switch"
             style="cursor: pointer"
           >
-            <input
+            <input 
               id="tog1"
               type="checkbox"
               [checked]="isToggleChecked"
               style="margin-left: 10px"
             />
             <span class="slider"></span>
-          </label> -->
+          </label>
         </div>
       </div>
 

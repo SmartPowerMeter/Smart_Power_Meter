@@ -6,7 +6,7 @@ import { Subscription } from "rxjs";
 import { ApiService } from "src/app/services/api.service";
 
 export interface User {
-  customerId: number;
+  customerId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -58,17 +58,22 @@ export class DashboardComponent implements OnInit {
   private subscr6: Subscription;
   private subscr7: Subscription;
   private intervalId: any;
+  public customerId: string;
 
   constructor(public _api: ApiService) {
     this._api.GetUser().subscribe((res) => {
       this.user = res;
+      if (this.user.email == 'smartpowmeter@gmail.com') 
+        this.customerId = this._api.adminSearchedCustomer;
+      else
+        this.customerId = this.user.customerId;
     });
+    
   }
 
   ngOnInit(): void {
     if (
-      this._api.email != "smartpowmeter@gmail.com" &&
-      this._api.adminSearchedCustomer == null
+      this._api.email != "smartpowmeter@gmail.com" 
     ) {
       this._api.GetRelayStatus().subscribe((res) => {
         if (res.adminRelayEnabled == true) {
@@ -349,8 +354,7 @@ export class DashboardComponent implements OnInit {
 
   send(timeType: number, time: number) {
     if (
-      this._api.email != "smartpowmeter@gmail.com" &&
-      this._api.adminSearchedCustomer == null
+      this._api.email != "smartpowmeter@gmail.com"
     ) {
       this.subscr1 = this._api
         .RecentMeasurementPost(1, timeType, time)
