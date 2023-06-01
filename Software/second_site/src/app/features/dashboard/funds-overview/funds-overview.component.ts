@@ -128,8 +128,7 @@ export class FundsOverviewComponent implements OnInit {
 
   GetEnergy(timeRange: number) {
     if (
-      this._api.email != "smartpowmeter@gmail.com" &&
-      this._api.adminSearchedCustomer == null
+      this._api.email != "smartpowmeter@gmail.com"
     ) {
       this._api.GetEnergyConsumption(timeRange).subscribe((res) => {
         this.user = res;
