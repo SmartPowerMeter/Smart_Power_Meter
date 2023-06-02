@@ -78,8 +78,8 @@ export class DashboardComponent implements OnInit {
       this._api.GetRelayStatus().subscribe((res) => {
         if (res.adminRelayEnabled == true) {
           this.isToggleChecked = res.customerRelayEnabled;
-          if (this.isToggleChecked) this.modalText = "Power will turn off.";
-          else this.modalText = "Power will turn on.";
+          // if (this.isToggleChecked) this.modalText = "Power will turn off.";
+          // else this.modalText = "Power will turn on.";
         } else {
           this.modalText = "Your Power is Turned Off By Company.";
         }
@@ -172,8 +172,8 @@ export class DashboardComponent implements OnInit {
       this._api.GetRelayStatus().subscribe((res) => {
         if (res.adminRelayEnabled == true) {
           this.isToggleChecked = res.customerRelayEnabled;
-          if (this.isToggleChecked) this.modalText = "Power will turn off.";
-          else this.modalText = "Power will turn on.";
+          // if (this.isToggleChecked) this.modalText = "Power will turn off.";
+          // else this.modalText = "Power will turn on.";
         } else {
           this.modalText = "Your Power is Turned Off By Company.";
         }
@@ -281,8 +281,8 @@ export class DashboardComponent implements OnInit {
     this._api.GetRelayStatus().subscribe((res) => {
       if (res.adminRelayEnabled == true) {
         this.isToggleChecked = res.customerRelayEnabled;
-        if (this.isToggleChecked) this.modalText = "Power will turn off.";
-        else this.modalText = "Power will turn on.";
+        // if (this.isToggleChecked) this.modalText = "Power will turn off.";
+        // else this.modalText = "Power will turn on.";
         this._api.SetRelayStatus(!this.isToggleChecked).subscribe((res) => {
           this.isToggleChecked = !this.isToggleChecked;
         });
