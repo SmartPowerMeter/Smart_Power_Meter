@@ -40,7 +40,6 @@ namespace SPM.Api.Services.Customer.Account
             var hashedPassword = EncryptionHelper.HashPasword(request.Password);
 
             var userType = request.IsConnected ? UserType.Connected : UserType.Seperate;
-            user.SetAdminRelayState(!request.IsConnected);
 
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
@@ -48,6 +47,7 @@ namespace SPM.Api.Services.Customer.Account
 
             var bucketAccessToken = await _influxDbService.CreateBucket(newUser.CustomerId);
             newUser.SetBucketAccessToken(bucketAccessToken);
+            newUser.SetAdminRelayState(!request.IsConnected);
 
             await _dbContext.User.AddAsync(newUser);
             await _dbContext.SaveChangesAsync();
