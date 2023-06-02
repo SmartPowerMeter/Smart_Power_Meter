@@ -9,8 +9,10 @@
 WiFiManager wm;
 Preferences initSetupParams;
 
+char CustomerIDInitChar[200];
+
 char html[] = "<html><body><h2>GPRS Settings</h2><p>Following parameters will be necessary to open GPRS context</p></body></html>";
-WiFiManagerParameter enteredCustomerId("CustomerId", "Enter Provided CustomerId", "", 50);
+WiFiManagerParameter enteredCustomerId("CustomerId", CustomerIDInitChar, "", 50);
 WiFiManagerParameter enteredSDConf("SDConf", "Do you want to save data on SD Card? (Yes/No)", "No", 3);
 WiFiManagerParameter enteredGSMConfAlert("GSMConfAlert", "Enter your phone number in case you want to receive alert messages(It will charge SIM card owner). Test message will be sent to this number for validation", "No", 15);
 WiFiManagerParameter enteredGSMConf("GSMConf", "Do you want to use GSM instead of WiFi? (Yes/No) (It will charge SIM card owner)", "No", 3, html, WFM_LABEL_BEFORE);
@@ -48,14 +50,24 @@ volatile void initWiFiManager(){
     wm.setMenu(menu, 1);
     wm.setBreakAfterConfig(true);
     wm.setSaveParamsCallback(saveParamCallback);
-    wm.setConnectTimeout(10);
+    wm.setConnectTimeout(20);
     wm.setSaveConnectTimeout(10);
-    wm.setConnectRetries(1);
+    wm.setConnectRetries(5);
     wm.setCaptivePortalEnable(true);
     wm.setCustomMenuHTML("<h1>Smart Meter</h1><h3>menu html</h3>");
     // wm.setSaveConnect(false);
 
-    wm.setCustomHeadElement("<h1>Smart Power Meter</h1><h3>Initial Setup</h3>");
+    unsigned long unique = getUnique();
+    String pre_name = "SPM_";
+    String unique_str = String(unique);
+    String AP_name = pre_name + unique_str;
+
+    char headElement[200];
+    sprintf(headElement, "<h1>Smart Power Meter</h1><h4>Initial Setup for %s</h4>", AP_name.c_str());
+    String CustomerIDInitString = "Enter Provided CustomerId (Previously configured for " + getCustomerId() + ")";
+    strcpy(CustomerIDInitChar, CustomerIDInitString.c_str());
+
+    wm.setCustomHeadElement(headElement);
 
     wm.addParameter(&enteredCustomerId);
     wm.addParameter(&enteredSDConf);
@@ -69,10 +81,10 @@ volatile void initWiFiManager(){
         wm.addParameter(&enteredGSMConfGPRSPass);
     }
 
-    unsigned long unique = getUnique();
-    String pre_name = "SPM_";
-    String unique_str = String(unique);
-    String AP_name = pre_name + unique_str;
+    // unsigned long unique = getUnique();
+    // String pre_name = "SPM_";
+    // String unique_str = String(unique);
+    // String AP_name = pre_name + unique_str;
     char AP_name_chr[20];
     char unique_chr[20];
     AP_name.toCharArray(AP_name_chr, sizeof(AP_name_chr));
