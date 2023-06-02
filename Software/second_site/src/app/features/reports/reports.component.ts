@@ -93,19 +93,37 @@ export class ReportsComponent implements OnInit, OnChanges {
     // this.paymentsService.getData().subscribe((payments) => {
     //   this.paymentsArray = this.paymentsService.data;
     // });
-    this._api.MeasurementPost(6, 2, 2).subscribe((res) => {
-      this.barChartCon = [];
-      this.barChartCon = res.map((item: any) => item.value);
-      this.barChartLabels = [];
-      this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));;
-      // this.barChartAvg = res.avgTenDays;
-      // this.barChartCon = res.conTenDays;
-      // this.lineChartAvg = res.avgTenMonths;
-      // this.lineChartCon = res.conTenMonths;
-      this.createBarChart();
-      // this.createLineChart();
-      // this.createPieChart();
-    });
+    if (this._api.email != "smartpowmeter@gmail.com") {
+      this._api.MeasurementPost(6, 2, 2).subscribe((res) => {
+        this.barChartCon = [];
+        this.barChartCon = res.map((item: any) => item.value);
+        this.barChartLabels = [];
+        this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
+        // this.barChartAvg = res.avgTenDays;
+        // this.barChartCon = res.conTenDays;
+        // this.lineChartAvg = res.avgTenMonths;
+        // this.lineChartCon = res.conTenMonths;
+        this.createBarChart();
+        // this.createLineChart();
+        // this.createPieChart();
+      });
+    } else {
+      this._api
+        .AdminMeasurementPost(6, 2, 2, this._api.adminSearchedCustomer)
+        .subscribe((res) => {
+          this.barChartCon = [];
+          this.barChartCon = res.map((item: any) => item.value);
+          this.barChartLabels = [];
+          this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
+          // this.barChartAvg = res.avgTenDays;
+          // this.barChartCon = res.conTenDays;
+          // this.lineChartAvg = res.avgTenMonths;
+          // this.lineChartCon = res.conTenMonths;
+          this.createBarChart();
+          // this.createLineChart();
+          // this.createPieChart();
+        });
+    }
   }
 
   ngOnChanges() {
@@ -140,13 +158,6 @@ export class ReportsComponent implements OnInit, OnChanges {
       } as ChartOptions,
     });
   }
-
-
-
-
-
-
-
 
   createPieChart() {
     this.pieChart = new Chart("MyPieChart", {
@@ -212,13 +223,19 @@ export class ReportsComponent implements OnInit, OnChanges {
   }
 
   public updateChart(range: any) {
-    const rangeValue = this.barChartLabels.slice(this.maxValue - range.value, this.maxValue);
+    const rangeValue = this.barChartLabels.slice(
+      this.maxValue - range.value,
+      this.maxValue
+    );
     //const rangeAvgData = this.barChartAvg.slice(10 - range.value, 10);
-    const rangeConData = this.barChartCon.slice(this.maxValue - range.value, this.maxValue);
+    const rangeConData = this.barChartCon.slice(
+      this.maxValue - range.value,
+      this.maxValue
+    );
     this.barChart.data.labels = rangeValue;
     //this.barChart.data.datasets[0].data = rangeAvgData;
     this.barChart.data.datasets[0].data = rangeConData;
-    console.log(rangeConData)
+    console.log(rangeConData);
     this.barChart.update();
   }
 
@@ -231,32 +248,47 @@ export class ReportsComponent implements OnInit, OnChanges {
   }
 
   send(selectOption: string, selectOption1: string) {
-    if(selectOption1 == 'Week'){
+    if (selectOption1 == "Week") {
       this.maxValue = 7;
-    }
-    else if(selectOption1 == 'Month') {
+    } else if (selectOption1 == "Month") {
       this.maxValue = 100;
-    }
-    else if(selectOption1 == 'Year') {
+    } else if (selectOption1 == "Year") {
       this.maxValue = 360;
     }
 
-
-
-    this._api
-      .MeasurementPost(
-        this.MeasurementType[selectOption],
-        this.TimeRange[selectOption1],
-        2
-      )
-      .subscribe((res) => {
-        this.barChartCon = [];
-        this.barChartCon = res.map((item: any) => item.value);
-        this.barChartLabels = [];
-        this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
-        this.barChart.data.datasets[0].data = this.barChartCon;
-        this.barChart.data.labels = this.barChartLabels;
-        this.barChart.update();
-      });
+    if (this._api.email != "smartpowmeter@gmail.com") {
+      this._api
+        .MeasurementPost(
+          this.MeasurementType[selectOption],
+          this.TimeRange[selectOption1],
+          2
+        )
+        .subscribe((res) => {
+          this.barChartCon = [];
+          this.barChartCon = res.map((item: any) => item.value);
+          this.barChartLabels = [];
+          this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
+          this.barChart.data.datasets[0].data = this.barChartCon;
+          this.barChart.data.labels = this.barChartLabels;
+          this.barChart.update();
+        });
+    } else {
+      this._api
+        .AdminMeasurementPost(
+          this.MeasurementType[selectOption],
+          this.TimeRange[selectOption1],
+          2,
+          this._api.adminSearchedCustomer
+        )
+        .subscribe((res) => {
+          this.barChartCon = [];
+          this.barChartCon = res.map((item: any) => item.value);
+          this.barChartLabels = [];
+          this.barChartLabels = res.map((item: any) => item.time.slice(0, 10));
+          this.barChart.data.datasets[0].data = this.barChartCon;
+          this.barChart.data.labels = this.barChartLabels;
+          this.barChart.update();
+        });
+    }
   }
 }

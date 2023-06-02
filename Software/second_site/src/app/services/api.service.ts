@@ -251,6 +251,24 @@ AdminGetEnergyConsumption(timeRange: number, customerId: string) {
     );
 }
 
+AdminMeasurementPost(
+  measurementType: number,
+  timeRange: number,
+  aggregateDuration: number,
+  customerId: string
+) {
+  return this._http
+    .post<any>(`https://api.smartpowermeter.ge/Admin/Measurement/GetMeasurement/${customerId}`, {
+      measurementType: measurementType,
+      timeRange: timeRange,
+      aggregateDuration: aggregateDuration,
+    })
+    .pipe(
+      map((e) => {
+        return e;
+      })
+    );
+}
   // აქ გაუგებრია პოსტი რატო მაქ
   // LogIn(email: string, password: string) {
   //   return this._http

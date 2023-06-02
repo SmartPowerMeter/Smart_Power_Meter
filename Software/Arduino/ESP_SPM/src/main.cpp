@@ -17,6 +17,8 @@ PZEM004Tv30 pzem = pzemInit();
 extern volatile LED_status status;
 TaskHandle_t Task1;
 
+extern String GSMConfAlertNum;
+
 void Task1code( void * pvParameters ){
   Serial.print("Task1 running on core ");
   Serial.println(xPortGetCoreID());
@@ -58,11 +60,6 @@ void setup() {
 
   Serial.printf("ESP Unique: %lu\n", getUnique());
 
-  sd_status sd_ret = allCardChecks(SD, SD_PRECENCE);
-  if(sd_ret != SD_OK){
-    handleErrorSD(sd_ret);
-  }
-
   initGSMSupport();
 
   initWiFiManager();
@@ -80,8 +77,14 @@ void setup() {
   initSDInterrupt();
   initUserButtonInterrupt();
   
+  sd_status sd_ret = allCardChecks(SD, SD_PRECENCE);
+  if(sd_ret != SD_OK){
+    handleErrorSD(sd_ret);
+  }
  
   setRelayStatus();
+
+  testMessage();
 }
 
 void loop() {

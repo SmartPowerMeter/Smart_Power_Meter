@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { ApiService } from "src/app/services/api.service";
 
 @Component({
@@ -14,7 +15,7 @@ export class UsersComponent implements OnInit {
 
   public people: any;
 
-  constructor(public _api: ApiService) {}
+  constructor(public _api: ApiService, public router: Router) {}
 
   ngOnInit(): void {
 
@@ -62,6 +63,7 @@ export class UsersComponent implements OnInit {
   showData(){
     var element = document.getElementById("inp1") as HTMLInputElement;
     this._api.adminSearchedCustomer = element.value;
+    this.router.navigate(["/dashboard"]);
   }
 
 }

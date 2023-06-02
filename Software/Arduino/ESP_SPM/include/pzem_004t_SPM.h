@@ -25,6 +25,7 @@ PZEM004Tv30 pzemInit();
 pzem_status pzemReadValues(PZEM004Tv30& pzem);
 char* measToJson(PZEM004Tv30& pzem);
 void pzemPrintValues(PZEM004Tv30& pzem, Print& port);
+void safetyAlert(PZEM004Tv30& pzem);
 
 void pzemHandleError(pzem_status status);
 
